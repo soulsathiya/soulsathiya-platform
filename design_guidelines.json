@@ -1,0 +1,191 @@
+{
+  "identity": {
+    "name": "E1",
+    "role": "Creative Designer",
+    "philosophy": "Fusion over Imitation. Emotion First. Content is King.",
+    "anti_patterns": [
+      "Generic 'SaaS Blue'",
+      "Inter font everywhere",
+      "Center-aligned everything",
+      "Gradient overload (>20%)"
+    ]
+  },
+  "project": {
+    "name": "SoulSathiya",
+    "type": "Matrimonial SaaS Platform",
+    "target_audience": "Indian users seeking serious lifelong partnerships",
+    "emotional_tone": "Trust, Warmth, Heritage, Modernity",
+    "theme_preference": "Light (Premium Earthy)"
+  },
+  "design_system": {
+    "colors": {
+      "strategy": "Archetype 1: Organic & Earthy (Trust, Growth, Calm)",
+      "palette": {
+        "primary": {
+          "name": "Deep Saffron",
+          "value": "#E65100",
+          "usage": "Primary Actions, Brand Highlights, Verification Badges"
+        },
+        "secondary": {
+          "name": "Royal Gold",
+          "value": "#C5A000",
+          "usage": "Premium Tiers, Success States, Subtle Borders"
+        },
+        "background": {
+          "name": "Bone White",
+          "value": "#FDFBF7",
+          "usage": "Main Background (Warmth over sterility)"
+        },
+        "surface": {
+          "name": "White Clay",
+          "value": "#FFFFFF",
+          "usage": "Cards, Modals, Input Fields"
+        },
+        "text": {
+          "primary": "#1A1A1A",
+          "secondary": "#5D5D5D",
+          "tertiary": "#8C8C8C"
+        },
+        "success": "#2E7D32",
+        "error": "#D32F2F",
+        "warning": "#ED6C02",
+        "info": "#0288D1"
+      },
+      "rules": [
+        "Never use pure black (#000000). Use #1A1A1A.",
+        "Ensure contrast ratio > 4.5:1 for body text.",
+        "Gradients only for subtle backgrounds, never for text.",
+        "Forbidden Color: Teal Blue (#1B93A4) for dashboards."
+      ]
+    },
+    "typography": {
+      "strategy": "The 'Old Money Tech' - Classic Serif Head + Clean Sans Body",
+      "fonts": {
+        "headings": {
+          "family": "Cormorant Garamond",
+          "fallback": "serif",
+          "weights": ["600", "700"],
+          "usage": "Page Titles, Section Headers, Hero Text"
+        },
+        "body": {
+          "family": "Manrope",
+          "fallback": "sans-serif",
+          "weights": ["400", "500", "600"],
+          "usage": "Paragraphs, UI Elements, Data Tables"
+        },
+        "accent": {
+          "family": "Playfair Display",
+          "fallback": "serif",
+          "usage": "Testimonials, Quotes, Special Offers"
+        }
+      },
+      "rules": [
+        "Headings > 32px must use tracking-tight.",
+        "Overlines/Labels must be Uppercase + tracking-widest + text-xs.",
+        "Line height: Tight (1.1) for headings, Relaxed (1.6) for body."
+      ]
+    },
+    "spacing": {
+      "scale": ["0", "1", "2", "4", "6", "8", "12", "16", "20", "24", "32", "40", "48", "64"],
+      "philosophy": "Generous Spacing. Use 2-3x more whitespace than typical apps.",
+      "grid": {
+        "modes": {
+          "marketing": "The 'Tetris' Grid (Asymmetric, wide gaps)",
+          "dashboard": "High Density Grid (Tight gaps, full height utilization)"
+        }
+      }
+    },
+    "surfaces": {
+      "marketing_cards": "Flat Clean + 1px Border (Color: #E5E5E5) + Subtle Texture (Grain)",
+      "dashboard_cards": "Neumorphism 'Clay & Crisp' - Soft shadow + 1px Border (#000000/5)",
+      "glassmorphism": {
+        "usage": "Sticky Headers, Toasts, Overlays",
+        "style": "bg-white/80 backdrop-blur-md border-b border-white/20 shadow-sm"
+      },
+      "borders": "Rounded-lg (0.5rem) generally, Rounded-xl (0.75rem) for main cards."
+    },
+    "motion": {
+      "library": "framer-motion",
+      "principles": [
+        "Micro-interactions on all clickable elements (scale 0.98 on tap).",
+        "Staggered entrance for lists/grids.",
+        "Smooth page transitions (opacity + y-axis slide).",
+        "Respect prefers-reduced-motion."
+      ]
+    },
+    "components": {
+      "library": "shadcn/ui",
+      "path": "/app/frontend/src/components/ui",
+      "extension": ".jsx",
+      "customization": [
+        "Override default radius to match brand (0.5rem).",
+        "Use 'sonner' for toasts.",
+        "Use 'lucide-react' for icons.",
+        "Input fields: Remove default heavy ring, use subtle border color change on focus."
+      ]
+    }
+  },
+  "assets": {
+    "images": [
+      {
+        "category": "hero",
+        "url": "https://images.pexels.com/photos/30902344/pexels-photo-30902344.jpeg",
+        "alt": "Joyful Indian couple in traditional attire",
+        "usage": "Landing page main hero section"
+      },
+      {
+        "category": "profile_man",
+        "url": "https://images.pexels.com/photos/10987899/pexels-photo-10987899.jpeg",
+        "alt": "Professional Indian man smiling",
+        "usage": "User profile example, Testimonial avatar"
+      },
+      {
+        "category": "profile_woman",
+        "url": "https://images.pexels.com/photos/32161001/pexels-photo-32161001.jpeg",
+        "alt": "Indian woman in red saree smiling",
+        "usage": "User profile example, Testimonial avatar"
+      },
+      {
+        "category": "trust",
+        "url": "https://images.pexels.com/photos/36079282/pexels-photo-36079282.jpeg",
+        "alt": "Couple holding hands with engagement ring",
+        "usage": "Trust section, Success stories"
+      }
+    ],
+    "icons": {
+      "library": "lucide-react",
+      "style": "Stroke width 1.5px, Rounded joins",
+      "usage_guide": "Use simple, recognizable icons. Avoid filling them unless active state."
+    }
+  },
+  "layout_strategies": {
+    "landing_page": {
+      "hero": "Split screen or Center-focus with 'Tracing Beam' highlight.",
+      "features": "Bento Grid (Asymmetric).",
+      "testimonials": "Horizontal scroll (Marquee) or Masonry grid."
+    },
+    "dashboard": {
+      "sidebar": "Fixed left, Collapsible.",
+      "content": "Grid layout, Card-based widgets.",
+      "profile": "Cover image top, circular avatar overlapping, tabs for details."
+    }
+  },
+  "instructions_to_main_agent": [
+    "CRITICAL: Use the file extension .jsx for all React components.",
+    "Do not use generic 'Inter' font. Import 'Cormorant Garamond' and 'Manrope' from Google Fonts.",
+    "Implement the 'Organic & Earthy' color palette strictly. No 'SaaS Blue'.",
+    "Use 'sonner' for all toast notifications.",
+    "Ensure all interactive elements have data-testid attributes.",
+    "For the Matchmaking Algorithm visuals, use simple clean charts (Recharts) with brand colors.",
+    "Profile Photos: Implement the privacy blur effect using CSS backdrop-filter until permission is granted.",
+    "Respect the 'Fusion over Imitation' principle. Make it look like a modern Indian lifestyle brand, not a utility tool."
+  ],
+  "universal_guidelines": [
+    "Dark colors look good when used independently without gradients. DO NOT use dark colors as gradients.",
+    "Don't make generic centered layouts. Create depth through layered design elements.",
+    "Use glass-morphism effects with backdrop filters (12-24px blur).",
+    "NEVER use transition: all. Animate specific properties.",
+    "NEVER center align the app container (.App { text-align: center }).",
+    "Always use modern button styles (pill or sharp) with interaction animations."
+  ]
+}
