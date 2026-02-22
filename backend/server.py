@@ -1507,10 +1507,30 @@ async def setup_first_admin(email: str, password: str, full_name: str):
         email=email,
         full_name=full_name,
         password=password,
-        role="super_admin"
+        role="super_admin",
+        require_password_change=True
     )
     
     return {"message": "Super admin created successfully", "admin_id": admin["admin_id"]}
+
+
+@admin_router.post("/change-password")
+async def change_admin_password(
+    old_password: str,
+    new_password: str,
+    admin: dict = Depends(get_current_admin)
+):
+    """Change admin password"""
+    result = await admin_service.change_admin_password(
+        admin_id=admin["admin_id"],
+        old_password=old_password,
+        new_password=new_password
+    )
+    
+    if not result["success"]:
+        raise HTTPException(status_code=400, detail=result["error"])
+    
+    return {"message": result["message"]}
 
 
 # Dashboard
