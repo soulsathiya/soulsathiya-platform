@@ -733,7 +733,7 @@ async def get_matches(
     
     else:
         # Fall back to basic matches
-    query = {"user_id": current_user["user_id"], "status": "computed"}
+        query = {"user_id": current_user["user_id"], "status": "computed"}
     
     if min_compatibility:
         query["compatibility_score"] = {"$gte": min_compatibility}
