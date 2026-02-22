@@ -64,8 +64,8 @@ const ProfileOnboarding = () => {
         { withCredentials: true }
       );
 
-      toast.success('Profile created successfully!');
-      navigate('/dashboard');
+      toast.success('Profile created! Now complete your compatibility assessment.');
+      navigate('/onboarding/psychometric');
     } catch (error) {
       toast.error(error.response?.data?.detail || 'Failed to create profile');
     } finally {
