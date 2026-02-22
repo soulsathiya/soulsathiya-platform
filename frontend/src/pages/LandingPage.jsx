@@ -36,7 +36,8 @@ const LandingPage = () => {
         "View up to 10 matches",
         "Send 3 interests per month",
         "Basic filters"
-      ]
+      ],
+      deepExploration: "Not included"
     },
     {
       tier: "Premium",
@@ -48,8 +49,10 @@ const LandingPage = () => {
         "Unlimited interests",
         "Advanced compatibility filters",
         "See who viewed your profile",
-        "Priority customer support"
-      ]
+        "Priority customer support",
+        "Deep Couple Compatibility (₹999/pair add-on)"
+      ],
+      deepExploration: "₹999 per pair"
     },
     {
       tier: "Elite",
@@ -60,8 +63,11 @@ const LandingPage = () => {
         "Profile boost",
         "Dedicated relationship manager",
         "Verified badge priority",
-        "Exclusive events access"
-      ]
+        "Exclusive events access",
+        "Unlimited Deep Couple Compatibility Exploration"
+      ],
+      deepExploration: "Included",
+      badge: "Most Comprehensive"
     }
   ];
 
