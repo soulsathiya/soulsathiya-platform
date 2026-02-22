@@ -1160,6 +1160,14 @@ async def unlock_deep_with_payment(
         payment_id=razorpay_payment_id
     )
     
+    # Notify partner about the unlock
+    if not result["exists"]:
+        await notification_service.notify_deep_unlock(
+            unlocking_user_id=current_user["user_id"],
+            partner_user_id=partner_id,
+            pair_id=result["pair"]["pair_id"]
+        )
+    
     return {
         "message": "Deep Exploration unlocked with payment",
         "pair_id": result["pair"]["pair_id"]
