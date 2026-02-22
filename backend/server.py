@@ -591,6 +591,18 @@ async def get_matches(
     
     matches = await db.matches.find(query, {"_id": 0}).sort("compatibility_score", -1).to_list(50)
     
+    # Get active boosts for all matched users
+    now = datetime.now(timezone.utc)
+    boosted_users = await db.boosts.find(
+        {
+            "status": "active",
+            "expires_at": {"$gt": now}
+        },
+        {"_id": 0, "user_id": 1}
+    ).to_list(100)
+    
+    boosted_user_ids = {boost["user_id"] for boost in boosted_users}
+    
     match_results = []
     for match in matches:
         user = await db.users.find_one(
@@ -604,13 +616,19 @@ async def get_matches(
                 {"_id": 0, "city": 1, "occupation": 1, "age": 1}
             )
             
+            is_boosted = match["matched_user_id"] in boosted_user_ids
+            
             match_results.append({
                 "match_id": match["match_id"],
                 "user": user,
                 "profile_preview": profile,
                 "compatibility_score": match["compatibility_score"],
-                "distance_km": match.get("distance_km")
+                "distance_km": match.get("distance_km"),
+                "is_boosted": is_boosted
             })
+    
+    # Sort: boosted profiles first, then by compatibility score
+    match_results.sort(key=lambda x: (not x["is_boosted"], -x["compatibility_score"]))
     
     return {"matches": match_results, "count": len(match_results)}
 
