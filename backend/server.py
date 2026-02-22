@@ -779,10 +779,10 @@ async def get_matches(
                 "is_boosted": is_boosted
             })
     
-    # Sort: boosted profiles first, then by compatibility score
-    match_results.sort(key=lambda x: (not x["is_boosted"], -x["compatibility_score"]))
-    
-    return {"matches": match_results, "count": len(match_results)}
+        # Sort: boosted profiles first, then by compatibility score
+        match_results.sort(key=lambda x: (not x["is_boosted"], -x["compatibility_score"]))
+        
+        return {"matches": match_results, "count": len(match_results), "psychometric_enabled": False}
 
 
 # ==================== INTEREST ROUTES ====================
