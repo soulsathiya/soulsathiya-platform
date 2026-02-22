@@ -13,6 +13,7 @@ import ProfileOnboarding from './pages/ProfileOnboarding';
 import PsychometricOnboarding from './pages/PsychometricOnboarding';
 import BoostPage from './pages/BoostPage';
 import DeepReportView from './pages/DeepReportView';
+import DeepQuestionnaireFlow from './pages/DeepQuestionnaireFlow';
 
 function AppRouter() {
   const location = useLocation();
@@ -33,6 +34,7 @@ function AppRouter() {
       <Route path="/onboarding/psychometric" element={<PsychometricOnboarding />} />
       <Route path="/boost" element={<BoostPage />} />
       <Route path="/deep/report/:pairId" element={<DeepReportView />} />
+      <Route path="/deep/questionnaire" element={<DeepQuestionnaireFlow />} />
       
       {/* Fallback */}
       <Route path="*" element={<LandingPage />} />
