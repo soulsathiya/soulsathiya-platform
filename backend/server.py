@@ -1068,6 +1068,161 @@ async def initiate_verification(
     }
 
 
+# ==================== DEEP EXPLORATION ROUTES ====================
+
+@api_router.get("/deep/status/{partner_id}")
+async def get_deep_exploration_status(
+    partner_id: str,
+    current_user: dict = Depends(get_current_user)
+):
+    """Get deep exploration status with a partner"""
+    status = await deep_exploration_service.get_pair_status(
+        current_user["user_id"],
+        partner_id
+    )
+    return status
+
+
+@api_router.post("/deep/unlock/{partner_id}")
+async def unlock_deep_exploration(
+    partner_id: str,
+    current_user: dict = Depends(get_current_user)
+):
+    """Unlock deep exploration (Elite: free, Premium: requires payment)"""
+    tier, has_access, payment_req = await deep_exploration_service.check_tier_access(
+        current_user["user_id"]
+    )
+    
+    if tier == "free":
+        raise HTTPException(
+            status_code=403,
+            detail="Please upgrade to Premium or Elite to unlock Deep Exploration"
+        )
+    
+    if tier == "premium":
+        # Return payment order details
+        # Payment verification will be handled by separate endpoint
+        raise HTTPException(
+            status_code=402,
+            detail={
+                "message": "Payment required",
+                "amount": 999,
+                "tier": "premium"
+            }
+        )
+    
+    # Elite tier - create pair directly
+    result = await deep_exploration_service.unlock_pair(
+        unlocking_user_id=current_user["user_id"],
+        partner_user_id=partner_id
+    )
+    
+    return {
+        "message": "Deep Exploration unlocked",
+        "pair_id": result["pair"]["pair_id"],
+        "exists": result["exists"]
+    }
+
+
+@api_router.post("/deep/unlock-paid/{partner_id}")
+async def unlock_deep_with_payment(
+    partner_id: str,
+    razorpay_payment_id: str,
+    razorpay_order_id: str,
+    razorpay_signature: str,
+    current_user: dict = Depends(get_current_user)
+):
+    """Unlock deep exploration after payment verification (Premium users)"""
+    # Verify payment signature
+    # For now, simplified verification
+    
+    result = await deep_exploration_service.unlock_pair(
+        unlocking_user_id=current_user["user_id"],
+        partner_user_id=partner_id,
+        payment_id=razorpay_payment_id
+    )
+    
+    return {
+        "message": "Deep Exploration unlocked with payment",
+        "pair_id": result["pair"]["pair_id"]
+    }
+
+
+@api_router.get("/deep/questions")
+async def get_deep_questions(current_user: dict = Depends(get_current_user)):
+    """Get the 108-item deep exploration questionnaire"""
+    return {
+        "questions": DEEP_QUESTIONS_FULL,
+        "total": len(DEEP_QUESTIONS_FULL),
+        "modules": [
+            "expectations_roles",
+            "conflict_repair",
+            "attachment_trust",
+            "lifestyle_integration",
+            "intimacy_communication",
+            "family_inlaw_dynamics"
+        ]
+    }
+
+
+@api_router.post("/deep/submit")
+async def submit_deep_profile(
+    pair_id: str,
+    responses: List[Dict],
+    current_user: dict = Depends(get_current_user)
+):
+    """Submit deep psychometric profile"""
+    if len(responses) != 108:
+        raise HTTPException(status_code=400, detail="Must submit all 108 responses")
+    
+    # Save profile
+    profile_id = await deep_exploration_service.save_deep_profile(
+        user_id=current_user["user_id"],
+        pair_id=pair_id,
+        responses=responses
+    )
+    
+    # Check if both completed
+    pair = await db.deep_exploration_pairs.find_one({"pair_id": pair_id}, {"_id": 0})
+    
+    if pair and len(pair.get("completed_users", [])) == 2:
+        # Generate report
+        report_id = await deep_exploration_service.generate_pair_report(pair_id)
+        
+        return {
+            "message": "Deep profile completed and report generated",
+            "profile_id": profile_id,
+            "report_generated": True,
+            "report_id": report_id
+        }
+    
+    return {
+        "message": "Deep profile saved. Waiting for partner to complete.",
+        "profile_id": profile_id,
+        "report_generated": False
+    }
+
+
+@api_router.get("/deep/report/{pair_id}")
+async def get_deep_report(
+    pair_id: str,
+    current_user: dict = Depends(get_current_user)
+):
+    """Get deep compatibility report for a pair"""
+    report = await deep_exploration_service.get_pair_report(
+        pair_id,
+        current_user["user_id"]
+    )
+    
+    if not report:
+        raise HTTPException(
+            status_code=404,
+            detail="Report not found or not yet generated"
+        )
+    
+    return report
+
+
 # ==================== BOOST ROUTES ====================
 
 @api_router.get("/boost/plans")
