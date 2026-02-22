@@ -14,6 +14,7 @@ import PsychometricOnboarding from './pages/PsychometricOnboarding';
 import BoostPage from './pages/BoostPage';
 import DeepReportView from './pages/DeepReportView';
 import DeepQuestionnaireFlow from './pages/DeepQuestionnaireFlow';
+import DemoDeepReport from './pages/DemoDeepReport';
 
 // Admin Pages
 import {
