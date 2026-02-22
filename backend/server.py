@@ -56,6 +56,7 @@ logger = logging.getLogger(__name__)
 auth_service = AuthService(db)
 boost_service = BoostService(db)
 compatibility_engine = CompatibilityEngine(db)
+deep_exploration_service = DeepExplorationService(db, boost_service)
 
 
 # Dependency to get current user from session
