@@ -10,6 +10,7 @@ import RegisterPage from './pages/RegisterPage';
 import AuthCallback from './pages/AuthCallback';
 import DashboardPage from './pages/DashboardPage';
 import ProfileOnboarding from './pages/ProfileOnboarding';
+import BoostPage from './pages/BoostPage';
 
 function AppRouter() {
   const location = useLocation();
@@ -27,6 +28,7 @@ function AppRouter() {
       <Route path="/register" element={<RegisterPage />} />
       <Route path="/dashboard" element={<DashboardPage />} />
       <Route path="/onboarding/profile" element={<ProfileOnboarding />} />
+      <Route path="/boost" element={<BoostPage />} />
       
       {/* Fallback */}
       <Route path="*" element={<LandingPage />} />
