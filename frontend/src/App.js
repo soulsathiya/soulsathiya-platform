@@ -49,6 +49,7 @@ function AppRouter() {
       <Route path="/boost" element={<BoostPage />} />
       <Route path="/deep/report/:pairId" element={<DeepReportView />} />
       <Route path="/deep/questionnaire" element={<DeepQuestionnaireFlow />} />
+      <Route path="/deep/demo-report" element={<DemoDeepReport />} />
       
       {/* Admin Routes */}
       <Route path="/admin/login" element={<AdminLogin />} />
