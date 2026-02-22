@@ -21,7 +21,9 @@ from models.interest import InterestCreate, Interest, InterestResponse
 from models.message import MessageCreate, Message, Conversation
 from models.subscription import SubscriptionCreate, Subscription
 from models.verification import VerificationCreate, Verification
+from models.boost import BoostCreate, Boost
 from services.auth_service import AuthService
+from services.boost_service import BoostService
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
