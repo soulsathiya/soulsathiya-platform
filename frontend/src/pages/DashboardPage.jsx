@@ -207,6 +207,39 @@ const DashboardPage = () => {
           </div>
         )}
 
+        {/* Boost Banner */}
+        {user.is_profile_complete && (
+          <div
+            className="card-surface p-6 mb-8 bg-gradient-to-r from-amber-500/10 to-orange-500/10 border-l-4 border-l-amber-500"
+            data-testid="boost-banner"
+          >
+            <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+              <div className="flex-1">
+                <div className="flex items-center space-x-2 mb-2">
+                  <svg className="w-6 h-6 text-amber-500" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" />
+                  </svg>
+                  <h3 className="font-heading text-xl">Boost Your Profile</h3>
+                </div>
+                <p className="text-muted-foreground mb-2">
+                  Get 3x more profile views! Appear at the top of matches for 24 hours.
+                </p>
+                <p className="text-sm font-medium text-amber-600">
+                  Starting from just ₹299
+                </p>
+              </div>
+              <Link to="/boost">
+                <Button className="bg-amber-500 hover:bg-amber-600" data-testid="boost-profile-btn">
+                  <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" />
+                  </svg>
+                  Boost Now
+                </Button>
+              </Link>
+            </div>
+          </div>
+        )}
+
         {/* Quick Actions Grid */}
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
           {quickActions.map((action, index) => (
