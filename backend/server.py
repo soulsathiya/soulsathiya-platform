@@ -1005,7 +1005,8 @@ async def get_subscription_plans():
                 "Send 10 interests per month",
                 "View 50 profiles per day",
                 "Basic filters"
-            ]
+            ],
+            "deep_exploration": "Not included"
         },
         {
             "tier": "premium",
@@ -1018,8 +1019,10 @@ async def get_subscription_plans():
                 "Unlimited profile views",
                 "Advanced filters",
                 "See who viewed your profile",
-                "Priority customer support"
-            ]
+                "Priority customer support",
+                "Deep Couple Compatibility (₹999/pair add-on)"
+            ],
+            "deep_exploration": "₹999 per pair"
         },
         {
             "tier": "elite",
@@ -1032,8 +1035,10 @@ async def get_subscription_plans():
                 "Profile boost",
                 "Dedicated relationship manager",
                 "Verified badge priority",
-                "Exclusive events access"
-            ]
+                "Exclusive events access",
+                "Unlimited Deep Couple Compatibility Exploration"
+            ],
+            "deep_exploration": "Included"
         }
     ]
     
