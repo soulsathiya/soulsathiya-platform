@@ -1,6 +1,7 @@
 from typing import Dict, List, Optional
 from datetime import datetime, timezone, timedelta
 import uuid
+import os
 from passlib.context import CryptContext
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -33,7 +34,14 @@ class AdminService:
         
         return admin
     
-    async def create_admin(self, email: str, full_name: str, password: str, role: str = "moderator") -> Dict:
+    async def create_admin(
+        self,
+        email: str,
+        full_name: str,
+        password: str,
+        role: str = "moderator",
+        require_password_change: bool = False
+    ) -> Dict:
         """Create a new admin user"""
         admin_id = f"admin_{uuid.uuid4().hex[:12]}"
         
@@ -44,12 +52,69 @@ class AdminService:
             "password_hash": self.hash_password(password),
             "role": role,
             "is_active": True,
+            "require_password_change": require_password_change,
             "created_at": datetime.now(timezone.utc),
             "last_login": None
         }
         
         await self.db.admin_users.insert_one(admin_doc)
         return {k: v for k, v in admin_doc.items() if k != "password_hash"}
+    
+    async def change_admin_password(
+        self,
+        admin_id: str,
+        old_password: str,
+        new_password: str
+    ) -> Dict:
+        """Change admin password"""
+        admin = await self.db.admin_users.find_one({"admin_id": admin_id}, {"_id": 0})
+        
+        if not admin:
+            return {"success": False, "error": "Admin not found"}
+        
+        if not self.verify_password(old_password, admin.get("password_hash", "")):
+            return {"success": False, "error": "Current password is incorrect"}
+        
+        if len(new_password) < 8:
+            return {"success": False, "error": "Password must be at least 8 characters"}
+        
+        await self.db.admin_users.update_one(
+            {"admin_id": admin_id},
+            {
+                "$set": {
+                    "password_hash": self.hash_password(new_password),
+                    "require_password_change": False,
+                    "password_changed_at": datetime.now(timezone.utc)
+                }
+            }
+        )
+        
+        return {"success": True, "message": "Password changed successfully"}
+    
+    async def create_admin_from_env(self) -> Optional[Dict]:
+        """Create admin from environment variables if not exists"""
+        env_email = os.environ.get("ADMIN_EMAIL")
+        env_password = os.environ.get("ADMIN_PASSWORD")
+        
+        if not env_email:
+            return None
+        
+        existing = await self.db.admin_users.find_one({"email": env_email}, {"_id": 0})
+        if existing:
+            return existing
+        
+        # Use a secure default if no password provided
+        password = env_password or f"change_me_{uuid.uuid4().hex[:8]}"
+        
+        admin = await self.create_admin(
+            email=env_email,
+            full_name="Super Admin",
+            password=password,
+            role="super_admin",
+            require_password_change=os.environ.get("ADMIN_REQUIRE_PASSWORD_CHANGE", "true").lower() == "true"
+        )
+        
+        return admin
     
     async def create_admin_session(self, admin_id: str) -> str:
         """Create admin session token"""
