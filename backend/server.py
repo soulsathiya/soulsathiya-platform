@@ -548,32 +548,120 @@ async def get_my_communities(current_user: dict = Depends(get_current_user)):
 # ==================== PSYCHOMETRIC ROUTES ====================
 
 @api_router.get("/psychometric/questions")
-async def get_questions(current_user: dict = Depends(get_current_user)):
-    """Get active psychometric questions"""
-    questions = await db.psychometric_questions.find(
-        {"is_active": True},
-        {"_id": 0}
-    ).sort("display_order", 1).to_list(100)
-    
-    return {"questions": questions}
+async def get_psychometric_questions():
+    """Get the 36-item psychometric questionnaire"""
+    return {"questions": PSYCHOMETRIC_QUESTIONS_36, "total": len(PSYCHOMETRIC_QUESTIONS_36)}
 
 
-@api_router.post("/psychometric/responses")
-async def submit_response(
-    response_data: ResponseCreate,
+@api_router.post("/psychometric/submit")
+async def submit_psychometric_profile(
+    profile_data: PsychometricProfileCreate,
     current_user: dict = Depends(get_current_user)
 ):
-    """Submit psychometric response"""
-    response_id = f"resp_{uuid.uuid4().hex[:12]}"
+    """Submit complete psychometric profile"""
+    if len(profile_data.responses) != 36:
+        raise HTTPException(status_code=400, detail="Must submit all 36 responses")
     
-    response_doc = response_data.model_dump()
-    response_doc["response_id"] = response_id
-    response_doc["user_id"] = current_user["user_id"]
-    response_doc["answered_at"] = datetime.now(timezone.utc)
+    # Convert responses to list of dicts
+    responses = [r.model_dump() for r in profile_data.responses]
     
-    await db.psychometric_responses.insert_one(response_doc)
+    # Create profile using compatibility engine
+    profile_id = await compatibility_engine.create_psychometric_profile(
+        user_id=current_user["user_id"],
+        responses=responses
+    )
     
-    return {"message": "Response recorded", "response_id": response_id}
+    # Update user profile completion
+    await db.users.update_one(
+        {"user_id": current_user["user_id"]},
+        {"$set": {"is_profile_complete": True}}
+    )
+    
+    return {
+        "message": "Psychometric profile created successfully",
+        "profile_id": profile_id
+    }
+
+
+@api_router.get("/psychometric/status")
+async def get_psychometric_status(current_user: dict = Depends(get_current_user)):
+    """Get user's psychometric profile status"""
+    profile = await db.psychometric_profiles.find_one(
+        {"user_id": current_user["user_id"]},
+        {"_id": 0}
+    )
+    
+    if not profile:
+        return {
+            "completed": False,
+            "profile": None
+        }
+    
+    return {
+        "completed": True,
+        "profile": {
+            "profile_id": profile["profile_id"],
+            "domain_scores": profile["domain_scores"],
+            "archetype_primary": profile["archetype_primary"],
+            "archetype_secondary": profile.get("archetype_secondary"),
+            "completed_at": profile["completed_at"]
+        }
+    }
+
+
+@api_router.get("/psychometric/profile")
+async def get_my_psychometric_profile(current_user: dict = Depends(get_current_user)):
+    """Get full psychometric profile"""
+    profile = await db.psychometric_profiles.find_one(
+        {"user_id": current_user["user_id"]},
+        {"_id": 0, "raw_responses": 0}  # Exclude raw responses
+    )
+    
+    if not profile:
+        raise HTTPException(status_code=404, detail="Psychometric profile not found")
+    
+    return profile
+
+
+@api_router.get("/compatibility/{matched_user_id}")
+async def get_compatibility_score(
+    matched_user_id: str,
+    current_user: dict = Depends(get_current_user)
+):
+    """Get detailed compatibility with another user"""
+    compatibility_data = await compatibility_engine.calculate_compatibility(
+        current_user["user_id"],
+        matched_user_id
+    )
+    
+    if "error" in compatibility_data:
+        raise HTTPException(status_code=404, detail=compatibility_data["error"])
+    
+    # Get archetypes for insights
+    profile_a = await db.psychometric_profiles.find_one(
+        {"user_id": current_user["user_id"]},
+        {"_id": 0, "archetype_primary": 1}
+    )
+    profile_b = await db.psychometric_profiles.find_one(
+        {"user_id": matched_user_id},
+        {"_id": 0, "archetype_primary": 1}
+    )
+    
+    archetype_a = profile_a.get("archetype_primary", "harmonizer") if profile_a else "harmonizer"
+    archetype_b = profile_b.get("archetype_primary", "harmonizer") if profile_b else "harmonizer"
+    
+    # Generate insights
+    insights = compatibility_engine.generate_match_insights(
+        compatibility_data,
+        archetype_a,
+        archetype_b
+    )
+    
+    return {
+        "compatibility_percentage": compatibility_data["compatibility_percentage"],
+        "domain_breakdown": compatibility_data["domain_breakdown"],
+        "insights": insights
+    }
 
 
 # ==================== MATCH ROUTES ====================
@@ -584,7 +672,67 @@ async def get_matches(
     max_distance_km: Optional[int] = None,
     current_user: dict = Depends(get_current_user)
 ):
-    """Get compatible matches"""
+    """Get psychometric-ranked compatible matches"""
+    # Check if user has completed psychometric profile
+    psych_profile = await db.psychometric_profiles.find_one(
+        {"user_id": current_user["user_id"]},
+        {"_id": 0}
+    )
+    
+    if psych_profile:
+        # Get psychometric-ranked matches
+        matches = await compatibility_engine.get_ranked_matches(
+            user_id=current_user["user_id"],
+            limit=50
+        )
+        
+        # Get active boosts
+        now = datetime.now(timezone.utc)
+        boosted_users = await db.boosts.find(
+            {"status": "active", "expires_at": {"$gt": now}},
+            {"_id": 0, "user_id": 1}
+        ).to_list(100)
+        
+        boosted_user_ids = {boost["user_id"] for boost in boosted_users}
+        
+        # Enrich with user data
+        match_results = []
+        for match in matches:
+            user = await db.users.find_one(
+                {"user_id": match["matched_user_id"]},
+                {"_id": 0, "user_id": 1, "full_name": 1, "picture": 1, "is_verified": 1}
+            )
+            
+            if user:
+                profile = await db.profiles.find_one(
+                    {"user_id": match["matched_user_id"]},
+                    {"_id": 0, "city": 1, "occupation": 1, "date_of_birth": 1}
+                )
+                
+                # Get archetype
+                psych = await db.psychometric_profiles.find_one(
+                    {"user_id": match["matched_user_id"]},
+                    {"_id": 0, "archetype_primary": 1}
+                )
+                
+                is_boosted = match["matched_user_id"] in boosted_user_ids
+                
+                match_results.append({
+                    "match_id": match.get("match_id", f"match_{uuid.uuid4().hex[:8]}"),
+                    "user": user,
+                    "profile_preview": profile,
+                    "archetype": psych.get("archetype_primary") if psych else None,
+                    "compatibility_score": match["psychometric_score"],
+                    "psychometric_score": match["psychometric_score"],
+                    "distance_km": match.get("distance_km"),
+                    "is_boosted": is_boosted,
+                    "rank_score": match["rank_score"]
+                })
+        
+        return {"matches": match_results, "count": len(match_results), "psychometric_enabled": True}
+    
+    else:
+        # Fall back to basic matches
     query = {"user_id": current_user["user_id"], "status": "computed"}
     
     if min_compatibility:
