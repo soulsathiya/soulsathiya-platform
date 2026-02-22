@@ -1,0 +1,173 @@
+<analysis>**original_problem_statement:**
+The user wants to build SoulSathiya, an AI-driven relationship compatibility and matchmaking platform.
+
+**PRODUCT REQUIREMENTS:**
+The initial MVP is to build a foundational architecture supporting:
+- Secure user authentication (signup/login) and Google Social Login.
+- A comprehensive user profile system (demographics, lifestyle, values, preferences, photos).
+- Multi-photo uploads (up to 6) with privacy controls (visible/hidden).
+- A psychometric questionnaire framework.
+- A compatibility engine to compute match scores.
+- A match discovery system with filters (age, location, community, etc.).
+- Gated community matching.
+- Interest-based interaction and simple private messaging after mutual consent.
+- Subscription-based access (Free, Premium, Elite) using Razorpay.
+- User verification framework (KYC/Aadhaar) with a verified badge.
+- A basic admin dashboard for platform management.
+
+Subsequent features requested and added:
+1.  **Profile Boost:** A paid feature for users to appear in top matches for 24 hours.
+2.  **Psychometric Engine (Phase 1):** A 36-item questionnaire to assess users across 7 domains (emotional style, personality, etc.), calculate compatibility scores, and assign archetypes.
+3.  **Deep Couple Compatibility Exploration (Stage 3):** An advanced 108-question assessment for matched couples. It is included for Elite subscribers and available as a ₹999 add-on for Premium subscribers. It generates a detailed pair-level report.
+4.  **UI/UX Refinement:** Enhance the Deep Exploration feature's visibility and user experience with new entry points (CTAs), partner notifications, and a refined report view.
+5.  **Admin Dashboard:** A comprehensive backend panel for managing users, profiles, subscriptions, moderation, and viewing analytics.
+
+**User's preferred language**: English
+
+**what currently exists?**
+A substantial full-stack application has been developed.
+-   **Backend (FastAPI):** Includes data models and API endpoints for users, profiles, photos, psychometric assessments, match discovery, subscriptions, profile boosts, and the deep couple exploration feature. It uses a service-oriented architecture with logic separated into files like  and .
+-   **Frontend (React):** A multi-page application with Tailwind CSS for styling. It includes a landing page, authentication forms, a user dashboard, a multi-step profile onboarding flow, a 36-question psychometric assessment UI, a 108-question deep questionnaire flow, and a detailed deep compatibility report view.
+-   **Database (MongoDB):** Schemas are in place for all major features, including users, profiles, psychometric data, and deep exploration pairs.
+-   **Integrations:** Razorpay is integrated for subscriptions and the Profile Boost feature. Google Social Login is also set up.
+
+**Last working item**:
+-   **Last item agent was working:** The agent was beginning the implementation of the SoulSathiya Admin Dashboard. It had just created the initial backend service file () and was about to add the admin API endpoints to  before building the frontend UI.
+-   **Status:** IN PROGRESS
+-   **Agent Testing Done:** N
+-   **Which testing method agent to use?** both
+-   **User Testing Done:** N
+
+**All Pending/In progress Issue list**:
+There are no known bugs or recurring issues. The pending work consists of implementing planned features.
+
+**In progress Task List**:
+-   **Task 1: Build SoulSathiya Admin Dashboard (P0)**
+    -   **Where to resume:**
+        1.  Add the admin-specific API routes to  using the logic from . The endpoints should be prefixed with  and protected by a role-check middleware.
+        2.  Create the admin login page ().
+        3.  Build the main admin layout with a sidebar for navigation.
+        4.  Implement each section of the admin dashboard as a separate React component/page (Dashboard, Users, Profiles, Subscriptions, etc.) as per the user's request.
+    -   **What will be achieved with this?** A secure and functional admin panel allowing administrators to manage all aspects of the SoulSathiya platform, including users, content, subscriptions, and analytics.
+    -   **Status:** IN PROGRESS
+    -   **Should Test frontend/backend/both after fix?** Both
+    -   **Blocked on something:** None
+
+**Upcoming and Future Tasks**
+-   **Upcoming Tasks:**
+    -   **Task 1: Integrate Deep Exploration CTAs (P1):** The  component needs to be added to the , , and  pages to increase feature visibility.
+    -   **Task 2: Implement Partner Notification System (P1):** Create an in-app notification system (e.g., a notification bell in the header) to alert users when a partner invites them to deep exploration, completes their part, or when a report is ready.
+    -   **Task 3: Implement Analytics Event Tracking (P2):** Integrate an analytics framework to track key user actions, especially for the deep exploration funnel (e.g., , , ).
+    -   **Task 4: Create Demo Deep Report (P2):** Create a static or mock-data-driven version of the  page and add a View Sample Report link to the landing and pricing pages to showcase the feature to potential customers.
+
+-   **Future Tasks:**
+    -   **Refactor  (P3):** The main  file has grown very large. It should be refactored by splitting routes into separate files using FastAPI's  for better maintainability (e.g., , ).
+    -   **Implement KYC Integration (P3):** Integrate a third-party KYC provider like HyperVerge or IDfy to verify user identities and display a verified badge on profiles.
+
+**Completed work in this session**
+-   Foundational MVP architecture (Backend/Frontend setup).
+-   Secure User Authentication (Email/Password & Google Social Login).
+-   User Profile and Photo Management system.
+-   Profile Boost feature with Razorpay integration.
+-   Psychometric Compatibility Engine (36-item assessment, scoring, and UI).
+-   Deep Couple Compatibility Exploration System (108-item assessment, tier-based access, pair dynamics engine).
+-   Razorpay payment flow for the Premium tier's Deep Exploration add-on.
+-   Frontend UI for the Deep Questionnaire () and Report ().
+-   UI refinements including a  component and updated pricing page labels.
+-   Initial backend service file for the Admin Dashboard ().
+
+**Earlier issues found/mentioned but not fixed**
+None. All identified issues during development (e.g., syntax errors, file corruption) were resolved by the agent.
+
+**Known issue recurrence from previous fork**
+None. This is the first summary.
+
+**Code Architecture**
+
+
+**Key Technical Concepts**
+-   **Frontend:** React, Tailwind CSS,  (toasts),  (icons).
+-   **Backend:** FastAPI, Pydantic.
+-   **Database:** MongoDB.
+-   **Architecture:** Decoupled full-stack application with a service-based backend structure.
+
+**key DB schema**
+-   **users:** , , , , , .
+-   **profiles:** , , , , , , .
+-   **photos:** , , , .
+-   **psychometric_profiles:** , , , .
+-   **deep_exploration_pairs:** , , , , .
+-   **deep_compatibility_reports:** , , , , .
+
+**changes in tech stack**
+None. The stack has remained React, FastAPI, and MongoDB as initially set up.
+
+**All files of reference**
+-   : The central backend file containing all API routes. It has become very large and is a candidate for refactoring.
+-   : Contains the logic for the 36-question psychometric scoring.
+-   : Contains the logic for the 108-question pair dynamics engine.
+-   : Contains the backend logic for the admin dashboard.
+-   : The main React component that defines all frontend routes.
+-   : Multi-step form for new user profile creation.
+-   : UI for the initial 36-question assessment.
+-   : UI for the 108-question deep exploration assessment.
+-   : Component to display the detailed couple compatibility report.
+-   : A reusable component for triggering the deep exploration flow.
+
+**Areas that need refactoring**:
+-   **:** This file is monolithically growing with every new feature. It should be broken down into smaller, manageable route files using  to improve maintainability and organization.
+
+**key api endpoints**
+-   : User signup and login.
+-   : CRUD for user profiles.
+-   : Get compatible matches.
+-   : Endpoints for the Profile Boost feature.
+-   : Submit assessments and get status.
+-   : Endpoints to unlock, manage, and view deep exploration.
+-   : (To be implemented) Protected endpoints for platform management.
+
+**Critical Info for New Agent**
+-   The project has been developed in large, distinct phases. The current task is to build the Admin Dashboard, which is a new, self-contained feature.
+-   The backend  file is very large. Be cautious when editing it and consider refactoring it with  if you have the opportunity.
+-   For creating large frontend files, the previous agent successfully used  to avoid shell escaping issues with quotes. This is a reliable method.
+-   The application logic is heavily tiered (Free, Premium, Elite), especially for the Deep Exploration feature. Ensure all new functionalities respect this tier logic.
+
+**documents and test reports created in this job**
+-   
+-   
+-   
+
+**Last 10 User Messages and any pending HUMAN messages**
+1.  **User:** Provides requirements for the final phase: the SoulSathiya Admin Dashboard. (COMPLETED)
+2.  **Agent:** Acknowledges the task and prepares to start. (COMPLETED)
+3.  **User:** Provides confirmation to proceed (Credits added. Please proceed.). (COMPLETED)
+4.  **Agent:** Acknowledges the credits and confirms it will start building the Admin Dashboard, starting with the backend. (COMPLETED)
+5.  **Agent:** Receives a context summary of the entire project state. (COMPLETED)
+6.  **Agent:** Acknowledges the summary and states its intention to add admin API endpoints and then build the UI. (LAST ACTION)
+
+**Project Health Check:**
+-   **Broken:** The admin dashboard feature is incomplete. Any attempt to access  routes will fail.
+-   **Mocked:** The View Sample Deep Report feature is requested but not implemented. The data for this will need to be mocked.
+
+**3rd Party Integrations**
+-   **Emergent-managed Google Auth:** For social login.
+-   **Razorpay:** For subscription payments and one-time add-ons (Deep Exploration). A test key is expected to be available.
+-   **AWS S3 (or equivalent):** Planned for photo storage, but the implementation using a library like  has not been shown.
+-   **HyperVerge / IDfy:** Planned for KYC verification, but not yet integrated.
+
+**Testing status**
+-   **Testing agent used after significant changes:** NO
+-   **Troubleshoot agent used after agent stuck in loop:** NO
+-   **Test files created:** []
+-   **Known regressions:** []
+
+**Credentials to test flow:**
+No specific credentials exist. To test:
+1.  Sign up a new user through the UI.
+2.  To test admin functionality, you will need to manually change a user's  in the  collection in MongoDB to  or .
+
+**What agent forgot to execute**
+-   **Partner Notifications:** The full implementation for notifying users about deep exploration invites and progress is still pending.
+-   **Analytics Tracking:** Multiple plans mentioned tracking analytics events (e.g., for deep exploration), but the implementation is missing.
+-   **Demo Report:** The feature to show a sample Deep Compatibility Report to non-subscribed users has not been built.
+-   **CTA Integration:** The  component has been created but not yet integrated into the Match Card and Chat Header as planned.</analysis>
