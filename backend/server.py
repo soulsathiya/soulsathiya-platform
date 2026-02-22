@@ -48,6 +48,7 @@ logger = logging.getLogger(__name__)
 
 # Initialize services
 auth_service = AuthService(db)
+boost_service = BoostService(db)
 
 
 # Dependency to get current user from session
