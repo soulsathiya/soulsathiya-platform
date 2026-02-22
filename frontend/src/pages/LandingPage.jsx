@@ -178,6 +178,11 @@ const LandingPage = () => {
                     Most Popular
                   </div>
                 )}
+                {plan.badge && (
+                  <div className="absolute -top-4 right-4 bg-gradient-to-r from-amber-500 to-amber-600 text-white px-3 py-1 rounded-full text-xs font-medium shadow-lg">
+                    {plan.badge}
+                  </div>
+                )}
                 <div>
                   <h3 className="font-heading text-2xl mb-2">{plan.tier}</h3>
                   <div className="flex items-baseline">
