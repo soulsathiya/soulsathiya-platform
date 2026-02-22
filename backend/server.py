@@ -7,7 +7,7 @@ import os
 import logging
 from pathlib import Path
 from datetime import datetime, timezone, date
-from typing import Optional, List
+from typing import Optional, List, Dict
 import uuid
 
 from models.user import UserCreate, UserLogin, User
