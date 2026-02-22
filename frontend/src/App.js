@@ -12,6 +12,7 @@ import DashboardPage from './pages/DashboardPage';
 import ProfileOnboarding from './pages/ProfileOnboarding';
 import PsychometricOnboarding from './pages/PsychometricOnboarding';
 import BoostPage from './pages/BoostPage';
+import DeepReportView from './pages/DeepReportView';
 
 function AppRouter() {
   const location = useLocation();
@@ -31,6 +32,7 @@ function AppRouter() {
       <Route path="/onboarding/profile" element={<ProfileOnboarding />} />
       <Route path="/onboarding/psychometric" element={<PsychometricOnboarding />} />
       <Route path="/boost" element={<BoostPage />} />
+      <Route path="/deep/report/:pairId" element={<DeepReportView />} />
       
       {/* Fallback */}
       <Route path="*" element={<LandingPage />} />
