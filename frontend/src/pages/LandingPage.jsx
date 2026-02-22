@@ -213,6 +213,85 @@ const LandingPage = () => {
         </div>
       </section>
 
+      {/* Deep Exploration Feature Section */}
+      <section className="py-20 px-6 bg-gradient-to-br from-primary/5 to-secondary/5" id="deep-exploration">
+        <div className="container mx-auto max-w-6xl">
+          <div className="grid md:grid-cols-2 gap-12 items-center">
+            <div className="space-y-6">
+              <div className="inline-flex items-center space-x-2 bg-primary/10 text-primary px-4 py-2 rounded-full">
+                <Sparkles className="w-5 h-5" />
+                <span className="font-medium">Premium Feature</span>
+              </div>
+              <h2 className="font-heading text-4xl">Deep Couple Compatibility Exploration</h2>
+              <p className="text-lg text-muted-foreground">
+                Go beyond surface-level compatibility with our comprehensive 108-question deep assessment. 
+                Discover how you and your match align on critical relationship dimensions.
+              </p>
+              <ul className="space-y-3">
+                {[
+                  'Expectations & Roles Assessment',
+                  'Conflict Resolution Styles',
+                  'Attachment & Trust Patterns',
+                  'Lifestyle Integration Compatibility',
+                  'Intimacy & Communication Analysis',
+                  'Family & In-Law Dynamics'
+                ].map((item, i) => (
+                  <li key={i} className="flex items-center space-x-2">
+                    <Check className="w-5 h-5 text-success" />
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+              <div className="flex flex-col sm:flex-row gap-4">
+                <Link to="/deep/demo-report">
+                  <Button variant="outline" size="lg" data-testid="view-sample-report-btn">
+                    <Sparkles className="w-5 h-5 mr-2" />
+                    View Sample Report
+                  </Button>
+                </Link>
+                <Link to="/register">
+                  <Button size="lg" data-testid="deep-get-started-btn">
+                    Get Started
+                    <ArrowRight className="w-5 h-5 ml-2" />
+                  </Button>
+                </Link>
+              </div>
+            </div>
+            <div className="relative">
+              <div className="card-surface p-8 space-y-4">
+                <div className="text-center mb-6">
+                  <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-gradient-to-br from-primary to-secondary mb-4">
+                    <span className="text-2xl font-bold text-white">87%</span>
+                  </div>
+                  <h3 className="font-heading text-xl">Sample Deep Score</h3>
+                </div>
+                <div className="space-y-3">
+                  {[
+                    { label: 'Emotional Alignment', value: 92 },
+                    { label: 'Life Goals', value: 88 },
+                    { label: 'Communication', value: 85 },
+                    { label: 'Values Match', value: 82 }
+                  ].map((item, i) => (
+                    <div key={i} className="flex items-center justify-between">
+                      <span className="text-sm text-muted-foreground">{item.label}</span>
+                      <div className="flex items-center space-x-2">
+                        <div className="w-32 h-2 bg-gray-200 rounded-full overflow-hidden">
+                          <div
+                            className="h-full bg-gradient-to-r from-primary to-secondary rounded-full"
+                            style={{ width: `${item.value}%` }}
+                          />
+                        </div>
+                        <span className="text-sm font-medium">{item.value}%</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* CTA Section */}
       <section className="py-20 px-6 bg-gradient-to-r from-primary to-secondary">
         <div className="container mx-auto max-w-4xl text-center">
