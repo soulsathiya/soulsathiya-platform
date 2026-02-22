@@ -1460,7 +1460,8 @@ async def admin_login(credentials: AdminLogin):
             "admin_id": admin["admin_id"],
             "email": admin["email"],
             "full_name": admin["full_name"],
-            "role": admin["role"]
+            "role": admin["role"],
+            "require_password_change": admin.get("require_password_change", False)
         }
     })
     
