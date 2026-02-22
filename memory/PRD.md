@@ -55,6 +55,19 @@ Build "SoulSathiya", an AI-driven relationship compatibility and matchmaking pla
 - [x] Analytics Charts (users/week, subscriptions by tier, deep unlocks, revenue)
 - [x] Role-based access control (RBAC)
 
+### Phase 6: Launch-Critical Enhancements (Completed - Feb 22, 2026)
+- [x] Deep Exploration CTAs in MatchCard component
+- [x] Deep Exploration feature section on Landing Page with "View Sample Report"
+- [x] Demo Deep Compatibility Report page (/deep/demo-report)
+- [x] Partner Notification System (in-app notifications)
+  - Notification bell component in header
+  - Notifications for: unlock invite, partner completed, report ready
+  - Database storage with read status
+- [x] Admin Credential Security
+  - Environment variables for admin credentials
+  - Password change requirement on first login
+  - Secure password hashing
+
 ## Technical Architecture
 
 ### Backend (FastAPI)
@@ -69,7 +82,8 @@ Build "SoulSathiya", an AI-driven relationship compatibility and matchmaking pla
 │   ├── boost_service.py
 │   ├── compatibility_engine.py
 │   ├── deep_exploration_service.py
-│   └── admin_service.py
+│   ├── admin_service.py
+│   └── notification_service.py (NEW)
 ├── data/             # Static data
 │   ├── psychometric_questions.py
 │   └── deep_questions.py
@@ -81,25 +95,19 @@ Build "SoulSathiya", an AI-driven relationship compatibility and matchmaking pla
 /app/frontend/src/
 ├── components/
 │   ├── ui/           # Shadcn components
-│   └── DeepExplorationCTA.jsx
+│   ├── DeepExplorationCTA.jsx
+│   ├── NotificationBell.jsx (NEW)
+│   └── MatchCard.jsx (NEW)
 ├── pages/
-│   ├── LandingPage.jsx
-│   ├── Dashboard.jsx
+│   ├── LandingPage.jsx (updated - Deep section)
+│   ├── Dashboard.jsx (updated - NotificationBell)
 │   ├── ProfileOnboarding.jsx
 │   ├── PsychometricOnboarding.jsx
 │   ├── DeepQuestionnaireFlow.jsx
 │   ├── DeepReportView.jsx
+│   ├── DemoDeepReport.jsx (NEW)
 │   ├── BoostPage.jsx
 │   └── admin/        # Admin panel pages
-│       ├── AdminLogin.jsx
-│       ├── AdminLayout.jsx
-│       ├── AdminDashboard.jsx
-│       ├── AdminUsers.jsx
-│       ├── AdminProfiles.jsx
-│       ├── AdminSubscriptions.jsx
-│       ├── AdminDeep.jsx
-│       ├── AdminReports.jsx
-│       └── AdminAnalytics.jsx
 └── App.js
 ```
 
@@ -130,34 +138,23 @@ Build "SoulSathiya", an AI-driven relationship compatibility and matchmaking pla
 - `GET /api/deep/questions` - Get 108 questions
 - `POST /api/deep/submit` - Submit deep assessment
 - `GET /api/deep/report/{pair_id}` - Get couple report
+- `GET /api/deep/demo-report` - Get demo report (no auth)
 
-### Admin APIs (NEW)
+### Notification APIs (NEW)
+- `GET /api/notifications` - Get user notifications
+- `GET /api/notifications/count` - Get unread count
+- `POST /api/notifications/{id}/read` - Mark as read
+- `POST /api/notifications/read-all` - Mark all as read
+
+### Admin APIs
 - `POST /api/admin/login` - Admin login
 - `POST /api/admin/logout` - Admin logout
 - `GET /api/admin/me` - Admin info
 - `POST /api/admin/setup` - First admin setup
+- `POST /api/admin/change-password` - Change password (NEW)
 - `GET /api/admin/dashboard/metrics` - Dashboard metrics
 - `GET /api/admin/users` - List users
-- `GET /api/admin/users/{user_id}` - User details
-- `POST /api/admin/users/{user_id}/suspend` - Suspend user
-- `POST /api/admin/users/{user_id}/activate` - Activate user
-- `POST /api/admin/users/{user_id}/verify` - Verify user
-- `DELETE /api/admin/users/{user_id}` - Delete user
-- `GET /api/admin/profiles` - List profiles
-- `POST /api/admin/profiles/{id}/flag` - Flag profile
-- `POST /api/admin/profiles/{id}/approve` - Approve profile
-- `DELETE /api/admin/photos/{id}` - Remove photo
-- `GET /api/admin/subscriptions` - List subscriptions
-- `PUT /api/admin/subscriptions/{user_id}/tier` - Change tier
-- `POST /api/admin/subscriptions/{user_id}/extend` - Extend subscription
-- `POST /api/admin/subscriptions/{user_id}/cancel` - Cancel subscription
-- `GET /api/admin/deep` - List deep pairs
-- `POST /api/admin/deep/{pair_id}/revoke` - Revoke access
-- `GET /api/admin/reports` - List user reports
-- `PUT /api/admin/reports/{id}` - Update report status
-- `POST /api/admin/users/{user_id}/warn` - Warn user
-- `POST /api/admin/users/{user_id}/ban` - Ban user
-- `GET /api/admin/analytics` - Platform analytics
+- ... (full CRUD for users, profiles, subscriptions, deep, reports)
 
 ## Database Collections
 - `users` - User accounts
@@ -173,20 +170,27 @@ Build "SoulSathiya", an AI-driven relationship compatibility and matchmaking pla
 - `user_reports` - User reports/complaints
 - `boosts` - Profile boosts
 - `matches` - Match data
+- `notifications` - In-app notifications (NEW)
 
 ## Test Credentials
 - **Admin**: admin@soulsathiya.com / admin123 (super_admin)
+  - Note: New admins require password change on first login
 
-## Upcoming Tasks (P1)
-1. Integrate DeepExplorationCTA into MatchCard, ChatHeader, MatchDetail
-2. Partner notification system for deep exploration invites
-3. Create demo deep report for marketing
+## Environment Variables (Backend)
+```
+MONGO_URL - MongoDB connection string
+DB_NAME - Database name
+ADMIN_EMAIL - Default admin email
+ADMIN_PASSWORD - Default admin password (temporary)
+ADMIN_REQUIRE_PASSWORD_CHANGE - Force password change (true)
+```
 
-## Future Tasks (P2-P3)
-1. Analytics event tracking
-2. Refactor server.py using APIRouter
-3. KYC integration (HyperVerge/IDfy)
-4. AWS S3 photo storage integration
+## Upcoming Tasks (P2-P3)
+1. Integrate DeepExplorationCTA into ChatHeader page
+2. Analytics event tracking
+3. Refactor server.py using APIRouter
+4. KYC integration (HyperVerge/IDfy)
+5. AWS S3 photo storage integration
 
 ## Integrations
 - Google Social Login (Emergent Auth)
