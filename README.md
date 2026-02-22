@@ -1,4 +1,4 @@
-# Here are your Instructions
+
 # SoulSathiya Platform
 
 AI-driven matrimonial and compatibility platform designed to create deeply compatible and fulfilling marriages.
