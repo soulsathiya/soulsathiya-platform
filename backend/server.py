@@ -1201,6 +1201,13 @@ async def submit_deep_profile(
     if len(responses) != 108:
         raise HTTPException(status_code=400, detail="Must submit all 108 responses")
     
+    # Get pair to identify partner
+    pair = await db.deep_exploration_pairs.find_one({"pair_id": pair_id}, {"_id": 0})
+    if not pair:
+        raise HTTPException(status_code=404, detail="Pair not found")
+    
+    partner_id = pair["user_b_id"] if pair["user_a_id"] == current_user["user_id"] else pair["user_a_id"]
+    
     # Save profile
     profile_id = await deep_exploration_service.save_deep_profile(
         user_id=current_user["user_id"],
@@ -1208,12 +1215,19 @@ async def submit_deep_profile(
         responses=responses
     )
     
-    # Check if both completed
+    # Refresh pair status
     pair = await db.deep_exploration_pairs.find_one({"pair_id": pair_id}, {"_id": 0})
     
     if pair and len(pair.get("completed_users", [])) == 2:
         # Generate report
         report_id = await deep_exploration_service.generate_pair_report(pair_id)
+        
+        # Notify both users that report is ready
+        await notification_service.notify_report_ready(
+            user_a_id=pair["user_a_id"],
+            user_b_id=pair["user_b_id"],
+            pair_id=pair_id
+        )
         
         return {
             "message": "Deep profile completed and report generated",
@@ -1221,6 +1235,13 @@ async def submit_deep_profile(
             "report_generated": True,
             "report_id": report_id
         }
+    else:
+        # Notify partner that this user completed
+        await notification_service.notify_deep_completed(
+            completing_user_id=current_user["user_id"],
+            partner_user_id=partner_id,
+            pair_id=pair_id
+        )
     
     return {
         "message": "Deep profile saved. Waiting for partner to complete.",
