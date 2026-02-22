@@ -15,6 +15,19 @@ import BoostPage from './pages/BoostPage';
 import DeepReportView from './pages/DeepReportView';
 import DeepQuestionnaireFlow from './pages/DeepQuestionnaireFlow';
 
+// Admin Pages
+import {
+  AdminLogin,
+  AdminLayout,
+  AdminDashboard,
+  AdminUsers,
+  AdminProfiles,
+  AdminSubscriptions,
+  AdminDeep,
+  AdminReports,
+  AdminAnalytics
+} from './pages/admin';
+
 function AppRouter() {
   const location = useLocation();
   
@@ -35,6 +48,18 @@ function AppRouter() {
       <Route path="/boost" element={<BoostPage />} />
       <Route path="/deep/report/:pairId" element={<DeepReportView />} />
       <Route path="/deep/questionnaire" element={<DeepQuestionnaireFlow />} />
+      
+      {/* Admin Routes */}
+      <Route path="/admin/login" element={<AdminLogin />} />
+      <Route path="/admin" element={<AdminLayout />}>
+        <Route path="dashboard" element={<AdminDashboard />} />
+        <Route path="users" element={<AdminUsers />} />
+        <Route path="profiles" element={<AdminProfiles />} />
+        <Route path="subscriptions" element={<AdminSubscriptions />} />
+        <Route path="deep" element={<AdminDeep />} />
+        <Route path="reports" element={<AdminReports />} />
+        <Route path="analytics" element={<AdminAnalytics />} />
+      </Route>
       
       {/* Fallback */}
       <Route path="*" element={<LandingPage />} />
