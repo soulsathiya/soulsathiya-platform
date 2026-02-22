@@ -15,7 +15,7 @@ from models.profile import ProfileCreate, ProfileUpdate, Profile
 from models.photo import PhotoUpload, Photo
 from models.partner_preference import PartnerPreferenceCreate, PartnerPreferenceUpdate, PartnerPreference
 from models.community import CommunityCreate, Community
-from models.psychometric import QuestionCreate, Question, ResponseCreate, Response
+from models.psychometric import QuestionCreate, Question, ResponseCreate, Response as PsychometricResponse
 from models.match import Match, MatchFilter
 from models.interest import InterestCreate, Interest, InterestResponse
 from models.message import MessageCreate, Message, Conversation
