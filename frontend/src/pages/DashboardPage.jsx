@@ -136,6 +136,7 @@ const DashboardPage = () => {
                 {user.subscription_tier}
               </Badge>
             )}
+            <NotificationBell />
             <Link to="/profile">
               <Avatar className="cursor-pointer" data-testid="user-avatar">
                 <AvatarImage src={user.picture} />
