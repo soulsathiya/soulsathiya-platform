@@ -1,0 +1,36 @@
+# =============================================================================
+# Render Deployment Config - SoulSathiya FastAPI Backend
+# =============================================================================
+# This file auto-configures your service when you connect this repo to Render.
+# Go to https://render.com -> New -> Blueprint -> Connect this repo
+# =============================================================================
+
+services:
+  - type: web
+      name: soulsathiya-api
+          runtime: python
+              region: oregon
+                  rootDir: backend
+                      buildCommand: pip install -r requirements.txt
+                          startCommand: uvicorn server:app --host 0.0.0.0 --port $PORT
+                              envVars:
+                                    - key: PYTHON_VERSION
+                                            value: "3.11.0"
+                                                  - key: MONGO_URL
+                                                          sync: false
+                                                                - key: DB_NAME
+                                                                        value: soulsathiya
+                                                                              - key: CORS_ORIGINS
+                                                                                      value: "http://localhost:3000,https://soulsathiya.vercel.app"
+                                                                                            - key: ADMIN_EMAIL
+                                                                                                    sync: false
+                                                                                                          - key: ADMIN_PASSWORD
+                                                                                                                  sync: false
+                                                                                                                        - key: ADMIN_REQUIRE_PASSWORD_CHANGE
+                                                                                                                                value: "true"
+                                                                                                                                      - key: RAZORPAY_KEY_ID
+                                                                                                                                              sync: false
+                                                                                                                                                    - key: RAZORPAY_KEY_SECRET
+                                                                                                                                                            sync: false
+                                                                                                                                                                healthCheckPath: /api/health
+                                                                                                                                                                    plan: free
