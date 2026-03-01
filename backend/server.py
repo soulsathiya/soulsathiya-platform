@@ -7,7 +7,7 @@ import os
 import logging
 from pathlib import Path
 from datetime import datetime, timezone, date
-from typing import Optional, List, Dict
+from typing import Optional, List, Dicth
 import uuid
 
 from models.user import UserCreate, UserLogin, User
@@ -1807,7 +1807,7 @@ app.include_router(admin_router)
 app.add_middleware(
     CORSMiddleware,
     allow_credentials=True,
-    allow_origins=os.environ.get('CORS_ORIGINS', '*').split(','),
+    allow_origins=os.environ.get('CORS_ORIGINS', 'http://localhost:3000,https://soulsathiya.vercel.app').split(','),
     allow_methods=["*"],
     allow_headers=["*"],
 )
