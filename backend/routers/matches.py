@@ -4,7 +4,7 @@ from typing import Optional
 import uuid
 
 from models.interest import InterestCreate, InterestResponse
-from dependencies import db, get_current_user, compatibility_engine, boost_service
+from dependencies import db, get_current_user, compatibility_engine
 
 router = APIRouter(tags=["matches"])
 
@@ -104,7 +104,7 @@ async def get_matches(
     for match in matches:
         user = await db.users.find_one(
             {"user_id": match["matched_user_id"]},
-            {"_id": 0, "user_id": 1, "full_name": 1, "picture": 1, "is_verified": 1}
+            {"_id": 0, "user_id": 1, "full_name": 1, "picture": 1, "is_verified": 1}h
         )
         
         if user:
