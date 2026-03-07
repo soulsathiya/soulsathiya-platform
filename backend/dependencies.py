@@ -94,3 +94,58 @@ def require_tier(minimum_tier: str):
 def get_user_tier(current_user: dict) -> str:
     """Return the user's current subscription tier string (defaults to 'free')."""
     return current_user.get("subscription_tier") or "free"
+
+
+# ---------------------------------------------------------------------------
+# MongoDB index creation (call once at startup)
+# ---------------------------------------------------------------------------
+async def create_indexes():
+    """Create MongoDB indexes for hot-path fields.
+
+    Idempotent — MongoDB will skip indexes that already exist.
+    Call this from the app lifespan startup hook.
+    """
+    from pymongo import ASCENDING, DESCENDING
+
+    # users collection
+    await db.users.create_index([("email", ASCENDING)], unique=True, background=True)
+    await db.users.create_index([("user_id", ASCENDING)], unique=True, background=True)
+    await db.users.create_index([("subscription_tier", ASCENDING)], background=True)
+    await db.users.create_index([("is_profile_complete", ASCENDING)], background=True)
+
+    # user_sessions collection
+    await db.user_sessions.create_index(
+        [("session_token", ASCENDING)], unique=True, background=True
+    )
+    await db.user_sessions.create_index(
+        [("expires_at", ASCENDING)], background=True, expireAfterSeconds=0
+    )
+    await db.user_sessions.create_index([("user_id", ASCENDING)], background=True)
+
+    # profiles collection
+    await db.profiles.create_index([("user_id", ASCENDING)], unique=True, background=True)
+
+    # matches collection
+    await db.matches.create_index([("user_id", ASCENDING)], background=True)
+    await db.matches.create_index([("target_user_id", ASCENDING)], background=True)
+
+    # messages collection
+    await db.messages.create_index([("pair_id", ASCENDING)], background=True)
+    await db.messages.create_index([("created_at", DESCENDING)], background=True)
+
+    # deep_exploration_pairs collection
+    await db.deep_exploration_pairs.create_index(
+        [("pair_id", ASCENDING)], unique=True, background=True
+    )
+    await db.deep_exploration_pairs.create_index([("user1_id", ASCENDING)], background=True)
+    await db.deep_exploration_pairs.create_index([("user2_id", ASCENDING)], background=True)
+
+    # boosts collection
+    await db.boosts.create_index([("user_id", ASCENDING)], background=True)
+    await db.boosts.create_index([("expires_at", ASCENDING)], background=True)
+
+    # notifications collection
+    await db.notifications.create_index([("user_id", ASCENDING)], background=True)
+    await db.notifications.create_index([("is_read", ASCENDING)], background=True)
+
+    logger.info("MongoDB indexes ensured")
