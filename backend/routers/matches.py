@@ -4,7 +4,7 @@ from typing import Optional
 import uuid
 
 from models.interest import InterestCreate, InterestResponse
-from dependencies import db, get_current_user, compatibility_engine
+from dependencies import db, get_current_user, compatibility_engine, require_tier, TIER_HIERARCHY
 
 router = APIRouter(tags=["matches"])
 
@@ -137,6 +137,22 @@ async def send_interest(
     """Send interest to another user"""
     if interest_data.to_user_id == current_user["user_id"]:
         raise HTTPException(status_code=400, detail="Cannot send interest to yourself")
+
+    # Enforce basic-tier monthly interest limit (10/month)
+    user_tier = current_user.get("subscription_tier") or "free"
+    if TIER_HIERARCHY.get(user_tier, 0) < TIER_HIERARCHY.get("premium", 2):
+        from datetime import timezone
+        import datetime
+        month_start = datetime.datetime.now(timezone.utc).replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+        monthly_count = await db.interests.count_documents({
+            "from_user_id": current_user["user_id"],
+            "sent_at": {"$gte": month_start}
+        })
+        limit = 10 if user_tier == "basic" else 0  # free users get 0 (can't send interests)
+        if user_tier == "free":
+            raise HTTPException(status_code=403, detail="Free users cannot send interests. Please upgrade to Basic or higher.")
+        if monthly_count >= limit:
+            raise HTTPException(status_code=403, detail=f"Basic plan limit reached: {limit} interests per month. Upgrade to Premium for unlimited.")
     
     existing = await db.interests.find_one({
         "from_user_id": current_user["user_id"],
