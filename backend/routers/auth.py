@@ -1,31 +1,32 @@
-from fastapi import APIRouter, HTTPException, Depends, Cookie, Response
+from fastapi import APIRouter, HTTPException, Depends, Cookie, Response, Request
 from fastapi.responses import JSONResponse
+from slowapi import Limiter
+from slowapi.util import get_remote_address
 from typing import Optional
 
 from models.user import UserCreate, UserLogin
 from dependencies import auth_service, get_current_user
 
+limiter = Limiter(key_func=get_remote_address)
+
 router = APIRouter(prefix="/auth", tags=["auth"])
 
 
 @router.post("/register")
-async def register(user_data: UserCreate):
+@limiter.limit("5/minute")
+async def register(request: Request, user_data: UserCreate):
     """Register a new user with email and password"""
     existing_user = await auth_service.get_user_by_email(user_data.email)
     if existing_user:
         raise HTTPException(status_code=400, detail="Email already registered")
-    
     if not user_data.password:
         raise HTTPException(status_code=400, detail="Password is required")
-    
     user = await auth_service.create_user(
         email=user_data.email,
         full_name=user_data.full_name,
         password=user_data.password
     )
-    
     session_token = await auth_service.create_session(user["user_id"])
-    
     response = JSONResponse(content={
         "message": "Registration successful",
         "user": {
@@ -35,7 +36,6 @@ async def register(user_data: UserCreate):
             "picture": user.get("picture")
         }
     })
-    
     response.set_cookie(
         key="session_token",
         value=session_token,
@@ -45,20 +45,17 @@ async def register(user_data: UserCreate):
         max_age=7 * 24 * 60 * 60,
         path="/"
     )
-    
     return response
 
 
 @router.post("/login")
-async def login(credentials: UserLogin):
+@limiter.limit("10/minute")
+async def login(request: Request, credentials: UserLogin):
     """Login with email and password"""
     user = await auth_service.authenticate_user(credentials.email, credentials.password)
-    
     if not user:
         raise HTTPException(status_code=401, detail="Invalid email or password")
-    
     session_token = await auth_service.create_session(user["user_id"])
-    
     response = JSONResponse(content={
         "message": "Login successful",
         "user": {
@@ -71,7 +68,6 @@ async def login(credentials: UserLogin):
             "subscription_status": user.get("subscription_status", "free")
         }
     })
-    
     response.set_cookie(
         key="session_token",
         value=session_token,
@@ -81,7 +77,6 @@ async def login(credentials: UserLogin):
         max_age=7 * 24 * 60 * 60,
         path="/"
     )
-    
     return response
 
 
@@ -91,13 +86,10 @@ async def google_session(session_id: str):
     REMINDER: DO NOT HARDCODE THE URL, OR ADD ANY FALLBACKS OR REDIRECT URLS, THIS BREAKS THE AUTH
     """
     result = await auth_service.handle_google_oauth(session_id)
-    
     if not result:
         raise HTTPException(status_code=401, detail="Google authentication failed")
-    
     user = result["user"]
     session_token = result["session_token"]
-    
     response = JSONResponse(content={
         "message": "Google login successful",
         "user": {
@@ -110,7 +102,6 @@ async def google_session(session_id: str):
             "subscription_status": user.get("subscription_status", "free")
         }
     })
-    
     response.set_cookie(
         key="session_token",
         value=session_token,
@@ -120,7 +111,6 @@ async def google_session(session_id: str):
         max_age=7 * 24 * 60 * 60,
         path="/"
     )
-    
     return response
 
 
@@ -148,6 +138,5 @@ async def logout(
     """Logout user"""
     if session_token:
         await auth_service.delete_session(session_token)
-    
     response.delete_cookie(key="session_token", path="/")
     return {"message": "Logged out successfully"}
