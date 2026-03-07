@@ -292,6 +292,63 @@ const LandingPage = () => {
         </div>
       </section>
 
+      {/* Testimonials Section */}
+      <section className="py-20 px-6 bg-white" id="testimonials">
+        <div className="container mx-auto max-w-6xl">
+          <div className="text-center mb-16">
+            <h2 className="font-heading text-4xl mb-4">Success Stories</h2>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              Thousands of couples have found their perfect match through SoulSathiya
+            </p>
+          </div>
+          <div className="grid md:grid-cols-3 gap-8">
+            {[
+              {
+                names: "Priya & Arjun",
+                location: "Mumbai & Bangalore",
+                compat: "91%",
+                quote: "We were matched at 91% compatibility. SoulSathiya understood us better than we understood ourselves. Our Deep Exploration report predicted our communication style perfectly — we've been married 8 months and every conversation confirms it.",
+                photo: "https://images.pexels.com/photos/10987899/pexels-photo-10987899.jpeg"
+              },
+              {
+                names: "Meera & Vikram",
+                location: "Delhi & Hyderabad",
+                compat: "87%",
+                quote: "The psychometric assessment felt like it was reading my mind. When I saw our Deep Compatibility report, I knew Vikram was different. The science gave us the confidence to move forward. We got engaged last month.",
+                photo: "https://images.pexels.com/photos/32161001/pexels-photo-32161001.jpeg"
+              },
+              {
+                names: "Ananya & Rahul",
+                location: "Pune & Chennai",
+                compat: "89%",
+                quote: "I was skeptical about matrimonial sites. But SoulSathiya's approach is completely different — no superficial filters, just genuine compatibility. The 108-question Deep Exploration was eye-opening. We just completed our wedding ceremony.",
+                photo: "https://images.pexels.com/photos/36079282/pexels-photo-36079282.jpeg"
+              }
+            ].map((story, i) => (
+              <div key={i} className="card-surface p-8 space-y-4" data-testid={`testimonial-${i}`}>
+                <div className="flex items-center space-x-2 mb-3">
+                  <span className="text-2xl font-bold text-primary">{story.compat}</span>
+                  <span className="text-sm text-muted-foreground">compatibility</span>
+                </div>
+                <p className="text-muted-foreground text-sm leading-relaxed italic">"{story.quote}"</p>
+                <div className="flex items-center space-x-3 pt-2">
+                  <div className="w-10 h-10 rounded-full bg-primary/20 overflow-hidden">
+                    <img src={story.photo} alt={story.names} className="w-full h-full object-cover" />
+                  </div>
+                  <div>
+                    <p className="font-heading font-semibold text-sm">{story.names}</p>
+                    <p className="text-xs text-muted-foreground">{story.location}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="text-center mt-8 text-muted-foreground text-sm">
+            <p>Join over <strong className="text-foreground">10,000+</strong> members who have found meaningful connections on SoulSathiya</p>
+          </div>
+        </div>
+      </section>
+
       {/* CTA Section */}
       <section className="py-20 px-6 bg-gradient-to-r from-primary to-secondary">
         <div className="container mx-auto max-w-4xl text-center">
@@ -326,25 +383,25 @@ const LandingPage = () => {
             <div>
               <h4 className="font-heading text-lg mb-4">Company</h4>
               <ul className="space-y-2 text-sm text-gray-400">
-                <li><a href="#" className="hover:text-white transition-colors">About Us</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Careers</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Success Stories</a></li>
+                <li><Link to="/about" className="hover:text-white transition-colors">About Us</Link></li>
+                <li><a href="mailto:careers@soulsathiya.com" className="hover:text-white transition-colors">Careers</a></li>
+                <li><a href="#testimonials" className="hover:text-white transition-colors">Success Stories</a></li>
               </ul>
             </div>
             <div>
               <h4 className="font-heading text-lg mb-4">Support</h4>
               <ul className="space-y-2 text-sm text-gray-400">
-                <li><a href="#" className="hover:text-white transition-colors">Help Center</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Safety Tips</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Contact Us</a></li>
+                <li><a href="mailto:support@soulsathiya.com" className="hover:text-white transition-colors">Help Center</a></li>
+                <li><Link to="/terms" className="hover:text-white transition-colors">Safety Tips</Link></li>
+                <li><a href="mailto:hello@soulsathiya.com" className="hover:text-white transition-colors">Contact Us</a></li>
               </ul>
             </div>
             <div>
               <h4 className="font-heading text-lg mb-4">Legal</h4>
               <ul className="space-y-2 text-sm text-gray-400">
-                <li><a href="#" className="hover:text-white transition-colors">Privacy Policy</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Terms of Service</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Cookie Policy</a></li>
+                <li><Link to="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link></li>
+                <li><Link to="/terms" className="hover:text-white transition-colors">Terms of Service</Link></li>
+                <li><Link to="/privacy" className="hover:text-white transition-colors">Cookie Policy</Link></li>
               </ul>
             </div>
           </div>
