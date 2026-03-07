@@ -13,16 +13,12 @@ class BoostService:
         self.db = db
         
         # Initialize Razorpay client
-        # Note: For production, get actual Razorpay credentials
-        # For now, using placeholder - will be replaced with actual keys
-        razorpay_key_id = os.getenv('RAZORPAY_KEY_ID', 'rzp_test_placeholder')
-        razorpay_key_secret = os.getenv('RAZORPAY_KEY_SECRET', 'placeholder_secret')
-        
-        try:
-            self.razorpay_client = razorpay.Client(auth=(razorpay_key_id, razorpay_key_secret))
-        except Exception as e:
-            logger.warning(f"Razorpay initialization failed: {e}. Using mock mode.")
-            self.razorpay_client = None
+        razorpay_key_id = os.environ.get('RAZORPAY_KEY_ID')
+        razorpay_key_secret = os.environ.get('RAZORPAY_KEY_SECRET')
+        if not razorpay_key_id or not razorpay_key_secret:
+            raise RuntimeError("RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET environment variables are required.")
+        self.razorpay_key_id = razorpay_key_id
+        self.razorpay_client = razorpay.Client(auth=(razorpay_key_id, razorpay_key_secret))
     
     def get_boost_plans(self) -> list:
         """Get available boost plans with pricing"""
@@ -91,21 +87,20 @@ class BoostService:
         price = self.get_price_for_duration(duration)
         
         # Create Razorpay order
-        razorpay_order = None
-        if self.razorpay_client:
-            try:
-                razorpay_order = self.razorpay_client.order.create({
-                    "amount": int(price * 100),  # Convert to paise
-                    "currency": "INR",
-                    "receipt": boost_id,
-                    "notes": {
-                        "boost_id": boost_id,
-                        "user_id": user_id,
-                        "duration": duration
-                    }
-                })
-            except Exception as e:
-                logger.error(f"Razorpay order creation failed: {e}")
+        try:
+            razorpay_order = self.razorpay_client.order.create({
+                "amount": int(price * 100),  # Convert to paise
+                "currency": "INR",
+                "receipt": boost_id,
+                "notes": {
+                    "boost_id": boost_id,
+                    "user_id": user_id,
+                    "duration": duration
+                }
+            })
+        except Exception as e:
+            logger.error(f"Razorpay order creation failed: {e}")
+            raise RuntimeError(f"Payment gateway error: {e}")
         
         # Create boost record
         boost_doc = {
@@ -114,7 +109,7 @@ class BoostService:
             "duration": duration,
             "price_paid": price,
             "status": "pending_payment",
-            "razorpay_order_id": razorpay_order["id"] if razorpay_order else f"mock_order_{boost_id}",
+            "razorpay_order_id": razorpay_order["id"],
             "razorpay_payment_id": None,
             "started_at": None,
             "expires_at": None,
@@ -127,7 +122,7 @@ class BoostService:
         return {
             "boost_id": boost_id,
             "razorpay_order_id": boost_doc["razorpay_order_id"],
-            "razorpay_key_id": os.getenv('RAZORPAY_KEY_ID', 'rzp_test_placeholder'),
+            "razorpay_key_id": self.razorpay_key_id,
             "amount": price,
             "currency": "INR"
         }
@@ -154,8 +149,8 @@ class BoostService:
                 logger.error(f"Payment verification failed: {e}")
                 return False
         else:
-            # Mock mode - accept payment
-            is_valid = True
+            logger.error("Razorpay client not initialized")
+            return False
         
         if is_valid:
             # Activate boost
