@@ -78,25 +78,19 @@ async def initiate_verification(
     verification_data: VerificationCreate,
     current_user: dict = Depends(get_current_user)
 ):
-    """Initiate KYC verification process"""
-    verification_id = f"verify_{uuid.uuid4().hex[:12]}"
-    
-    verification_doc = {
-        "verification_id": verification_id,
-        "user_id": current_user["user_id"],
-        "status": "pending",
-        "document_type": verification_data.document_type,
-        "created_at": datetime.now(timezone.utc),
-        "updated_at": datetime.now(timezone.utc)
-    }
-    
-    await db.verifications.insert_one(verification_doc)
-    
-    return {
-        "message": "Verification initiated",
-        "verification_id": verification_id,
-        "note": "KYC provider integration pending"
-    }
+    """Initiate KYC verification process.
+
+    KYC/identity provider integration is not yet implemented.
+    This endpoint returns 501 until a provider (Digio, CKYC, Aadhaar API, etc.) is integrated.
+    """
+    raise HTTPException(
+        status_code=501,
+        detail=(
+            "KYC verification is not yet available. "
+            "We are working on integrating a verification provider. "
+            "Please check back soon."
+        )
+    )
 
 
 # ==================== DEEP EXPLORATION ROUTES ====================
