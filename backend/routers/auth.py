@@ -130,6 +130,28 @@ async def get_current_user_info(current_user: dict = Depends(get_current_user)):
     }
 
 
+@router.post("/change-password")
+async def change_password(
+    old_password: str,
+    new_password: str,
+    response: Response,
+    current_user: dict = Depends(get_current_user)
+):
+    """Change password for email/password users and invalidate all existing sessions."""
+    if len(new_password) < 8:
+        raise HTTPException(status_code=400, detail="New password must be at least 8 characters")
+    result = await auth_service.change_password(
+        user_id=current_user["user_id"],
+        old_password=old_password,
+        new_password=new_password
+    )
+    if not result["success"]:
+        raise HTTPException(status_code=400, detail=result["error"])
+    # Clear the session cookie — user must log in again with new password
+    response.delete_cookie(key="session_token", path="/")
+    return {"message": "Password changed successfully. Please log in again."}
+
+
 @router.post("/logout")
 async def logout(
     response: Response,
