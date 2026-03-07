@@ -2,10 +2,28 @@ from fastapi import APIRouter, HTTPException, Depends, UploadFile, File, Form
 from datetime import datetime, timezone, date
 from typing import Optional
 import uuid
+import os
+import io
+import boto3
+from botocore.exceptions import ClientError, NoCredentialsError
+import logging
 
 from models.profile import ProfileCreate, ProfileUpdate
 from models.partner_preference import PartnerPreferenceCreate
 from dependencies import db, get_current_user
+
+logger = logging.getLogger(__name__)
+
+def get_s3_client():
+    """Get boto3 S3 client from environment variables"""
+    return boto3.client(
+        "s3",
+        aws_access_key_id=os.environ.get("AWS_ACCESS_KEY_ID"),
+        aws_secret_access_key=os.environ.get("AWS_SECRET_ACCESS_KEY"),
+        region_name=os.environ.get("AWS_REGION", "ap-south-1"),
+    )
+
+S3_BUCKET = os.environ.get("S3_BUCKET_NAME", "")
 
 router = APIRouter(tags=["profiles"])
 
@@ -126,39 +144,64 @@ async def upload_photo(
     is_hidden: bool = Form(False),
     current_user: dict = Depends(get_current_user)
 ):
-    """Upload profile photo (placeholder - will integrate S3)"""
+    """Upload profile photo to S3"""
     photo_count = await db.photos.count_documents({"user_id": current_user["user_id"]})
-    
+
     if photo_count >= 6:
         raise HTTPException(status_code=400, detail="Maximum 6 photos allowed")
-    
+
     if file.content_type not in ["image/jpeg", "image/jpg", "image/png", "image/webp"]:
-        raise HTTPException(status_code=400, detail="Only image files allowed")
-    
+        raise HTTPException(status_code=400, detail="Only JPEG, PNG, or WebP images are allowed")
+
+    if not S3_BUCKET:
+        raise HTTPException(status_code=500, detail="S3 bucket not configured. Set S3_BUCKET_NAME env var.")
+
     photo_id = f"photo_{uuid.uuid4().hex[:12]}"
     s3_key = f"photos/{current_user['user_id']}/{photo_id}_{file.filename}"
-    
+
+    file_bytes = await file.read()
+    if len(file_bytes) > 5 * 1024 * 1024:
+        raise HTTPException(status_code=400, detail="File size must be under 5 MB")
+
+    try:
+        s3 = get_s3_client()
+        s3.upload_fileobj(
+            io.BytesIO(file_bytes),
+            S3_BUCKET,
+            s3_key,
+            ExtraArgs={"ContentType": file.content_type, "ACL": "public-read"},
+        )
+    except NoCredentialsError:
+        logger.error("AWS credentials not configured")
+        raise HTTPException(status_code=500, detail="Storage credentials not configured. Set AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY.")
+    except ClientError as e:
+        logger.error(f"S3 upload failed: {e}")
+        raise HTTPException(status_code=500, detail="Photo upload failed. Please try again.")
+
+    region = os.environ.get("AWS_REGION", "ap-south-1")
+    s3_url = f"https://{S3_BUCKET}.s3.{region}.amazonaws.com/{s3_key}"
+    thumbnail_url = f"https://{S3_BUCKET}.s3.{region}.amazonaws.com/thumbnails/{s3_key}"
+
     photo_doc = {
         "photo_id": photo_id,
         "user_id": current_user["user_id"],
         "file_name": file.filename,
         "s3_key": s3_key,
-        "s3_url": f"https://placeholder-s3-url/{s3_key}",
-        "thumbnail_url": f"https://placeholder-s3-url/thumbnails/{s3_key}",
+        "s3_url": s3_url,
+        "thumbnail_url": thumbnail_url,
         "is_primary": is_primary,
         "is_hidden": is_hidden,
         "display_order": photo_count,
         "uploaded_at": datetime.now(timezone.utc)
     }
-    
     await db.photos.insert_one(photo_doc)
-    
+
     if is_primary:
         await db.photos.update_many(
             {"user_id": current_user["user_id"], "photo_id": {"$ne": photo_id}},
             {"$set": {"is_primary": False}}
         )
-    
+
     profile = await db.profiles.find_one({"user_id": current_user["user_id"]})
     if profile:
         new_percentage = min(profile.get("completion_percentage", 60) + 10, 100)
@@ -166,14 +209,12 @@ async def upload_photo(
             {"user_id": current_user["user_id"]},
             {"$set": {"completion_percentage": new_percentage}}
         )
-    
+
     return {
         "message": "Photo uploaded successfully",
         "photo_id": photo_id,
-        "s3_url": photo_doc["s3_url"],
-        "note": "S3 integration pending"
+        "s3_url": s3_url
     }
-
 
 @router.get("/photos/my-photos")
 async def get_my_photos(current_user: dict = Depends(get_current_user)):
