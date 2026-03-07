@@ -104,7 +104,7 @@ async def get_matches(
     for match in matches:
         user = await db.users.find_one(
             {"user_id": match["matched_user_id"]},
-            {"_id": 0, "user_id": 1, "full_name": 1, "picture": 1, "is_verified": 1}h
+            {"_id": 0, "user_id": 1, "full_name": 1, "picture": 1, "is_verified": 1}
         )
         
         if user:
