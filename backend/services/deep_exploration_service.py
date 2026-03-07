@@ -298,3 +298,18 @@ class DeepExplorationService:
         )
         
         return report
+
+    async def submit_deep_profile(self, user_id: str, pair_id: str, responses: list) -> str:
+        """Alias for save_deep_profile — called by the subscriptions router."""
+        return await self.save_deep_profile(user_id, pair_id, responses)
+
+    async def generate_deep_report(self, pair_id: str) -> str:
+        """Alias for generate_pair_report — called by the subscriptions router."""
+        return await self.generate_pair_report(pair_id)
+
+    async def check_both_submitted(self, pair_id: str) -> bool:
+        """Check if both users in a pair have completed their deep questionnaire."""
+        pair = await self.db.deep_exploration_pairs.find_one({"pair_id": pair_id}, {"_id": 0})
+        if not pair:
+            return False
+        return len(pair.get("completed_users", [])) >= 2
