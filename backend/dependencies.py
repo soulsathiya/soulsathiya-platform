@@ -57,3 +57,40 @@ async def get_current_user(
         raise HTTPException(status_code=401, detail="Invalid or expired session")
     
     return user
+
+
+# ---------------------------------------------------------------------------
+# Subscription tier enforcement
+# ---------------------------------------------------------------------------
+
+TIER_HIERARCHY = {"free": 0, "basic": 1, "premium": 2, "elite": 3}
+
+def require_tier(minimum_tier: str):
+    """
+    FastAPI dependency factory — raises 403 if user's subscription tier
+    is below the required minimum.
+
+    Usage:
+        @router.get("/some-premium-endpoint")
+        async def endpoint(user = Depends(require_tier("premium"))):
+            ...
+    """
+    async def _check(current_user: dict = Depends(get_current_user)) -> dict:
+        user_tier = current_user.get("subscription_tier") or "free"
+        user_level = TIER_HIERARCHY.get(user_tier, 0)
+        required_level = TIER_HIERARCHY.get(minimum_tier, 0)
+        if user_level < required_level:
+            raise HTTPException(
+                status_code=403,
+                detail=(
+                    f"This feature requires a {minimum_tier.capitalize()} subscription or higher. "
+                    f"Your current plan is '{user_tier}'."
+                )
+            )
+        return current_user
+    return _check
+
+
+def get_user_tier(current_user: dict) -> str:
+    """Return the user's current subscription tier string (defaults to 'free')."""
+    return current_user.get("subscription_tier") or "free"
