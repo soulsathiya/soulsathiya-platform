@@ -1,4 +1,4 @@
-from typing import Dict, List, Optional
+Fix: Add submit_deep_profile, generate_deep_report, check_both_submitted methods (router name mismatch)from typing import Dict, List, Optional
 from datetime import datetime, timezone
 import uuid
 
@@ -149,6 +149,20 @@ class NotificationService:
             pair_id=pair_id,
             partner_id=user_a_id
         )
+
+    async def notify_deep_report_ready(
+        self,
+        pair_id: str,
+        user_a_id: str,
+        user_b_id: str
+    ):
+        """Alias for notify_report_ready — matches the argument signature used by the subscriptions router."""
+        await self.notify_report_ready(
+            user_a_id=user_a_id,
+            user_b_id=user_b_id,
+            pair_id=pair_id
+        )
+
 
 
 # Demo report data for sample viewing
