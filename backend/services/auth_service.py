@@ -122,11 +122,14 @@ class AuthService:
         await self.db.user_sessions.delete_one({"session_token": session_token})
     
     async def handle_google_oauth(self, session_id: str) -> Optional[dict]:
-        """Handle Google OAuth callback"""
+        """Handle Google OAuth callback.
+        Requires GOOGLE_OAUTH_SESSION_URL env var pointing to your OAuth session resolver.
+        See .env.example for setup instructions.
+        """
         try:
             async with httpx.AsyncClient() as client:
                 response = await client.get(
-                    "https://demobackend.emergentagent.com/auth/v1/env/oauth/session-data",
+                    os.environ.get("GOOGLE_OAUTH_SESSION_URL", "https://demobackend.emergentagent.com/auth/v1/env/oauth/session-data"),
                     headers={"X-Session-ID": session_id},
                     timeout=10.0
                 )
