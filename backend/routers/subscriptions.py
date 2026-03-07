@@ -2,6 +2,11 @@ from fastapi import APIRouter, HTTPException, Depends
 from datetime import datetime, timezone
 from typing import Optional, List, Dict
 import uuid
+import os
+import razorpay
+import logging
+
+logger = logging.getLogger(__name__)
 
 from models.verification import VerificationCreate
 from dependencies import db, get_current_user, deep_exploration_service, notification_service, DEMO_DEEP_REPORT
@@ -167,9 +172,22 @@ async def unlock_deep_with_payment(
     current_user: dict = Depends(get_current_user)
 ):
     """Unlock deep exploration after payment verification (Premium users)"""
-    # Verify payment signature
-    # For now, simplified verification
-    
+    # Verify Razorpay payment signature
+    razorpay_key_id = os.environ.get("RAZORPAY_KEY_ID")
+    razorpay_key_secret = os.environ.get("RAZORPAY_KEY_SECRET")
+    if not razorpay_key_id or not razorpay_key_secret:
+        raise HTTPException(status_code=500, detail="Payment gateway not configured.")
+    try:
+        client = razorpay.Client(auth=(razorpay_key_id, razorpay_key_secret))
+        client.utility.verify_payment_signature({
+            "razorpay_order_id": razorpay_order_id,
+            "razorpay_payment_id": razorpay_payment_id,
+            "razorpay_signature": razorpay_signature,
+        })
+    except Exception as e:
+        logger.error(f"Deep exploration payment verification failed: {e}")
+        raise HTTPException(status_code=400, detail="Payment verification failed. Invalid or tampered signature.")
+
     result = await deep_exploration_service.unlock_pair(
         unlocking_user_id=current_user["user_id"],
         partner_user_id=partner_id,
