@@ -174,3 +174,27 @@ class AuthService:
         except Exception as e:
             logger.error(f"Google OAuth error: {str(e)}")
             return None
+
+    async def change_password(self, user_id: str, old_password: str, new_password: str) -> dict:
+        """Change user password and invalidate ALL existing sessions.
+
+        Returns {"success": True} on success, {"success": False, "error": "..."} on failure.
+        Session invalidation is the key security property here: if an attacker
+        already has a session cookie, changing the password will log them out.
+        """
+        user = await self.get_user_by_id(user_id)
+        if not user:
+            return {"success": False, "error": "User not found"}
+        if user.get("is_google_auth"):
+            return {"success": False, "error": "Google-authenticated users cannot set a password here"}
+        if not self.verify_password(old_password, user.get("password_hash", "")):
+            return {"success": False, "error": "Current password is incorrect"}
+        new_hash = self.hash_password(new_password)
+        await self.db.users.update_one(
+            {"user_id": user_id},
+            {"$set": {"password_hash": new_hash}}
+        )
+        # Invalidate ALL sessions for this user so stolen cookies are worthless
+        await self.db.user_sessions.delete_many({"user_id": user_id})
+        logger.info(f"Password changed for user {user_id}; all sessions invalidated")
+        return {"success": True}
