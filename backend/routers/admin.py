@@ -93,12 +93,27 @@ async def get_admin_info(admin: dict = Depends(get_current_admin)):
 
 
 @admin_router.post("/setup")
-async def setup_first_admin(email: str, password: str, full_name: str):
-    """Setup first admin (only works if no admins exist)"""
+async def setup_first_admin(email: str, password: str, full_name: str, setup_token: str):
+    """Setup first admin account.
+
+    Requires ADMIN_SETUP_TOKEN env var so this unauthenticated endpoint cannot
+    be called by arbitrary parties. Once any admin exists, the endpoint is
+    permanently disabled regardless of the token value.
+    """
+    import os
+    # 1. Verify the one-time setup token
+    expected_token = os.environ.get("ADMIN_SETUP_TOKEN", "")
+    if not expected_token:
+        raise HTTPException(
+            status_code=503,
+            detail="Admin setup is disabled: ADMIN_SETUP_TOKEN is not configured."
+        )
+    if setup_token != expected_token:
+        raise HTTPException(status_code=403, detail="Invalid setup token.")
+    # 2. Prevent creating a second super-admin via this endpoint
     existing = await db.admin_users.count_documents({})
     if existing > 0:
         raise HTTPException(status_code=400, detail="Admin already exists. Contact super admin.")
-    
     admin = await admin_service.create_admin(
         email=email,
         full_name=full_name,
@@ -106,7 +121,6 @@ async def setup_first_admin(email: str, password: str, full_name: str):
         role="super_admin",
         require_password_change=False
     )
-    
     return {"message": "First admin created", "admin_id": admin["admin_id"]}
 
 
