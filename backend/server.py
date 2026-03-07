@@ -1,8 +1,11 @@
 from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
+from contextlib import asynccontextmanager
 import os
+import asyncio
+import logging
 
-from dependencies import client
+from dependencies import client, boost_service
 
 from routers import (
     auth_router,
@@ -16,8 +19,46 @@ from routers import (
     admin_router,
 )
 
+logger = logging.getLogger(__name__)
+
+# ---------------------------------------------------------------------------
+# Background task: expire stale boosts every 15 minutes
+# ---------------------------------------------------------------------------
+async def boost_expiry_loop():
+    """Periodically expire boosts whose time has run out."""
+    while True:
+        try:
+            expired = await boost_service.expire_old_boosts()
+            if expired:
+                logger.info(f"Boost expiry task: expired {expired} boost(s)")
+        except Exception as e:
+            logger.error(f"Boost expiry task error: {e}")
+        await asyncio.sleep(15 * 60)  # run every 15 minutes
+
+
+# ---------------------------------------------------------------------------
+# App lifespan (replaces deprecated @app.on_event)
+# ---------------------------------------------------------------------------
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Startup
+    task = asyncio.create_task(boost_expiry_loop())
+    logger.info("Background task started: boost_expiry_loop")
+    yield
+    # Shutdown
+    task.cancel()
+    try:
+        await task
+    except asyncio.CancelledError:
+        pass
+    client.close()
+    logger.info("Server shutdown: DB connection closed")
+
+
+# ---------------------------------------------------------------------------
 # Create the main app
-app = FastAPI(title="SoulSathiya API")
+# ---------------------------------------------------------------------------
+app = FastAPI(title="SoulSathiya API", lifespan=lifespan)
 
 # Include all API routers under /api prefix
 app.include_router(auth_router, prefix="/api")
@@ -32,7 +73,9 @@ app.include_router(boosts_router, prefix="/api")
 # Admin router has its own /api/admin prefix built-in
 app.include_router(admin_router)
 
+# ---------------------------------------------------------------------------
 # CORS middleware
+# ---------------------------------------------------------------------------
 app.add_middleware(
     CORSMiddleware,
     allow_credentials=True,
@@ -42,11 +85,9 @@ app.add_middleware(
 )
 
 
-@app.on_event("shutdown")
-async def shutdown_db_client():
-    client.close()
-
-
+# ---------------------------------------------------------------------------
+# Health check (required by Render deployment)
+# ---------------------------------------------------------------------------
 @app.get("/api/health")
 async def health_check():
     """Health check endpoint for deployment platforms (Render, etc.)"""
