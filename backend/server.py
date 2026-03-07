@@ -9,7 +9,7 @@ import os
 import asyncio
 import logging
 
-from dependencies import client, boost_service
+from dependencies import client, boost_service, create_indexes
 from routers import (
     auth_router,
     profiles_router,
@@ -50,6 +50,7 @@ async def boost_expiry_loop():
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Startup
+    await create_indexes()
     task = asyncio.create_task(boost_expiry_loop())
     logger.info("Background task started: boost_expiry_loop")
     yield
