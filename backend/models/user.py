@@ -20,7 +20,7 @@ class UserCreate(UserBase):
     def validate_full_name(cls, v):
         if not v or len(v.strip()) < 2:
             raise ValueError('Full name must be at least 2 characters')
-        if not re.match(r"^[a-zA-Z\s\-']{2,100}$", v):
+        if not re.match(r"^[a-zA-Z0-9\s\.\-']{2,100}$", v):
             raise ValueError('Full name contains invalid characters')
         return v.strip()
 

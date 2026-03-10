@@ -31,7 +31,9 @@ const LoginPage = () => {
       toast.success('Login successful!');
       navigate('/dashboard', { state: { user: response.data.user } });
     } catch (error) {
-      toast.error(error.response?.data?.detail || 'Login failed');
+      const detail = error?.response?.data?.detail;
+      const message = (Array.isArray(detail) ? detail[0]?.msg : detail) || error?.message || 'Login failed';
+      toast.error(message);
     } finally {
       setLoading(false);
     }
@@ -77,7 +79,16 @@ const LoginPage = () => {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
+              <div className="flex items-center justify-between">
+                <Label htmlFor="password">Password</Label>
+                <Link
+                  to="/forgot-password"
+                  className="text-xs text-primary hover:underline font-medium"
+                  data-testid="forgot-password-link"
+                >
+                  Forgot password?
+                </Link>
+              </div>
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                 <Input

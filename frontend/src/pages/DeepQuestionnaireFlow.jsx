@@ -128,7 +128,9 @@ const DeepQuestionnaireFlow = () => {
         navigate('/dashboard');
       }
     } catch (error) {
-      toast.error(error.response?.data?.detail || 'Failed to submit assessment');
+      const detail = error?.response?.data?.detail;
+      const message = (Array.isArray(detail) ? detail[0]?.msg : detail) || error?.message || 'Failed to submit assessment';
+      toast.error(message);
     } finally {
       setSubmitting(false);
     }

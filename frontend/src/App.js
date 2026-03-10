@@ -23,11 +23,20 @@ import MessagesPage from './pages/MessagesPage';
 import ChatPage from './pages/ChatPage';
 import ProfileViewPage from './pages/ProfileViewPage';
 
+// Auth flows — Issue #2 (Email Verification) & Issue #3 (Password Reset)
+import VerifyEmailPage from './pages/VerifyEmailPage';
+import ForgotPasswordPage from './pages/ForgotPasswordPage';
+import ResetPasswordPage from './pages/ResetPasswordPage';
+
 // Step 2 (Trust & Conversion)
 import { PrivacyPolicyPage, TermsOfServicePage, AboutUsPage } from './pages/LegalPages';
 
 // Step 3 (Revenue)
 import SubscriptionPage from './pages/SubscriptionPage';
+
+// Notifications & Unsubscribe
+import NotificationPreferencesPage from './pages/NotificationPreferencesPage';
+import UnsubscribePage from './pages/UnsubscribePage';
 
 // Admin Pages
 import { AdminLogin, AdminLayout, AdminDashboard, AdminUsers, AdminProfiles, AdminSubscriptions, AdminDeep, AdminReports, AdminAnalytics } from './pages/admin';
@@ -47,6 +56,11 @@ function AppRouter() {
       <Route path="/" element={<LandingPage />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />
+
+      {/* Email verification & password reset — Issue #2 & #3 */}
+      <Route path="/verify-email" element={<VerifyEmailPage />} />
+      <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+      <Route path="/reset-password" element={<ResetPasswordPage />} />
 
       {/* Auth */}
       <Route path="/dashboard" element={<DashboardPage />} />
@@ -71,6 +85,10 @@ function AppRouter() {
       <Route path="/deep/report/:pairId" element={<DeepReportView />} />
       <Route path="/deep/questionnaire" element={<DeepQuestionnaireFlow />} />
       <Route path="/deep/demo-report" element={<DemoDeepReport />} />
+
+      {/* Notification settings & unsubscribe */}
+      <Route path="/notification-preferences" element={<NotificationPreferencesPage />} />
+      <Route path="/unsubscribe" element={<UnsubscribePage />} />
 
       {/* Legal — Step 2 */}
       <Route path="/privacy" element={<PrivacyPolicyPage />} />

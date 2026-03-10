@@ -83,7 +83,9 @@ const ChatPage = () => {
       setMessages(res.data.messages || []);
     } catch (error) {
       setNewMessage(msgText);
-      toast.error(error.response?.data?.detail || 'Failed to send message');
+      const detail = error?.response?.data?.detail;
+      const message = (Array.isArray(detail) ? detail[0]?.msg : detail) || error?.message || 'Failed to send message';
+      toast.error(message);
     } finally {
       setSending(false);
     }

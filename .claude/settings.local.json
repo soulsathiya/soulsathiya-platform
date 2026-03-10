@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python -c \"import os; print\\(os.listdir\\(''C:/Users/DELL/CLAUDE1/soulsathiya-platform-main/frontend/src/pages''\\)\\)\")",
+      "Bash(python3 -c \"import os; print\\(os.listdir\\(''C:/Users/DELL/CLAUDE1/soulsathiya-platform-main/frontend/src/pages''\\)\\)\")",
+      "Bash(dir \"C:/Users/DELL/CLAUDE1/soulsathiya-platform-main/frontend/src/pages\")",
+      "Bash(python3:*)",
+      "Bash(git --version)",
+      "Bash(SHELL=/bin/bash git --version)",
+      "Bash(node -e \"const fs = require\\(''fs''\\); const p = ''C:/Users/DELL/CLAUDE1/soulsathiya-platform-main/frontend/src/pages/LoginPage.jsx''; const c = fs.readFileSync\\(p,''utf8''\\); console.log\\(c.substring\\(0,200\\)\\);\")",
+      "Bash(python -c \"print\\(''hello''\\)\")"
+    ]
+  }
+}

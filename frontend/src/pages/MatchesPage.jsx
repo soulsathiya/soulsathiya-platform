@@ -173,7 +173,8 @@ const MatchesPage = () => {
       setInterestsSent(prev => new Set([...prev, toUserId]));
       toast.success('Interest sent! They will be notified.');
     } catch (error) {
-      const msg = error.response?.data?.detail || 'Failed to send interest';
+      const detail = error?.response?.data?.detail;
+      const msg = (Array.isArray(detail) ? detail[0]?.msg : detail) || error?.message || 'Failed to send interest';
       toast.error(msg);
       if (msg.includes('upgrade')) {
         setTimeout(() => navigate('/subscription'), 1500);

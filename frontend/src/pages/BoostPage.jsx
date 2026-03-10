@@ -92,7 +92,9 @@ const BoostPage = () => {
       razorpay.open();
     } catch (error) {
       if (error.response?.status === 400) {
-        toast.error(error.response.data.detail);
+        const detail = error?.response?.data?.detail;
+        const message = (Array.isArray(detail) ? detail[0]?.msg : detail) || error?.message || 'Failed to create boost order';
+        toast.error(message);
       } else {
         toast.error('Failed to create boost order');
       }

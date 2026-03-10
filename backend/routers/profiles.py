@@ -9,7 +9,7 @@ from botocore.exceptions import ClientError, NoCredentialsError
 import logging
 
 from models.profile import ProfileCreate, ProfileUpdate
-from models.partner_preference import PartnerPreferenceCreate
+from models.partner_preference import PartnerPreferenceCreate, PartnerPreferenceUpdate
 from dependencies import db, get_current_user
 
 logger = logging.getLogger(__name__)
@@ -297,8 +297,42 @@ async def get_partner_preferences(current_user: dict = Depends(get_current_user)
         {"user_id": current_user["user_id"]},
         {"_id": 0}
     )
-    
+
     if not preferences:
         raise HTTPException(status_code=404, detail="Preferences not found")
-    
+
     return preferences
+
+
+@router.put("/partner-preferences")
+async def update_partner_preferences(
+    preferences: PartnerPreferenceUpdate,
+    current_user: dict = Depends(get_current_user)
+):
+    """Update (upsert) partner preferences"""
+    update_data = {k: v for k, v in preferences.model_dump().items() if v is not None}
+
+    if not update_data:
+        raise HTTPException(status_code=400, detail="No fields to update")
+
+    update_data["updated_at"] = datetime.now(timezone.utc)
+
+    result = await db.partner_preferences.update_one(
+        {"user_id": current_user["user_id"]},
+        {"$set": update_data},
+        upsert=True
+    )
+
+    if result.upserted_id:
+        # New document was created via upsert — stamp created_at and preference_id
+        preference_id = f"pref_{uuid.uuid4().hex[:12]}"
+        await db.partner_preferences.update_one(
+            {"user_id": current_user["user_id"]},
+            {"$set": {
+                "preference_id": preference_id,
+                "user_id": current_user["user_id"],
+                "created_at": datetime.now(timezone.utc)
+            }}
+        )
+
+    return {"message": "Partner preferences updated successfully"}

@@ -12,6 +12,7 @@ from services.compatibility_engine import CompatibilityEngine
 from services.deep_exploration_service import DeepExplorationService
 from services.admin_service import AdminService
 from services.notification_service import NotificationService, DEMO_DEEP_REPORT
+from services.email_service import EmailService
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
@@ -35,6 +36,7 @@ compatibility_engine = CompatibilityEngine(db)
 deep_exploration_service = DeepExplorationService(db, boost_service)
 admin_service = AdminService(db)
 notification_service = NotificationService(db)
+email_service = EmailService()
 
 
 # Dependency to get current user from session
@@ -147,5 +149,40 @@ async def create_indexes():
     # notifications collection
     await db.notifications.create_index([("user_id", ASCENDING)], background=True)
     await db.notifications.create_index([("is_read", ASCENDING)], background=True)
+
+    # email_verification_tokens collection
+    await db.email_verification_tokens.create_index(
+        [("token", ASCENDING)], unique=True, background=True
+    )
+    await db.email_verification_tokens.create_index(
+        [("user_id", ASCENDING)], background=True
+    )
+    # TTL index: MongoDB will auto-delete expired tokens
+    await db.email_verification_tokens.create_index(
+        [("expires_at", ASCENDING)], background=True, expireAfterSeconds=0
+    )
+
+    # password_reset_tokens collection
+    await db.password_reset_tokens.create_index(
+        [("token", ASCENDING)], unique=True, background=True
+    )
+    await db.password_reset_tokens.create_index(
+        [("user_id", ASCENDING)], background=True
+    )
+    # TTL index: MongoDB will auto-delete expired tokens
+    await db.password_reset_tokens.create_index(
+        [("expires_at", ASCENDING)], background=True, expireAfterSeconds=0
+    )
+
+    # email_preferences collection
+    await db.email_preferences.create_index([("user_id", ASCENDING)], unique=True, background=True)
+
+    # unsubscribe_tokens collection
+    await db.unsubscribe_tokens.create_index([("token", ASCENDING)], unique=True, background=True)
+    await db.unsubscribe_tokens.create_index([("user_id", ASCENDING)], background=True)
+
+    # interests collection
+    await db.interests.create_index([("from_user_id", ASCENDING)], background=True)
+    await db.interests.create_index([("to_user_id", ASCENDING)], background=True)
 
     logger.info("MongoDB indexes ensured")

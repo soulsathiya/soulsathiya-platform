@@ -45,10 +45,13 @@ const RegisterPage = () => {
         { withCredentials: true }
       );
 
-      toast.success('Registration successful!');
-      navigate('/onboarding/profile', { state: { user: response.data.user } });
+      toast.success('Account created! Please check your email to verify your address.');
+      // Redirect to verify-email banner first, then onboarding continues after verification
+      navigate('/verify-email', { state: { user: response.data.user } });
     } catch (error) {
-      toast.error(error.response?.data?.detail || 'Registration failed');
+      const detail = error?.response?.data?.detail;
+      const message = (Array.isArray(detail) ? detail[0]?.msg : detail) || error?.message || 'Registration failed';
+      toast.error(message);
     } finally {
       setLoading(false);
     }

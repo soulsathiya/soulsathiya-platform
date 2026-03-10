@@ -93,7 +93,8 @@ const SubscriptionPage = () => {
       const rzp = new window.Razorpay(options);
       rzp.open();
     } catch (error) {
-      const detail = error.response?.data?.detail || 'Failed to initiate payment';
+      const rawDetail = error?.response?.data?.detail;
+      const detail = (Array.isArray(rawDetail) ? rawDetail[0]?.msg : rawDetail) || error?.message || 'Failed to initiate payment';
       toast.error(detail);
     } finally {
       setPaying(null);

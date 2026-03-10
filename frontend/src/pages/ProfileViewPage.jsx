@@ -53,7 +53,9 @@ const ProfileViewPage = () => {
       setInterestSent(true);
       toast.success('Interest sent!');
     } catch (error) {
-      toast.error(error.response?.data?.detail || 'Failed to send interest');
+      const detail = error?.response?.data?.detail;
+      const message = (Array.isArray(detail) ? detail[0]?.msg : detail) || error?.message || 'Failed to send interest';
+      toast.error(message);
     }
   };
 
@@ -74,7 +76,9 @@ const ProfileViewPage = () => {
       const refreshed = await axios.get(`${BACKEND_URL}/api/photos/my-photos`, { withCredentials: true });
       setPhotos(refreshed.data.photos || []);
     } catch (error) {
-      toast.error(error.response?.data?.detail || 'Upload failed');
+      const detail = error?.response?.data?.detail;
+      const message = (Array.isArray(detail) ? detail[0]?.msg : detail) || error?.message || 'Upload failed';
+      toast.error(message);
     } finally {
       setUploading(false);
     }

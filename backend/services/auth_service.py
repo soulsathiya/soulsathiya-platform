@@ -3,6 +3,7 @@ from datetime import datetime, timezone, timedelta
 from typing import Optional
 import uuid
 import os
+import secrets
 import httpx
 import logging
 
@@ -174,6 +175,156 @@ class AuthService:
         except Exception as e:
             logger.error(f"Google OAuth error: {str(e)}")
             return None
+
+    # ------------------------------------------------------------------
+    # Email verification tokens
+    # ------------------------------------------------------------------
+
+    async def create_email_verification_token(self, user_id: str) -> str:
+        """Generate a secure email verification token and store it in the DB.
+
+        Any previous tokens for this user are invalidated before creating a new one.
+        The token expires after 24 hours.
+        """
+        # Invalidate stale tokens
+        await self.db.email_verification_tokens.delete_many({"user_id": user_id})
+
+        token = secrets.token_urlsafe(32)
+        expires_at = datetime.now(timezone.utc) + timedelta(hours=24)
+
+        await self.db.email_verification_tokens.insert_one({
+            "token": token,
+            "user_id": user_id,
+            "expires_at": expires_at,
+            "created_at": datetime.now(timezone.utc),
+        })
+        logger.info("Email verification token created for user %s", user_id)
+        return token
+
+    async def verify_email_token(self, token: str) -> Optional[dict]:
+        """Consume an email verification token and mark the user's email as verified.
+
+        Returns the updated user dict on success, None if the token is invalid/expired.
+        """
+        record = await self.db.email_verification_tokens.find_one({"token": token})
+        if not record:
+            return None
+
+        expires_at = record["expires_at"]
+        if isinstance(expires_at, str):
+            expires_at = datetime.fromisoformat(expires_at)
+        if expires_at.tzinfo is None:
+            expires_at = expires_at.replace(tzinfo=timezone.utc)
+
+        if expires_at < datetime.now(timezone.utc):
+            await self.db.email_verification_tokens.delete_one({"token": token})
+            logger.info("Expired email verification token used for user %s", record["user_id"])
+            return None
+
+        user_id = record["user_id"]
+        await self.db.users.update_one(
+            {"user_id": user_id},
+            {"$set": {"is_email_verified": True}},
+        )
+        # Consume the token so it cannot be reused
+        await self.db.email_verification_tokens.delete_one({"token": token})
+        logger.info("Email verified for user %s", user_id)
+        return await self.get_user_by_id(user_id)
+
+    # ------------------------------------------------------------------
+    # Password reset tokens
+    # ------------------------------------------------------------------
+
+    async def create_password_reset_token(self, email: str) -> Optional[str]:
+        """Generate a secure password-reset token for the given email.
+
+        Returns the token string on success, or None if the email is not found.
+        The token expires after 1 hour.
+
+        Note: callers should NOT reveal to end-users whether the email was found
+        (to prevent account enumeration). Always show a generic success message.
+        """
+        user = await self.get_user_by_email(email)
+        if not user:
+            return None  # Caller must still return a generic success response
+
+        user_id = user["user_id"]
+        # Invalidate stale reset tokens
+        await self.db.password_reset_tokens.delete_many({"user_id": user_id})
+
+        token = secrets.token_urlsafe(32)
+        expires_at = datetime.now(timezone.utc) + timedelta(hours=1)
+
+        await self.db.password_reset_tokens.insert_one({
+            "token": token,
+            "user_id": user_id,
+            "email": email,
+            "expires_at": expires_at,
+            "created_at": datetime.now(timezone.utc),
+        })
+        logger.info("Password reset token created for user %s", user_id)
+        return token
+
+    async def verify_password_reset_token(self, token: str) -> Optional[dict]:
+        """Check if a reset token is valid and not expired.
+
+        Returns the associated user dict if valid, else None.
+        Does NOT consume the token — call reset_password_with_token to do that.
+        """
+        record = await self.db.password_reset_tokens.find_one({"token": token})
+        if not record:
+            return None
+
+        expires_at = record["expires_at"]
+        if isinstance(expires_at, str):
+            expires_at = datetime.fromisoformat(expires_at)
+        if expires_at.tzinfo is None:
+            expires_at = expires_at.replace(tzinfo=timezone.utc)
+
+        if expires_at < datetime.now(timezone.utc):
+            await self.db.password_reset_tokens.delete_one({"token": token})
+            return None
+
+        return await self.get_user_by_id(record["user_id"])
+
+    async def reset_password_with_token(self, token: str, new_password: str) -> dict:
+        """Reset a user's password using a valid reset token.
+
+        On success:
+        - Updates password hash
+        - Invalidates ALL existing sessions (security: stolen cookies become useless)
+        - Deletes the used reset token
+
+        Returns {"success": True} or {"success": False, "error": "..."}.
+        """
+        record = await self.db.password_reset_tokens.find_one({"token": token})
+        if not record:
+            return {"success": False, "error": "Invalid or expired reset token"}
+
+        expires_at = record["expires_at"]
+        if isinstance(expires_at, str):
+            expires_at = datetime.fromisoformat(expires_at)
+        if expires_at.tzinfo is None:
+            expires_at = expires_at.replace(tzinfo=timezone.utc)
+
+        if expires_at < datetime.now(timezone.utc):
+            await self.db.password_reset_tokens.delete_one({"token": token})
+            return {"success": False, "error": "Reset token has expired"}
+
+        user_id = record["user_id"]
+        new_hash = self.hash_password(new_password)
+
+        await self.db.users.update_one(
+            {"user_id": user_id},
+            {"$set": {"password_hash": new_hash}},
+        )
+        # Invalidate all sessions so any stolen cookies are worthless
+        await self.db.user_sessions.delete_many({"user_id": user_id})
+        # Consume the token — one-time use only
+        await self.db.password_reset_tokens.delete_many({"user_id": user_id})
+
+        logger.info("Password reset for user %s; all sessions invalidated", user_id)
+        return {"success": True}
 
     async def change_password(self, user_id: str, old_password: str, new_password: str) -> dict:
         """Change user password and invalidate ALL existing sessions.

@@ -1,16 +1,27 @@
-Fix: Add submit_deep_profile, generate_deep_report, check_both_submitted methods (router name mismatch)from typing import Dict, List, Optional
+from typing import Dict, List, Optional
 from datetime import datetime, timezone
 import uuid
+import secrets
+
+
+DEFAULT_EMAIL_PREFERENCES = {
+    "interest_received": True,
+    "new_message": True,
+    "weekly_digest": True,
+    "deep_exploration": True,
+}
 
 
 class NotificationService:
-    """Service to manage in-app notifications for deep exploration events"""
-    
+    """Service to manage in-app notifications and email preferences"""
+
     NOTIFICATION_TYPES = {
         "deep_invite": "Your match invited you to explore deeper compatibility",
         "deep_partner_completed": "Your partner completed the deep compatibility assessment",
         "deep_report_ready": "Your Deep Compatibility Report is ready!",
-        "deep_reminder": "Don't forget to complete your deep compatibility assessment"
+        "deep_reminder": "Don't forget to complete your deep compatibility assessment",
+        "interest_received": "Someone sent you an interest",
+        "new_message": "You have a new message",
     }
     
     def __init__(self, db):
@@ -163,6 +174,97 @@ class NotificationService:
             pair_id=pair_id
         )
 
+    # ------------------------------------------------------------------
+    # Interest / message in-app notifications
+    # ------------------------------------------------------------------
+    async def notify_interest_received(
+        self,
+        to_user_id: str,
+        from_user_id: str,
+    ):
+        """Create in-app notification when someone sends an interest."""
+        await self.create_notification(
+            user_id=to_user_id,
+            notification_type="interest_received",
+            partner_id=from_user_id,
+        )
+
+    async def notify_new_message(
+        self,
+        to_user_id: str,
+        from_user_id: str,
+    ):
+        """Create in-app notification when a message is received."""
+        await self.create_notification(
+            user_id=to_user_id,
+            notification_type="new_message",
+            partner_id=from_user_id,
+        )
+
+    # ------------------------------------------------------------------
+    # Email preferences
+    # ------------------------------------------------------------------
+    async def get_email_preferences(self, user_id: str) -> Dict:
+        """Return stored email preferences for a user, falling back to defaults."""
+        doc = await self.db.email_preferences.find_one(
+            {"user_id": user_id}, {"_id": 0}
+        )
+        if not doc:
+            return {**DEFAULT_EMAIL_PREFERENCES, "user_id": user_id}
+        # Merge with defaults to add any new keys added after user record was created
+        prefs = {**DEFAULT_EMAIL_PREFERENCES, **doc}
+        return prefs
+
+    async def update_email_preferences(self, user_id: str, updates: Dict) -> Dict:
+        """Upsert email preferences for a user."""
+        safe_updates = {k: v for k, v in updates.items() if k in DEFAULT_EMAIL_PREFERENCES}
+        safe_updates["user_id"] = user_id
+        safe_updates["updated_at"] = datetime.now(timezone.utc)
+        await self.db.email_preferences.update_one(
+            {"user_id": user_id},
+            {"$set": safe_updates},
+            upsert=True,
+        )
+        return await self.get_email_preferences(user_id)
+
+    async def should_send_email(self, user_id: str, email_type: str) -> bool:
+        """Return True if the user has opted in to this email type."""
+        prefs = await self.get_email_preferences(user_id)
+        return bool(prefs.get(email_type, True))
+
+    # ------------------------------------------------------------------
+    # Unsubscribe tokens
+    # ------------------------------------------------------------------
+    async def generate_unsubscribe_token(self, user_id: str, email_type: str) -> str:
+        """Generate a one-time unsubscribe token stored in MongoDB."""
+        token = secrets.token_urlsafe(32)
+        await self.db.unsubscribe_tokens.insert_one({
+            "token": token,
+            "user_id": user_id,
+            "email_type": email_type,
+            "created_at": datetime.now(timezone.utc),
+            "used": False,
+        })
+        return token
+
+    async def process_unsubscribe(self, token: str) -> Optional[Dict]:
+        """
+        Validate and consume an unsubscribe token, then disable the email type.
+        Returns {"user_id", "email_type"} on success, None if invalid/already used.
+        """
+        doc = await self.db.unsubscribe_tokens.find_one({"token": token})
+        if not doc or doc.get("used"):
+            return None
+        user_id = doc["user_id"]
+        email_type = doc["email_type"]
+        # Disable the email type
+        await self.update_email_preferences(user_id, {email_type: False})
+        # Mark token as used
+        await self.db.unsubscribe_tokens.update_one(
+            {"token": token},
+            {"$set": {"used": True, "used_at": datetime.now(timezone.utc)}}
+        )
+        return {"user_id": user_id, "email_type": email_type}
 
 
 # Demo report data for sample viewing

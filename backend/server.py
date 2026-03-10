@@ -9,7 +9,7 @@ import os
 import asyncio
 import logging
 
-from dependencies import client, boost_service, create_indexes
+from dependencies import client, boost_service, notification_service, email_service, db, create_indexes
 from routers import (
     auth_router,
     profiles_router,
@@ -44,6 +44,54 @@ async def boost_expiry_loop():
         await asyncio.sleep(15 * 60)  # run every 15 minutes
 
 
+async def weekly_digest_loop():
+    """Send weekly digest emails every 7 days to opted-in users."""
+    # Wait 1 minute on startup before first check, to let the server settle
+    await asyncio.sleep(60)
+    while True:
+        try:
+            logger.info("Weekly digest task: starting digest run")
+            # Fetch all users with verified emails
+            users_cursor = db.users.find(
+                {"is_email_verified": True},
+                {"_id": 0, "user_id": 1, "email": 1, "full_name": 1}
+            )
+            async for user in users_cursor:
+                try:
+                    user_id = user["user_id"]
+                    # Check opt-in
+                    if not await notification_service.should_send_email(user_id, "weekly_digest"):
+                        continue
+                    # Count activity metrics
+                    new_matches = await db.matches.count_documents({"user_id": user_id})
+                    unread_messages = await db.messages.count_documents({
+                        "to_user_id": user_id, "is_read": False
+                    })
+                    pending_interests = await db.interests.count_documents({
+                        "to_user_id": user_id, "status": "pending"
+                    })
+                    # Only send if there's something to report
+                    if new_matches + unread_messages + pending_interests == 0:
+                        continue
+                    unsub_token = await notification_service.generate_unsubscribe_token(
+                        user_id, "weekly_digest"
+                    )
+                    await email_service.send_weekly_digest_email(
+                        to=user["email"],
+                        name=user.get("full_name", ""),
+                        new_matches=new_matches,
+                        unread_messages=unread_messages,
+                        pending_interests=pending_interests,
+                        unsubscribe_token=unsub_token,
+                    )
+                except Exception as user_exc:
+                    logger.warning(f"Weekly digest failed for {user.get('user_id')}: {user_exc}")
+            logger.info("Weekly digest task: run complete")
+        except Exception as e:
+            logger.error(f"Weekly digest task error: {e}")
+        await asyncio.sleep(7 * 24 * 60 * 60)  # run every 7 days
+
+
 # ---------------------------------------------------------------------------
 # App lifespan (replaces deprecated @app.on_event)
 # ---------------------------------------------------------------------------
@@ -51,15 +99,17 @@ async def boost_expiry_loop():
 async def lifespan(app: FastAPI):
     # Startup
     await create_indexes()
-    task = asyncio.create_task(boost_expiry_loop())
-    logger.info("Background task started: boost_expiry_loop")
+    boost_task = asyncio.create_task(boost_expiry_loop())
+    digest_task = asyncio.create_task(weekly_digest_loop())
+    logger.info("Background tasks started: boost_expiry_loop, weekly_digest_loop")
     yield
     # Shutdown
-    task.cancel()
-    try:
-        await task
-    except asyncio.CancelledError:
-        pass
+    for task in (boost_task, digest_task):
+        task.cancel()
+        try:
+            await task
+        except asyncio.CancelledError:
+            pass
     client.close()
     logger.info("Server shutdown: DB connection closed")
 

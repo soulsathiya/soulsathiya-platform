@@ -100,7 +100,9 @@ const DeepExplorationCTA = ({ partnerId, userTier = 'free', compact = false, onS
         toast.error('Please upgrade to access this feature');
         setTimeout(() => window.location.href = '/subscription', 1500);
       } else {
-        toast.error(error.response?.data?.detail || 'Failed to unlock');
+        const detail = error?.response?.data?.detail;
+        const message = (Array.isArray(detail) ? detail[0]?.msg : detail) || error?.message || 'Failed to unlock';
+        toast.error(message);
       }
     } finally {
       setLoading(false);

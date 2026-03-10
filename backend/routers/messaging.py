@@ -1,9 +1,13 @@
 from fastapi import APIRouter, HTTPException, Depends
 from datetime import datetime, timezone
 import uuid
+import asyncio
+import logging
 
 from models.message import MessageCreate
-from dependencies import db, get_current_user
+from dependencies import db, get_current_user, notification_service, email_service
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/messages", tags=["messaging"])
 
@@ -37,7 +41,42 @@ async def send_message(
     }
     
     await db.messages.insert_one(message_doc)
-    
+
+    # Fire-and-forget: in-app + email notification to recipient
+    async def _notify():
+        try:
+            # In-app notification
+            await notification_service.notify_new_message(
+                to_user_id=message_data.to_user_id,
+                from_user_id=current_user["user_id"],
+            )
+            # Email notification (only if user opted in)
+            should_email = await notification_service.should_send_email(
+                message_data.to_user_id, "new_message"
+            )
+            if should_email:
+                recipient = await db.users.find_one(
+                    {"user_id": message_data.to_user_id}, {"_id": 0, "email": 1, "full_name": 1}
+                )
+                sender = await db.users.find_one(
+                    {"user_id": current_user["user_id"]}, {"_id": 0, "full_name": 1}
+                )
+                if recipient and recipient.get("email"):
+                    unsub_token = await notification_service.generate_unsubscribe_token(
+                        message_data.to_user_id, "new_message"
+                    )
+                    await email_service.send_message_notification_email(
+                        to=recipient["email"],
+                        recipient_name=recipient.get("full_name", ""),
+                        sender_name=sender.get("full_name", "") if sender else "",
+                        preview=message_data.content,
+                        unsubscribe_token=unsub_token,
+                    )
+        except Exception as exc:
+            logger.warning("Message notification error: %s", exc)
+
+    asyncio.create_task(_notify())
+
     return {"message": "Message sent", "message_id": message_id}
 
 

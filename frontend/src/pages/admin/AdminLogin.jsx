@@ -64,7 +64,9 @@ const AdminLogin = () => {
         navigate('/admin/dashboard', { state: { admin: response.data.admin } });
       }
     } catch (error) {
-      toast.error(error.response?.data?.detail || 'Login failed');
+      const detail = error?.response?.data?.detail;
+      const message = (Array.isArray(detail) ? detail[0]?.msg : detail) || error?.message || 'Login failed';
+      toast.error(message);
     } finally {
       setLoading(false);
     }
@@ -101,7 +103,9 @@ const AdminLogin = () => {
       toast.success('Password changed successfully!');
       navigate('/admin/dashboard', { state: { admin: adminData } });
     } catch (error) {
-      toast.error(error.response?.data?.detail || 'Failed to change password');
+      const detail = error?.response?.data?.detail;
+      const message = (Array.isArray(detail) ? detail[0]?.msg : detail) || error?.message || 'Failed to change password';
+      toast.error(message);
     } finally {
       setLoading(false);
     }

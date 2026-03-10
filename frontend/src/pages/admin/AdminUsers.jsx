@@ -119,7 +119,9 @@ const AdminUsers = () => {
       setConfirmModal({ open: false, type: '', user: null });
       fetchUsers();
     } catch (error) {
-      toast.error(error.response?.data?.detail || `Failed to ${type} user`);
+      const detail = error?.response?.data?.detail;
+      const message = (Array.isArray(detail) ? detail[0]?.msg : detail) || error?.message || `Failed to ${type} user`;
+      toast.error(message);
     } finally {
       setActionLoading(false);
     }
