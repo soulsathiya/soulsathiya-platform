@@ -14,7 +14,7 @@
     { "src": "/(.*)", "dest": "/index.html" }
   ],
   "env": {
-    "REACT_APP_BACKEND_URL": "@soulsathiya_backend_url",
+    "REACT_APP_BACKEND_URL": "https://soulsathiya-backend.onrender.com",
     "REACT_APP_ENV": "production"
   }
 }
