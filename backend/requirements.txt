@@ -54,10 +54,8 @@ ecdsa==0.19.1
 rsa==4.9.1
 oauthlib==3.3.1
 
-# --- Google AI / Generative AI (version ranges to avoid gRPC conflicts) ---
+# --- Google AI / Generative AI ---
 google-genai==1.63.0
-google-generativeai>=0.8.6,<1.0
-google-ai-generativelanguage>=0.6.15,<1.0
 google-api-python-client==2.190.0
 google-auth>=2.38.0,<3.0
 google-auth-httplib2==0.3.0
@@ -70,7 +68,7 @@ grpcio-status>=1.71.2,<2.0
 
 # --- Protobuf ---
 proto-plus>=1.27.1,<2.0
-protobuf>=5.29.6,<6.0
+protobuf>=6.30.0
 
 # --- OpenAI / LiteLLM ---
 openai==1.99.9
