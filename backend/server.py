@@ -5,7 +5,6 @@ from slowapi.util import get_remote_address
 from slowapi.errors import RateLimitExceeded
 from slowapi.middleware import SlowAPIMiddleware
 from contextlib import asynccontextmanager
-import os
 import asyncio
 import logging
 
@@ -148,17 +147,6 @@ app.include_router(notifications_router, prefix="/api")
 app.include_router(boosts_router, prefix="/api")
 # Admin router has its own /api/admin prefix built-in
 app.include_router(admin_router)
-
-# ---------------------------------------------------------------------------
-# CORS middleware
-# ---------------------------------------------------------------------------
-app.add_middleware(
-    CORSMiddleware,
-    allow_credentials=True,
-    allow_origins=os.environ.get('CORS_ORIGINS', 'http://localhost:3000,https://soulsathiya.vercel.app').split(','),
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
 
 # ---------------------------------------------------------------------------
 # Health check (required by Render deployment)

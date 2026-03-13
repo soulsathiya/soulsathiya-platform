@@ -23,6 +23,11 @@ services:
         sync: false
       - key: ADMIN_REQUIRE_PASSWORD_CHANGE
         value: "true"
+      # Required for cross-origin cookie support (SameSite=None; Secure=True).
+      # Without this, session cookies won't persist across domains and all
+      # authenticated API calls from the frontend will return 401.
+      - key: ENVIRONMENT
+        value: "production"
       # PRODUCTION: Set to a live key (rzp_live_...) in the Render dashboard.
       # Using a test key (rzp_test_...) causes Razorpay to show a "Test Mode"
       # banner in the payment widget, which is visible to end users.
