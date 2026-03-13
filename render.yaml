@@ -16,7 +16,7 @@ services:
       - key: DB_NAME
         value: soulsathiya
       - key: CORS_ORIGINS
-        value: "http://localhost:3000,https://soulsathiya.vercel.app"
+        value: "http://localhost:3000,https://soulsathiya.vercel.app,https://www.soulsathiya.com,https://soulsathiya.com"
       - key: ADMIN_EMAIL
         sync: false
       - key: ADMIN_PASSWORD
