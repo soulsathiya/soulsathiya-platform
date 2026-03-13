@@ -46,16 +46,16 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#FDFBF7] to-white px-4 py-12">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background to-card px-4 py-12">
       <div className="w-full max-w-md">
         {/* Logo */}
-        <div className="text-center mb-8">
+        <div className="text-center mb-6">
           <Link to="/" className="inline-flex items-center space-x-2">
-            <Heart className="w-10 h-10 text-primary fill-primary" />
-            <span className="text-3xl font-heading font-bold text-foreground">SoulSathiya</span>
+            <Heart className="w-7 h-7 text-primary fill-primary" />
+            <span className="text-xl font-heading font-bold text-foreground">SoulSathiya</span>
           </Link>
-          <h2 className="font-heading text-2xl mt-6 mb-2">Welcome Back</h2>
-          <p className="text-muted-foreground">Sign in to continue your journey</p>
+          <h2 className="font-heading text-xl mt-4 mb-1">Welcome Back</h2>
+          <p className="text-muted-foreground text-sm">Sign in to continue your journey</p>
         </div>
 
         {/* Login Form */}
@@ -123,7 +123,7 @@ const LoginPage = () => {
               <span className="w-full border-t" />
             </div>
             <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-white px-2 text-muted-foreground">Or continue with</span>
+              <span className="bg-card px-2 text-muted-foreground">Or continue with</span>
             </div>
           </div>
 

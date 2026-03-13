@@ -168,13 +168,13 @@ const LandingPage = () => {
             </div>
 
             {/* Right: Hero Image */}
-            <div className="relative">
+            <div className="relative" style={{ minHeight: '320px', aspectRatio: '4 / 3' }}>
               {/* Ambient glow behind image */}
               <div className="absolute inset-0 bg-gradient-to-br from-primary/25 to-secondary/15 rounded-3xl blur-2xl scale-95 opacity-70" />
               <img
                 src="/hero-mandala.jpg"
                 alt="Couple before golden mandala — SoulSathiya"
-                className="relative rounded-3xl shadow-2xl shadow-primary/20 w-full h-auto object-cover border border-primary/15"
+                className="relative rounded-3xl shadow-2xl shadow-primary/20 w-full h-full object-cover border border-primary/15"
                 loading="eager"
               />
               {/* Floating compatibility badge */}

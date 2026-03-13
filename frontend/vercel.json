@@ -11,6 +11,11 @@
     },
     { "src": "/favicon.ico", "dest": "/favicon.ico" },
     { "src": "/manifest.json", "dest": "/manifest.json" },
+    { "src": "/robots.txt", "dest": "/robots.txt" },
+    {
+      "src": "/(.+\\.(png|jpg|jpeg|svg|webp|gif|ico|woff|woff2|ttf|eot))",
+      "dest": "/$1"
+    },
     { "src": "/(.*)", "dest": "/index.html" }
   ],
   "env": {
