@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Link, useSearchParams, useNavigate } from 'react-router-dom';
-import { Heart, Mail, CheckCircle2, XCircle, Loader2, RefreshCw } from 'lucide-react';
+import { Mail, CheckCircle2, XCircle, Loader2, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import axios from 'axios';
@@ -105,8 +105,8 @@ const VerifyEmailPage = () => {
   const Logo = () => (
     <div className="text-center mb-8">
       <Link to="/" className="inline-flex items-center space-x-2">
-        <Heart className="w-10 h-10 text-primary fill-primary" />
-        <span className="text-3xl font-heading font-bold text-foreground">SoulSathiya</span>
+        <img src="/logo.png" alt="SoulSathiya" className="w-9 h-9 object-contain" draggable={false} />
+        <span className="text-3xl font-heading font-bold text-foreground">Soul<span className="text-primary">Sathiya</span></span>
       </Link>
     </div>
   );
@@ -114,7 +114,7 @@ const VerifyEmailPage = () => {
   // --- Verifying ---
   if (status === 'verifying') {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#FDFBF7] to-white px-4">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background to-card px-4">
         <div className="w-full max-w-md text-center">
           <Logo />
           <div className="card-surface p-10 space-y-6">
@@ -130,12 +130,12 @@ const VerifyEmailPage = () => {
   // --- Success ---
   if (status === 'success') {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#FDFBF7] to-white px-4">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background to-card px-4">
         <div className="w-full max-w-md text-center">
           <Logo />
           <div className="card-surface p-10 space-y-6">
             <CheckCircle2 className="w-16 h-16 text-green-500 mx-auto" />
-            <h2 className="font-heading text-2xl text-green-700">Email Verified!</h2>
+            <h2 className="font-heading text-2xl text-green-400">Email Verified!</h2>
             <p className="text-muted-foreground leading-relaxed">
               Your email has been confirmed. You now have full access to SoulSathiya.
               Redirecting you to your dashboard…
@@ -152,7 +152,7 @@ const VerifyEmailPage = () => {
   // --- Error (invalid / expired token) ---
   if (status === 'error') {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#FDFBF7] to-white px-4">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background to-card px-4">
         <div className="w-full max-w-md text-center">
           <Logo />
           <div className="card-surface p-10 space-y-6">
@@ -186,7 +186,7 @@ const VerifyEmailPage = () => {
 
   // --- Default: no token in URL — "check your inbox" state ---
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#FDFBF7] to-white px-4">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background to-card px-4">
       <div className="w-full max-w-md">
         <Logo />
         <div className="card-surface p-10 space-y-6 text-center">

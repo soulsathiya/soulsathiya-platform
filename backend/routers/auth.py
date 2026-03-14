@@ -78,6 +78,10 @@ async def register(request: Request, user_data: UserCreate):
             "full_name": user["full_name"],
             "picture": user.get("picture"),
             "is_email_verified": user.get("is_email_verified", False),
+            "is_profile_complete": user.get("is_profile_complete", False),
+            "is_verified": user.get("is_verified", False),
+            "subscription_status": user.get("subscription_status", "free"),
+            "subscription_tier": user.get("subscription_tier"),
         },
     })
     response.set_cookie(

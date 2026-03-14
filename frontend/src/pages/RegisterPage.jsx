@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Heart, Mail, Lock, User, Loader2 } from 'lucide-react';
+import { Mail, Lock, User, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -22,6 +22,12 @@ const RegisterPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    const trimmedName = formData.full_name.trim();
+    if (!trimmedName) {
+      toast.error('Full name is required');
+      return;
+    }
+
     if (formData.password !== formData.confirmPassword) {
       toast.error('Passwords do not match');
       return;
@@ -38,7 +44,7 @@ const RegisterPage = () => {
       const response = await axios.post(
         `${BACKEND_URL}/api/auth/register`,
         {
-          full_name: formData.full_name,
+          full_name: trimmedName,
           email: formData.email,
           password: formData.password
         },
@@ -69,8 +75,8 @@ const RegisterPage = () => {
         {/* Logo */}
         <div className="text-center mb-6">
           <Link to="/" className="inline-flex items-center space-x-2">
-            <Heart className="w-7 h-7 text-primary fill-primary" />
-            <span className="text-xl font-heading font-bold text-foreground">SoulSathiya</span>
+            <img src="/logo.png" alt="SoulSathiya" className="w-7 h-7 object-contain" draggable={false} />
+            <span className="text-xl font-heading font-bold text-foreground">Soul<span className="text-primary">Sathiya</span></span>
           </Link>
           <h2 className="font-heading text-xl mt-4 mb-1">Create Your Account</h2>
           <p className="text-muted-foreground text-sm">Start your journey to find your soulmate</p>
