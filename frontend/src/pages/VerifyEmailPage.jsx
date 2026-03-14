@@ -160,6 +160,12 @@ const VerifyEmailPage = () => {
             <h2 className="font-heading text-2xl">Verification Failed</h2>
             <p className="text-muted-foreground leading-relaxed">{errorMessage}</p>
 
+            {/* Hint: link may have already been used */}
+            <div className="bg-muted/40 border border-border rounded-lg px-4 py-3 text-sm text-muted-foreground text-left space-y-1">
+              <p>💡 If you already verified your email, just <Link to="/login" className="text-primary hover:underline font-medium">sign in</Link> — no need to re-verify.</p>
+              <p>🔄 Otherwise, request a fresh link below.</p>
+            </div>
+
             <div className="space-y-3 pt-2">
               <Button
                 className="w-full"
@@ -171,7 +177,7 @@ const VerifyEmailPage = () => {
                 ) : resendCooldown > 0 ? (
                   `Resend in ${resendCooldown}s`
                 ) : (
-                  <><RefreshCw className="w-4 h-4 mr-2" /> Resend Verification Email</>
+                  <><RefreshCw className="w-4 h-4 mr-2" /> Send New Verification Email</>
                 )}
               </Button>
               <Button variant="outline" className="w-full" asChild>

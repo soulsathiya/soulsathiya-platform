@@ -67,7 +67,7 @@ class EmailService:
 <body style="margin:0;padding:0;background:#FDFBF7;font-family:Arial,Helvetica,sans-serif;">
   <div style="max-width:600px;margin:40px auto;background:#ffffff;border-radius:16px;overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,0.10);">
     <!-- Header -->
-    <div style="background:linear-gradient(135deg,#E8796A 0%,#c0555a 100%);padding:36px 32px;text-align:center;">
+    <div style="background:linear-gradient(135deg,#D4A520 0%,#B8881A 100%);padding:36px 32px;text-align:center;">
       <div style="font-size:32px;margin-bottom:8px;">💑</div>
       <h1 style="color:#ffffff;margin:0;font-size:28px;font-weight:700;letter-spacing:-0.5px;">SoulSathiya</h1>
       <p style="color:rgba(255,255,255,0.85);margin:6px 0 0;font-size:14px;">Find Your Soulmate</p>
@@ -81,13 +81,13 @@ class EmailService:
       </p>
       <div style="text-align:center;margin:32px 0;">
         <a href="{verify_url}"
-           style="display:inline-block;background:linear-gradient(135deg,#E8796A 0%,#c0555a 100%);
+           style="display:inline-block;background:linear-gradient(135deg,#D4A520 0%,#B8881A 100%);
                   color:#ffffff;padding:15px 40px;border-radius:10px;text-decoration:none;
-                  font-weight:700;font-size:16px;letter-spacing:0.3px;box-shadow:0 4px 12px rgba(232,121,106,0.35);">
+                  font-weight:700;font-size:16px;letter-spacing:0.3px;box-shadow:0 4px 12px rgba(212,165,32,0.35);">
           ✉️ Verify My Email
         </a>
       </div>
-      <div style="background:#FFF8F7;border:1px solid #FCE4E1;border-radius:8px;padding:16px 20px;margin:24px 0 0;">
+      <div style="background:#FBF6E9;border:1px solid #EDD98A;border-radius:8px;padding:16px 20px;margin:24px 0 0;">
         <p style="color:#888888;font-size:13px;margin:0 0 8px;">⏱ This link expires in <strong>24 hours</strong>.</p>
         <p style="color:#888888;font-size:13px;margin:0;">
           If you didn't create a SoulSathiya account, you can safely ignore this email.
@@ -99,7 +99,7 @@ class EmailService:
     </div>
     <!-- Footer -->
     <div style="background:#f9f9f9;padding:20px 32px;text-align:center;border-top:1px solid #eeeeee;">
-      <p style="color:#aaaaaa;font-size:12px;margin:0;">© 2024 SoulSathiya. All rights reserved.</p>
+      <p style="color:#aaaaaa;font-size:12px;margin:0;">© 2026 SoulSathiya. All rights reserved.</p>
     </div>
   </div>
 </body>
@@ -121,7 +121,7 @@ class EmailService:
 <body style="margin:0;padding:0;background:#FDFBF7;font-family:Arial,Helvetica,sans-serif;">
   <div style="max-width:600px;margin:40px auto;background:#ffffff;border-radius:16px;overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,0.10);">
     <!-- Header -->
-    <div style="background:linear-gradient(135deg,#E8796A 0%,#c0555a 100%);padding:36px 32px;text-align:center;">
+    <div style="background:linear-gradient(135deg,#D4A520 0%,#B8881A 100%);padding:36px 32px;text-align:center;">
       <div style="font-size:32px;margin-bottom:8px;">🔐</div>
       <h1 style="color:#ffffff;margin:0;font-size:28px;font-weight:700;letter-spacing:-0.5px;">SoulSathiya</h1>
       <p style="color:rgba(255,255,255,0.85);margin:6px 0 0;font-size:14px;">Password Reset</p>
@@ -135,13 +135,13 @@ class EmailService:
       </p>
       <div style="text-align:center;margin:32px 0;">
         <a href="{reset_url}"
-           style="display:inline-block;background:linear-gradient(135deg,#E8796A 0%,#c0555a 100%);
+           style="display:inline-block;background:linear-gradient(135deg,#D4A520 0%,#B8881A 100%);
                   color:#ffffff;padding:15px 40px;border-radius:10px;text-decoration:none;
-                  font-weight:700;font-size:16px;letter-spacing:0.3px;box-shadow:0 4px 12px rgba(232,121,106,0.35);">
+                  font-weight:700;font-size:16px;letter-spacing:0.3px;box-shadow:0 4px 12px rgba(212,165,32,0.35);">
           🔑 Reset My Password
         </a>
       </div>
-      <div style="background:#FFF8F7;border:1px solid #FCE4E1;border-radius:8px;padding:16px 20px;margin:24px 0 0;">
+      <div style="background:#FBF6E9;border:1px solid #EDD98A;border-radius:8px;padding:16px 20px;margin:24px 0 0;">
         <p style="color:#888888;font-size:13px;margin:0 0 8px;">⏱ This link expires in <strong>1 hour</strong>.</p>
         <p style="color:#888888;font-size:13px;margin:0;">
           If you didn't request a password reset, you can safely ignore this email — your password will remain unchanged.
@@ -153,7 +153,7 @@ class EmailService:
     </div>
     <!-- Footer -->
     <div style="background:#f9f9f9;padding:20px 32px;text-align:center;border-top:1px solid #eeeeee;">
-      <p style="color:#aaaaaa;font-size:12px;margin:0;">© 2024 SoulSathiya. All rights reserved.</p>
+      <p style="color:#aaaaaa;font-size:12px;margin:0;">© 2026 SoulSathiya. All rights reserved.</p>
     </div>
   </div>
 </body>
@@ -178,7 +178,7 @@ class EmailService:
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
 <body style="margin:0;padding:0;background:#FDFBF7;font-family:Arial,Helvetica,sans-serif;">
   <div style="max-width:600px;margin:40px auto;background:#ffffff;border-radius:16px;overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,0.10);">
-    <div style="background:linear-gradient(135deg,#E8796A 0%,#c0555a 100%);padding:36px 32px;text-align:center;">
+    <div style="background:linear-gradient(135deg,#D4A520 0%,#B8881A 100%);padding:36px 32px;text-align:center;">
       <div style="font-size:32px;margin-bottom:8px;">💌</div>
       <h1 style="color:#ffffff;margin:0;font-size:28px;font-weight:700;">SoulSathiya</h1>
       <p style="color:rgba(255,255,255,0.85);margin:6px 0 0;font-size:14px;">You have a new interest!</p>
@@ -191,15 +191,15 @@ class EmailService:
       </p>
       <div style="text-align:center;margin:32px 0;">
         <a href="{interests_url}"
-           style="display:inline-block;background:linear-gradient(135deg,#E8796A 0%,#c0555a 100%);
+           style="display:inline-block;background:linear-gradient(135deg,#D4A520 0%,#B8881A 100%);
                   color:#ffffff;padding:15px 40px;border-radius:10px;text-decoration:none;
-                  font-weight:700;font-size:16px;box-shadow:0 4px 12px rgba(232,121,106,0.35);">
+                  font-weight:700;font-size:16px;box-shadow:0 4px 12px rgba(212,165,32,0.35);">
           💑 View Interest
         </a>
       </div>
     </div>
     <div style="background:#f9f9f9;padding:16px 32px;text-align:center;border-top:1px solid #eeeeee;">
-      <p style="color:#aaaaaa;font-size:12px;margin:0;">© 2024 SoulSathiya. All rights reserved.</p>
+      <p style="color:#aaaaaa;font-size:12px;margin:0;">© 2026 SoulSathiya. All rights reserved.</p>
       {f'<p style="color:#aaaaaa;font-size:11px;margin:4px 0 0;"><a href="{unsub_url}" style="color:#aaaaaa;">Unsubscribe</a></p>' if unsub_url else ''}
     </div>
   </div>
@@ -226,7 +226,7 @@ class EmailService:
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
 <body style="margin:0;padding:0;background:#FDFBF7;font-family:Arial,Helvetica,sans-serif;">
   <div style="max-width:600px;margin:40px auto;background:#ffffff;border-radius:16px;overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,0.10);">
-    <div style="background:linear-gradient(135deg,#E8796A 0%,#c0555a 100%);padding:36px 32px;text-align:center;">
+    <div style="background:linear-gradient(135deg,#D4A520 0%,#B8881A 100%);padding:36px 32px;text-align:center;">
       <div style="font-size:32px;margin-bottom:8px;">💬</div>
       <h1 style="color:#ffffff;margin:0;font-size:28px;font-weight:700;">SoulSathiya</h1>
       <p style="color:rgba(255,255,255,0.85);margin:6px 0 0;font-size:14px;">New message from {sender_first}</p>
@@ -236,18 +236,18 @@ class EmailService:
       <p style="color:#555555;line-height:1.7;margin:0 0 16px;font-size:15px;">
         <strong>{sender_first}</strong> sent you a message on SoulSathiya.
       </p>
-      {f'<div style="background:#FFF8F7;border-left:4px solid #E8796A;padding:12px 16px;border-radius:4px;margin:0 0 24px;color:#444;font-size:14px;font-style:italic;">{safe_preview}</div>' if safe_preview else ''}
+      {f'<div style="background:#FFF8F7;border-left:4px solid #D4A520;padding:12px 16px;border-radius:4px;margin:0 0 24px;color:#444;font-size:14px;font-style:italic;">{safe_preview}</div>' if safe_preview else ''}
       <div style="text-align:center;margin:24px 0;">
         <a href="{messages_url}"
-           style="display:inline-block;background:linear-gradient(135deg,#E8796A 0%,#c0555a 100%);
+           style="display:inline-block;background:linear-gradient(135deg,#D4A520 0%,#B8881A 100%);
                   color:#ffffff;padding:15px 40px;border-radius:10px;text-decoration:none;
-                  font-weight:700;font-size:16px;box-shadow:0 4px 12px rgba(232,121,106,0.35);">
+                  font-weight:700;font-size:16px;box-shadow:0 4px 12px rgba(212,165,32,0.35);">
           💬 Reply Now
         </a>
       </div>
     </div>
     <div style="background:#f9f9f9;padding:16px 32px;text-align:center;border-top:1px solid #eeeeee;">
-      <p style="color:#aaaaaa;font-size:12px;margin:0;">© 2024 SoulSathiya. All rights reserved.</p>
+      <p style="color:#aaaaaa;font-size:12px;margin:0;">© 2026 SoulSathiya. All rights reserved.</p>
       {f'<p style="color:#aaaaaa;font-size:11px;margin:4px 0 0;"><a href="{unsub_url}" style="color:#aaaaaa;">Unsubscribe</a></p>' if unsub_url else ''}
     </div>
   </div>
@@ -272,7 +272,7 @@ class EmailService:
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
 <body style="margin:0;padding:0;background:#FDFBF7;font-family:Arial,Helvetica,sans-serif;">
   <div style="max-width:600px;margin:40px auto;background:#ffffff;border-radius:16px;overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,0.10);">
-    <div style="background:linear-gradient(135deg,#E8796A 0%,#c0555a 100%);padding:36px 32px;text-align:center;">
+    <div style="background:linear-gradient(135deg,#D4A520 0%,#B8881A 100%);padding:36px 32px;text-align:center;">
       <div style="font-size:32px;margin-bottom:8px;">📊</div>
       <h1 style="color:#ffffff;margin:0;font-size:28px;font-weight:700;">SoulSathiya</h1>
       <p style="color:rgba(255,255,255,0.85);margin:6px 0 0;font-size:14px;">Your Weekly Summary</p>
@@ -283,30 +283,30 @@ class EmailService:
         Here's a summary of your activity on SoulSathiya this week.
       </p>
       <div style="display:flex;gap:16px;justify-content:center;margin:0 0 32px;flex-wrap:wrap;">
-        <div style="background:#FFF8F7;border:1px solid #FCE4E1;border-radius:12px;padding:20px 24px;text-align:center;min-width:120px;">
-          <div style="font-size:28px;font-weight:700;color:#E8796A;">{new_matches}</div>
+        <div style="background:#FBF6E9;border:1px solid #EDD98A;border-radius:12px;padding:20px 24px;text-align:center;min-width:120px;">
+          <div style="font-size:28px;font-weight:700;color:#D4A520;">{new_matches}</div>
           <div style="color:#888;font-size:13px;margin-top:4px;">New Matches</div>
         </div>
-        <div style="background:#FFF8F7;border:1px solid #FCE4E1;border-radius:12px;padding:20px 24px;text-align:center;min-width:120px;">
-          <div style="font-size:28px;font-weight:700;color:#E8796A;">{unread_messages}</div>
+        <div style="background:#FBF6E9;border:1px solid #EDD98A;border-radius:12px;padding:20px 24px;text-align:center;min-width:120px;">
+          <div style="font-size:28px;font-weight:700;color:#D4A520;">{unread_messages}</div>
           <div style="color:#888;font-size:13px;margin-top:4px;">Unread Messages</div>
         </div>
-        <div style="background:#FFF8F7;border:1px solid #FCE4E1;border-radius:12px;padding:20px 24px;text-align:center;min-width:120px;">
-          <div style="font-size:28px;font-weight:700;color:#E8796A;">{pending_interests}</div>
+        <div style="background:#FBF6E9;border:1px solid #EDD98A;border-radius:12px;padding:20px 24px;text-align:center;min-width:120px;">
+          <div style="font-size:28px;font-weight:700;color:#D4A520;">{pending_interests}</div>
           <div style="color:#888;font-size:13px;margin-top:4px;">Pending Interests</div>
         </div>
       </div>
       <div style="text-align:center;">
         <a href="{dashboard_url}"
-           style="display:inline-block;background:linear-gradient(135deg,#E8796A 0%,#c0555a 100%);
+           style="display:inline-block;background:linear-gradient(135deg,#D4A520 0%,#B8881A 100%);
                   color:#ffffff;padding:15px 40px;border-radius:10px;text-decoration:none;
-                  font-weight:700;font-size:16px;box-shadow:0 4px 12px rgba(232,121,106,0.35);">
+                  font-weight:700;font-size:16px;box-shadow:0 4px 12px rgba(212,165,32,0.35);">
           🏠 Go to Dashboard
         </a>
       </div>
     </div>
     <div style="background:#f9f9f9;padding:16px 32px;text-align:center;border-top:1px solid #eeeeee;">
-      <p style="color:#aaaaaa;font-size:12px;margin:0;">© 2024 SoulSathiya. All rights reserved.</p>
+      <p style="color:#aaaaaa;font-size:12px;margin:0;">© 2026 SoulSathiya. All rights reserved.</p>
       {f'<p style="color:#aaaaaa;font-size:11px;margin:4px 0 0;"><a href="{unsub_url}" style="color:#aaaaaa;">Unsubscribe from digest</a></p>' if unsub_url else ''}
     </div>
   </div>
