@@ -3,11 +3,12 @@ from fastapi.responses import JSONResponse
 from datetime import datetime, timezone
 from typing import Optional
 import os
+import asyncio
 import boto3
 from botocore.exceptions import ClientError
 import logging
 
-from dependencies import db, get_current_user, auth_service
+from dependencies import db, get_current_user, auth_service, email_service
 from models.user import DELETED_ACCOUNT_ERROR
 
 logger = logging.getLogger(__name__)
@@ -86,7 +87,21 @@ async def delete_account(
     logger.info("Account soft-deleted for user %s", user_id)
 
     # ------------------------------------------------------------------
-    # 4. Clear session cookie and respond
+    # 4. Send deletion confirmation email (fire-and-forget)
+    # ------------------------------------------------------------------
+    async def _send_deletion_email():
+        try:
+            await email_service.send_account_deletion_email(
+                to=current_user["email"],
+                name=current_user.get("full_name", ""),
+            )
+        except Exception as exc:
+            logger.warning("Account deletion email failed for %s: %s", user_id, exc)
+
+    asyncio.create_task(_send_deletion_email())
+
+    # ------------------------------------------------------------------
+    # 5. Clear session cookie and respond
     # ------------------------------------------------------------------
     response = JSONResponse(
         content={"message": "Your account has been successfully deleted."}

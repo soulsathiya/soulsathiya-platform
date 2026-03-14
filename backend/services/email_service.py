@@ -313,3 +313,48 @@ class EmailService:
 </body>
 </html>"""
         return await self._send(to, "Your weekly SoulSathiya summary", html)
+
+    # ------------------------------------------------------------------
+    # Account deletion confirmation
+    # ------------------------------------------------------------------
+    async def send_account_deletion_email(self, to: str, name: str) -> bool:
+        """Send a confirmation email when a user deletes their account."""
+        first_name = name.split()[0] if name else "there"
+        html = f"""<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
+<body style="margin:0;padding:0;background:#FDFBF7;font-family:Arial,Helvetica,sans-serif;">
+  <div style="max-width:600px;margin:40px auto;background:#ffffff;border-radius:16px;overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,0.10);">
+    <!-- Header -->
+    <div style="background:linear-gradient(135deg,#D4A520 0%,#B8881A 100%);padding:36px 32px;text-align:center;">
+      <div style="font-size:32px;margin-bottom:8px;">💑</div>
+      <h1 style="color:#ffffff;margin:0;font-size:28px;font-weight:700;letter-spacing:-0.5px;">SoulSathiya</h1>
+      <p style="color:rgba(255,255,255,0.85);margin:6px 0 0;font-size:14px;">Account Deleted</p>
+    </div>
+    <!-- Body -->
+    <div style="padding:40px 32px;">
+      <h2 style="color:#1a1a1a;margin:0 0 12px;font-size:22px;">Goodbye, {first_name} 👋</h2>
+      <p style="color:#555555;line-height:1.7;margin:0 0 16px;font-size:15px;">
+        Your SoulSathiya account has been successfully deleted. Your profile is no longer visible to other members and your login has been disabled.
+      </p>
+      <p style="color:#555555;line-height:1.7;margin:0 0 28px;font-size:15px;">
+        We're sorry to see you go. If this was a mistake or you'd like to return, please contact our support team and we'll be happy to help restore your account.
+      </p>
+      <div style="background:#FBF6E9;border:1px solid #EDD98A;border-radius:8px;padding:16px 20px;margin:0 0 24px;">
+        <p style="color:#888888;font-size:13px;margin:0;">
+          📧 Need help? Contact us at
+          <a href="mailto:support@soulsathiya.com" style="color:#D4A520;text-decoration:none;">support@soulsathiya.com</a>
+        </p>
+      </div>
+      <p style="color:#aaaaaa;font-size:13px;margin:0;line-height:1.6;">
+        Thank you for being part of the SoulSathiya community. We wish you all the best in your journey.
+      </p>
+    </div>
+    <!-- Footer -->
+    <div style="background:#f9f9f9;padding:20px 32px;text-align:center;border-top:1px solid #eeeeee;">
+      <p style="color:#aaaaaa;font-size:12px;margin:0;">© 2026 SoulSathiya. All rights reserved.</p>
+    </div>
+  </div>
+</body>
+</html>"""
+        return await self._send(to, "Your SoulSathiya account has been deleted", html)
