@@ -252,7 +252,7 @@ const ProfileViewPage = () => {
                       </button>
                     </div>
                   )}
-                  {photo.is_primary && <div className="absolute bottom-2 left-2"><Badge className="text-xs bg-primary text-white">Primary</Badge></div>}
+                  {photo.is_primary && <div className="absolute bottom-2 left-2"><Badge className="text-xs bg-primary text-primary-foreground">Primary</Badge></div>}
                   {photo.is_hidden && isOwnProfile && <div className="absolute top-2 right-2"><Badge variant="secondary" className="text-xs"><Lock className="w-3 h-3" /></Badge></div>}
                 </div>
               ))}

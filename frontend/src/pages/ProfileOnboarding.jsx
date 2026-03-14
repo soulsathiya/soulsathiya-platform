@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import {
-  Heart, User, Settings2, BookOpen, Brain, ClipboardCheck,
+  User, Settings2, BookOpen, Brain, ClipboardCheck,
   ChevronRight, ChevronLeft, Loader2, Check
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -687,13 +687,13 @@ const ProfileOnboarding = () => {
   if (!user) return null;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#FDFBF7] to-white px-4 py-10">
+    <div className="min-h-screen bg-gradient-to-br from-background to-card px-4 py-10">
       <div className="container mx-auto max-w-2xl">
         {/* Header */}
         <div className="text-center mb-8">
           <div className="flex items-center justify-center space-x-2 mb-3">
-            <Heart className="w-8 h-8 text-primary fill-primary" />
-            <span className="text-2xl font-heading font-bold">SoulSathiya</span>
+            <img src="/logo.png" alt="SoulSathiya" className="w-8 h-8 object-contain" draggable={false} />
+            <span className="text-2xl font-heading font-bold">Soul<span className="text-primary">Sathiya</span></span>
           </div>
           <h1 className="font-heading text-2xl">Complete Your Profile</h1>
           <p className="text-sm text-muted-foreground mt-1">
