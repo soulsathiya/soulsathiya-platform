@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import { Heart, ShieldCheck, MapPin, Briefcase, GraduationCap, ArrowLeft, Upload, X, Lock, Loader2, UserPlus, MessageCircle, Star, Camera } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -26,6 +26,7 @@ const ProfileViewPage = () => {
   const [loading, setLoading] = useState(true);
   const [interestSent, setInterestSent] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const fileInputRef = useRef(null);
   const isOwnProfile = !userId || userId === currentUser?.user_id;
   const targetUserId = userId || currentUser?.user_id;
 
@@ -114,7 +115,7 @@ const ProfileViewPage = () => {
   const age = calcAge(profileData?.date_of_birth);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#FDFBF7] to-white">
+    <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="glass-card border-b sticky top-0 z-50">
         <div className="container mx-auto px-6 py-4 flex items-center justify-between">
@@ -132,7 +133,7 @@ const ProfileViewPage = () => {
 
       <main className="container mx-auto px-6 py-10 max-w-4xl">
         {/* Profile Header */}
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-8 mb-6">
+        <div className="card-surface p-8 mb-6">
           <div className="flex flex-col md:flex-row items-start gap-6">
             <Avatar className="w-24 h-24 flex-shrink-0">
               <AvatarImage src={user?.picture || photos.find(p => p.is_primary)?.s3_url} />
@@ -178,7 +179,7 @@ const ProfileViewPage = () => {
 
         {/* Details */}
         {profileData && (
-          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-8 mb-6">
+          <div className="card-surface p-8 mb-6">
             <h2 className="font-heading text-xl mb-4">About</h2>
             <div className="grid md:grid-cols-2 gap-4">
               {[
@@ -197,17 +198,17 @@ const ProfileViewPage = () => {
         )}
 
         {/* Photos */}
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-8">
+        <div className="card-surface p-8">
           <div className="flex items-center justify-between mb-4">
             <h2 className="font-heading text-xl">Photos</h2>
             {isOwnProfile && photos.length < 6 && (
-              <label className="cursor-pointer">
-                <input type="file" accept="image/*" className="hidden" onChange={handlePhotoUpload} />
-                <Button variant="outline" size="sm" disabled={uploading} data-testid="upload-photo-btn">
+              <>
+                <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handlePhotoUpload} />
+                <Button variant="outline" size="sm" disabled={uploading} onClick={() => fileInputRef.current?.click()} data-testid="upload-photo-btn">
                   {uploading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Camera className="w-4 h-4 mr-2" />}
                   {uploading ? 'Uploading...' : 'Add Photo'}
                 </Button>
-              </label>
+              </>
             )}
           </div>
           {photos.length === 0 ? (
@@ -218,10 +219,10 @@ const ProfileViewPage = () => {
           ) : (
             <div className="grid grid-cols-3 gap-3">
               {photos.map((photo) => (
-                <div key={photo.photo_id} className="relative group aspect-square rounded-xl overflow-hidden bg-gray-100">
+                <div key={photo.photo_id} className="relative group aspect-square rounded-xl overflow-hidden bg-card">
                   {photo.is_hidden && !isOwnProfile ? (
-                    <div className="w-full h-full flex items-center justify-center bg-gray-200">
-                      <Lock className="w-8 h-8 text-gray-400" />
+                    <div className="w-full h-full flex items-center justify-center bg-muted">
+                      <Lock className="w-8 h-8 text-muted-foreground" />
                     </div>
                   ) : (
                     <img src={photo.s3_url} alt="Profile" className="w-full h-full object-cover" />
