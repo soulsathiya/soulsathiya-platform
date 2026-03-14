@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Bell, Heart, Check, X } from 'lucide-react';
+import { Bell, Heart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import axios from 'axios';
@@ -111,7 +111,7 @@ const NotificationBell = () => {
       case 'deep_report_ready':
         return <Heart className="w-4 h-4 text-pink-500" />;
       default:
-        return <Bell className="w-4 h-4 text-blue-500" />;
+        return <Bell className="w-4 h-4 text-primary" />;
     }
   };
 
@@ -130,10 +130,10 @@ const NotificationBell = () => {
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={handleToggle}
-        className="relative p-2 rounded-full hover:bg-gray-100 transition-colors"
+        className="relative p-2 rounded-full hover:bg-muted transition-colors"
         data-testid="notification-bell"
       >
-        <Bell className="w-5 h-5 text-gray-600" />
+        <Bell className="w-5 h-5 text-muted-foreground" />
         {unreadCount > 0 && (
           <span className="absolute -top-0.5 -right-0.5 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">
             {unreadCount > 9 ? '9+' : unreadCount}
@@ -142,13 +142,13 @@ const NotificationBell = () => {
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-80 bg-white rounded-xl shadow-xl border border-gray-200 overflow-hidden z-50">
-          <div className="p-3 border-b border-gray-100 flex items-center justify-between">
-            <h3 className="font-semibold text-gray-900">Notifications</h3>
+        <div className="absolute right-0 mt-2 w-80 bg-card rounded-xl shadow-xl border border-border overflow-hidden z-50">
+          <div className="p-3 border-b border-border flex items-center justify-between">
+            <h3 className="font-semibold text-foreground">Notifications</h3>
             {unreadCount > 0 && (
               <button
                 onClick={markAllAsRead}
-                className="text-sm text-blue-600 hover:text-blue-700"
+                className="text-sm text-primary hover:text-primary/80"
               >
                 Mark all read
               </button>
@@ -157,9 +157,9 @@ const NotificationBell = () => {
 
           <div className="max-h-96 overflow-y-auto">
             {loading ? (
-              <div className="p-4 text-center text-gray-500">Loading...</div>
+              <div className="p-4 text-center text-muted-foreground">Loading...</div>
             ) : notifications.length === 0 ? (
-              <div className="p-8 text-center text-gray-500">
+              <div className="p-8 text-center text-muted-foreground">
                 <Bell className="w-8 h-8 mx-auto mb-2 opacity-50" />
                 <p>No notifications yet</p>
               </div>
@@ -168,8 +168,8 @@ const NotificationBell = () => {
                 <div
                   key={notification.notification_id}
                   onClick={() => handleNotificationClick(notification)}
-                  className={`p-3 border-b border-gray-50 cursor-pointer hover:bg-gray-50 transition-colors ${
-                    !notification.is_read ? 'bg-blue-50/50' : ''
+                  className={`p-3 border-b border-border/40 cursor-pointer hover:bg-muted/50 transition-colors ${
+                    !notification.is_read ? 'bg-primary/5' : ''
                   }`}
                   data-testid={`notification-${notification.notification_id}`}
                 >
@@ -178,15 +178,15 @@ const NotificationBell = () => {
                       {getNotificationIcon(notification.type)}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className={`text-sm ${!notification.is_read ? 'font-medium text-gray-900' : 'text-gray-700'}`}>
+                      <p className={`text-sm ${!notification.is_read ? 'font-medium text-foreground' : 'text-muted-foreground'}`}>
                         {notification.message}
                       </p>
-                      <p className="text-xs text-gray-500 mt-1">
+                      <p className="text-xs text-muted-foreground mt-1">
                         {formatTime(notification.created_at)}
                       </p>
                     </div>
                     {!notification.is_read && (
-                      <div className="w-2 h-2 bg-blue-500 rounded-full flex-shrink-0 mt-2"></div>
+                      <div className="w-2 h-2 bg-primary rounded-full flex-shrink-0 mt-2"></div>
                     )}
                   </div>
                 </div>

@@ -104,7 +104,7 @@ const NotificationPreferencesPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#FDFBF7] to-white px-4 py-10">
+    <div className="min-h-screen bg-gradient-to-br from-background to-card px-4 py-10">
       <div className="container mx-auto max-w-lg">
         {/* Header */}
         <div className="flex items-center gap-3 mb-8">

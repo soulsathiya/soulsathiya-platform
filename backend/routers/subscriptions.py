@@ -1,4 +1,5 @@
 from fastapi import APIRouter, HTTPException, Depends
+from pydantic import BaseModel
 from datetime import datetime, timezone
 from typing import Optional, List, Dict
 import uuid
@@ -69,6 +70,95 @@ async def get_subscription_plans():
     ]
     
     return {"plans": plans}
+
+
+# ==================== SUBSCRIPTION PAYMENT ROUTES ====================
+
+class SubscriptionOrderRequest(BaseModel):
+    tier: str
+
+class SubscriptionVerifyRequest(BaseModel):
+    razorpay_payment_id: str
+    razorpay_order_id: str
+    razorpay_signature: str
+    tier: str
+
+
+@router.post("/subscription/create-order")
+async def create_subscription_order(
+    body: SubscriptionOrderRequest,
+    current_user: dict = Depends(get_current_user)
+):
+    """Create a Razorpay order for a subscription purchase"""
+    TIER_PRICES = {"basic": 99900, "premium": 199900, "elite": 499900}  # paise
+    if body.tier not in TIER_PRICES:
+        raise HTTPException(status_code=400, detail="Invalid subscription tier")
+
+    razorpay_key_id = os.environ.get("RAZORPAY_KEY_ID")
+    razorpay_key_secret = os.environ.get("RAZORPAY_KEY_SECRET")
+    if not razorpay_key_id or not razorpay_key_secret:
+        raise HTTPException(status_code=500, detail="Payment gateway not configured")
+
+    try:
+        client = razorpay.Client(auth=(razorpay_key_id, razorpay_key_secret))
+        rzp_order = client.order.create({
+            "amount": TIER_PRICES[body.tier],
+            "currency": "INR",
+            "receipt": f"sub_{current_user['user_id']}_{body.tier}_{uuid.uuid4().hex[:8]}",
+            "notes": {"user_id": current_user["user_id"], "tier": body.tier}
+        })
+    except Exception as e:
+        logger.error(f"Razorpay order creation failed: {e}")
+        raise HTTPException(status_code=500, detail="Failed to create payment order")
+
+    return {
+        "order": {
+            "razorpay_key_id": razorpay_key_id,
+            "razorpay_order_id": rzp_order["id"],
+            "amount": TIER_PRICES[body.tier],
+            "currency": "INR"
+        }
+    }
+
+
+@router.post("/subscription/verify-payment")
+async def verify_subscription_payment(
+    body: SubscriptionVerifyRequest,
+    current_user: dict = Depends(get_current_user)
+):
+    """Verify Razorpay signature and activate subscription"""
+    if body.tier not in ("basic", "premium", "elite"):
+        raise HTTPException(status_code=400, detail="Invalid subscription tier")
+
+    razorpay_key_id = os.environ.get("RAZORPAY_KEY_ID")
+    razorpay_key_secret = os.environ.get("RAZORPAY_KEY_SECRET")
+    if not razorpay_key_id or not razorpay_key_secret:
+        raise HTTPException(status_code=500, detail="Payment gateway not configured")
+
+    try:
+        client = razorpay.Client(auth=(razorpay_key_id, razorpay_key_secret))
+        client.utility.verify_payment_signature({
+            "razorpay_order_id": body.razorpay_order_id,
+            "razorpay_payment_id": body.razorpay_payment_id,
+            "razorpay_signature": body.razorpay_signature,
+        })
+    except Exception as e:
+        logger.error(f"Subscription payment verification failed: {e}")
+        raise HTTPException(status_code=400, detail="Payment verification failed. Invalid or tampered signature.")
+
+    # Activate subscription
+    await db.users.update_one(
+        {"user_id": current_user["user_id"]},
+        {"$set": {
+            "subscription_tier": body.tier,
+            "subscription_status": "active",
+            "subscription_updated_at": datetime.now(timezone.utc),
+            "subscription_payment_id": body.razorpay_payment_id,
+        }}
+    )
+
+    logger.info(f"Subscription activated: user={current_user['user_id']} tier={body.tier} payment={body.razorpay_payment_id}")
+    return {"message": f"Subscription activated successfully", "tier": body.tier}
 
 
 # ==================== VERIFICATION ROUTES (Placeholder) ====================

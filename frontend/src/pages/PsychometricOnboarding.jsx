@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Heart, Check, Loader2, ArrowLeft, ArrowRight } from 'lucide-react';
+import { Check, Loader2, ArrowLeft, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
@@ -128,12 +128,12 @@ const PsychometricOnboarding = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#FDFBF7] to-white px-4 py-12">
+    <div className="min-h-screen bg-gradient-to-b from-background to-card px-4 py-12">
       <div className="container mx-auto max-w-4xl">
         <div className="text-center mb-8">
           <div className="flex items-center justify-center space-x-2 mb-4">
-            <Heart className="w-10 h-10 text-primary fill-primary" />
-            <span className="text-3xl font-heading font-bold">SoulSathiya</span>
+            <img src="/logo.png" alt="SoulSathiya" className="w-10 h-10 object-contain" draggable={false} />
+            <span className="text-3xl font-heading font-bold">Soul<span className="text-primary">Sathiya</span></span>
           </div>
           <h1 className="font-heading text-3xl mb-2">Compatibility Assessment</h1>
           <p className="text-muted-foreground mb-4">

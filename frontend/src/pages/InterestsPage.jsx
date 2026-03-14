@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Heart, Check, X, MessageCircle, User, Loader2, Inbox } from 'lucide-react';
+import { Check, X, MessageCircle, Loader2, Inbox } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -26,13 +26,13 @@ const InterestCard = ({ interest, onRespond }) => {
   };
 
   const statusColors = {
-    pending: 'bg-amber-50 border-amber-200',
-    accepted: 'bg-green-50 border-green-200',
-    rejected: 'bg-gray-50 border-gray-200',
+    pending: 'bg-amber-500/10 border-amber-700/50',
+    accepted: 'bg-green-900/20 border-green-700/50',
+    rejected: 'bg-muted/50 border-border',
   };
 
   return (
-    <div className={`rounded-xl border p-5 space-y-4 transition-all ${statusColors[status] || 'bg-white border-gray-100'}`} data-testid={`interest-card-${interest_id}`}>
+    <div className={`rounded-xl border p-5 space-y-4 transition-all ${statusColors[status] || 'card-surface border-border'}`} data-testid={`interest-card-${interest_id}`}>
       <div className="flex items-start justify-between gap-4">
         <Link to={`/profile/${from_user?.user_id}`} className="flex items-center space-x-3 flex-1 min-w-0">
           <Avatar className="w-12 h-12 flex-shrink-0">
@@ -63,7 +63,7 @@ const InterestCard = ({ interest, onRespond }) => {
           <Button
             size="sm"
             variant="outline"
-            className="flex-1 border-red-200 text-red-600 hover:bg-red-50"
+            className="flex-1 border-red-800 text-red-400 hover:bg-red-900/20"
             onClick={() => handleRespond('reject')}
             disabled={responding}
             data-testid={`reject-interest-${interest_id}`}
@@ -127,12 +127,12 @@ const InterestsPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#FDFBF7] to-white">
+    <div className="min-h-screen bg-gradient-to-b from-background to-card">
       <header className="glass-card border-b sticky top-0 z-50">
         <div className="container mx-auto px-6 py-4 flex items-center justify-between">
           <Link to="/dashboard" className="flex items-center space-x-2">
-            <Heart className="w-8 h-8 text-primary fill-primary" />
-            <span className="text-2xl font-heading font-bold">SoulSathiya</span>
+            <img src="/logo.png" alt="SoulSathiya" className="w-8 h-8 object-contain" draggable={false} />
+            <span className="text-2xl font-heading font-bold">Soul<span className="text-primary">Sathiya</span></span>
           </Link>
           <div className="flex items-center space-x-3">
             <NotificationBell />
@@ -158,7 +158,7 @@ const InterestsPage = () => {
             <button
               key={f}
               onClick={() => setFilter(f)}
-              className={`px-4 py-2 rounded-full text-sm font-medium capitalize transition-all ${filter === f ? 'bg-primary text-white' : 'bg-white text-muted-foreground border border-gray-200 hover:border-primary/40'}`}
+              className={`px-4 py-2 rounded-full text-sm font-medium capitalize transition-all ${filter === f ? 'bg-primary text-primary-foreground' : 'bg-card text-muted-foreground border border-border hover:border-primary/40'}`}
             >
               {f}
             </button>

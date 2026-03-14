@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
-import { Heart, Send, ArrowLeft, Loader2, ShieldCheck } from 'lucide-react';
+import { Send, ArrowLeft, Loader2, ShieldCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { toast } from 'sonner';
@@ -66,7 +66,9 @@ const ChatPage = () => {
       try {
         const res = await axios.get(`${BACKEND_URL}/api/messages/conversation/${otherUserId}`, { withCredentials: true });
         setMessages(res.data.messages || []);
-      } catch {}
+      } catch (pollError) {
+        console.error('Polling error:', pollError?.response?.status || pollError?.message);
+      }
     }, 5000);
     return () => clearInterval(pollRef.current);
   }, [currentUser, otherUserId]);
@@ -100,7 +102,7 @@ const ChatPage = () => {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#FDFBF7]">
+    <div className="min-h-screen flex flex-col bg-background">
       {/* Chat Header */}
       <header className="glass-card border-b z-50 flex-shrink-0">
         <div className="container mx-auto px-4 py-3 flex items-center space-x-4 max-w-2xl">
@@ -119,7 +121,7 @@ const ChatPage = () => {
             <Link to={`/profile/${otherUserId}`} className="text-xs text-primary hover:underline">View profile</Link>
           </div>
           <Link to="/" className="flex items-center space-x-1">
-            <Heart className="w-5 h-5 text-primary fill-primary" />
+            <img src="/logo.png" alt="SoulSathiya" className="w-5 h-5 object-contain" draggable={false} />
           </Link>
         </div>
       </header>
@@ -135,9 +137,9 @@ const ChatPage = () => {
           const isOwn = msg.from_user_id === currentUser?.user_id;
           return (
             <div key={msg.message_id || idx} className={`flex ${isOwn ? 'justify-end' : 'justify-start'}`}>
-              <div className={`max-w-xs lg:max-w-md px-4 py-2.5 rounded-2xl text-sm ${isOwn ? 'bg-primary text-white rounded-br-sm' : 'bg-white border border-gray-100 text-gray-900 rounded-bl-sm shadow-sm'}`}>
+              <div className={`max-w-xs lg:max-w-md px-4 py-2.5 rounded-2xl text-sm ${isOwn ? 'bg-primary text-primary-foreground rounded-br-sm' : 'bg-card border border-border text-foreground rounded-bl-sm shadow-sm'}`}>
                 <p>{msg.content}</p>
-                <p className={`text-xs mt-1 ${isOwn ? 'text-white/70 text-right' : 'text-muted-foreground'}`}>{formatMsgTime(msg.sent_at)}</p>
+                <p className={`text-xs mt-1 ${isOwn ? 'text-primary-foreground/70 text-right' : 'text-muted-foreground'}`}>{formatMsgTime(msg.sent_at)}</p>
               </div>
             </div>
           );
@@ -146,14 +148,14 @@ const ChatPage = () => {
       </div>
 
       {/* Input */}
-      <div className="border-t bg-white flex-shrink-0">
+      <div className="border-t bg-card flex-shrink-0">
         <form onSubmit={handleSend} className="container mx-auto px-4 py-4 max-w-2xl flex items-center space-x-3">
           <input
             type="text"
             value={newMessage}
             onChange={e => setNewMessage(e.target.value)}
             placeholder="Type a message..."
-            className="flex-1 border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 bg-[#FDFBF7]"
+            className="flex-1 border border-border rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 bg-input text-foreground"
             data-testid="message-input"
           />
           <Button type="submit" size="icon" disabled={sending || !newMessage.trim()} data-testid="send-message-btn">

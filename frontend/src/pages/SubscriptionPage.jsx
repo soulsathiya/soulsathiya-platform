@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Heart, Crown, Check, Loader2, Zap, ArrowRight, ShieldCheck, Star } from 'lucide-react';
+import { Crown, Check, Loader2, Zap, ArrowRight, ShieldCheck, Star, Heart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
@@ -9,7 +9,7 @@ import axios from 'axios';
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 const PLAN_HIGHLIGHTS = {
-  basic: { color: 'border-gray-200', badge: '', icon: <Star className="w-6 h-6 text-gray-500" /> },
+  basic: { color: 'border-border', badge: '', icon: <Star className="w-6 h-6 text-muted-foreground" /> },
   premium: { color: 'border-primary ring-2 ring-primary shadow-xl', badge: 'Most Popular', icon: <Crown className="w-6 h-6 text-primary" /> },
   elite: { color: 'border-amber-400 ring-2 ring-amber-400 shadow-xl', badge: 'Most Comprehensive', icon: <Zap className="w-6 h-6 text-amber-500" /> },
 };
@@ -67,7 +67,7 @@ const SubscriptionPage = () => {
         order_id: order.razorpay_order_id || order.id,
         name: 'SoulSathiya',
         description: `${plan.name} Subscription — 1 Month`,
-        image: 'https://via.placeholder.com/100',
+        image: window.location.origin + '/logo.png',
         handler: async (response) => {
           try {
             await axios.post(
@@ -87,7 +87,7 @@ const SubscriptionPage = () => {
           }
         },
         prefill: { name: currentUser?.full_name, email: currentUser?.email },
-        theme: { color: '#E65100' },
+        theme: { color: '#D4A520' },
       };
 
       const rzp = new window.Razorpay(options);
@@ -104,13 +104,13 @@ const SubscriptionPage = () => {
   if (loading) return <div className="min-h-screen flex items-center justify-center"><Loader2 className="w-12 h-12 animate-spin text-primary" /></div>;
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#FDFBF7] to-white">
+    <div className="min-h-screen bg-gradient-to-b from-background to-card">
       {/* Header */}
       <header className="glass-card border-b sticky top-0 z-50">
         <div className="container mx-auto px-6 py-4 flex items-center justify-between">
           <Link to="/dashboard" className="flex items-center space-x-2">
-            <Heart className="w-8 h-8 text-primary fill-primary" />
-            <span className="text-2xl font-heading font-bold">SoulSathiya</span>
+            <img src="/logo.png" alt="SoulSathiya" className="w-8 h-8 object-contain" draggable={false} />
+            <span className="text-2xl font-heading font-bold">Soul<span className="text-primary">Sathiya</span></span>
           </Link>
           <Link to="/dashboard"><Button variant="ghost" size="sm">Dashboard</Button></Link>
         </div>
@@ -128,7 +128,7 @@ const SubscriptionPage = () => {
             Start free and upgrade whenever you're ready. Every plan helps you get closer to finding your soulmate.
           </p>
           {currentUser?.subscription_tier && currentUser.subscription_tier !== 'free' && (
-            <div className="mt-4 inline-flex items-center space-x-2 bg-green-50 text-green-700 border border-green-200 px-4 py-2 rounded-full">
+            <div className="mt-4 inline-flex items-center space-x-2 bg-green-900/40 text-green-400 border border-green-700/50 px-4 py-2 rounded-full">
               <ShieldCheck className="w-4 h-4" />
               <span className="text-sm font-medium capitalize">Current Plan: {currentUser.subscription_tier}</span>
             </div>
@@ -141,7 +141,7 @@ const SubscriptionPage = () => {
             const highlight = PLAN_HIGHLIGHTS[plan.tier] || PLAN_HIGHLIGHTS.basic;
             const isCurrent = currentUser?.subscription_tier === plan.tier;
             return (
-              <div key={plan.tier} className={`relative bg-white rounded-2xl border p-8 space-y-6 ${highlight.color}`} data-testid={`plan-card-${plan.tier}`}>
+              <div key={plan.tier} className={`relative card-surface rounded-2xl border p-8 space-y-6 ${highlight.color}`} data-testid={`plan-card-${plan.tier}`}>
                 {highlight.badge && (
                   <div className={`absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full text-white text-sm font-medium ${plan.tier === 'elite' ? 'bg-gradient-to-r from-amber-500 to-amber-600' : 'bg-primary'}`}>
                     {highlight.badge}
@@ -198,7 +198,7 @@ const SubscriptionPage = () => {
         </div>
       </main>
 
-      <script src="https://checkout.razorpay.com/v1/checkout.js" />
+      {/* Razorpay script loaded via public/index.html */}
     </div>
   );
 };

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Heart, Zap, TrendingUp, Users, Clock, Check, Crown, Sparkles, Loader2 } from 'lucide-react';
+import { Zap, TrendingUp, Users, Clock, Check, Crown, Sparkles, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
@@ -59,7 +59,7 @@ const BoostPage = () => {
         order_id: order.razorpay_order_id,
         name: 'SoulSathiya',
         description: 'Profile Boost',
-        image: 'https://via.placeholder.com/100',
+        image: window.location.origin + '/logo.png',
         handler: async (response) => {
           try {
             await axios.post(
@@ -84,7 +84,7 @@ const BoostPage = () => {
           email: 'user@example.com'
         },
         theme: {
-          color: '#E65100'
+          color: '#D4A520'
         }
       };
 
@@ -135,12 +135,12 @@ const BoostPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#FDFBF7] to-white">
+    <div className="min-h-screen bg-gradient-to-b from-background to-card">
       <header className="glass-card border-b sticky top-0 z-50">
         <div className="container mx-auto px-6 py-4 flex items-center justify-between">
           <Link to="/dashboard" className="flex items-center space-x-2">
-            <Heart className="w-8 h-8 text-primary fill-primary" />
-            <span className="text-2xl font-heading font-bold">SoulSathiya</span>
+            <img src="/logo.png" alt="SoulSathiya" className="w-8 h-8 object-contain" draggable={false} />
+            <span className="text-2xl font-heading font-bold">Soul<span className="text-primary">Sathiya</span></span>
           </Link>
           <Link to="/dashboard">
             <Button variant="ghost">Back to Dashboard</Button>
@@ -286,8 +286,7 @@ const BoostPage = () => {
         </div>
       </main>
 
-      {/* Razorpay Script */}
-      <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+      {/* Razorpay script loaded via public/index.html */}
     </div>
   );
 };

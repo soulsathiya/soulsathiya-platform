@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Heart, MessageCircle, Loader2, Search } from 'lucide-react';
+import { MessageCircle, Loader2, Search } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -55,12 +55,12 @@ const MessagesPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#FDFBF7] to-white">
+    <div className="min-h-screen bg-gradient-to-b from-background to-card">
       <header className="glass-card border-b sticky top-0 z-50">
         <div className="container mx-auto px-6 py-4 flex items-center justify-between">
           <Link to="/dashboard" className="flex items-center space-x-2">
-            <Heart className="w-8 h-8 text-primary fill-primary" />
-            <span className="text-2xl font-heading font-bold">SoulSathiya</span>
+            <img src="/logo.png" alt="SoulSathiya" className="w-8 h-8 object-contain" draggable={false} />
+            <span className="text-2xl font-heading font-bold">Soul<span className="text-primary">Sathiya</span></span>
           </Link>
           <div className="flex items-center space-x-3">
             <NotificationBell />
@@ -83,7 +83,7 @@ const MessagesPage = () => {
             placeholder="Search conversations..."
             value={search}
             onChange={e => setSearch(e.target.value)}
-            className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-xl bg-white text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
+            className="w-full pl-10 pr-4 py-2.5 border border-border rounded-xl bg-input text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
           />
         </div>
 
@@ -105,14 +105,14 @@ const MessagesPage = () => {
                 className="block"
                 data-testid={`conversation-${conv.other_user?.user_id}`}
               >
-                <div className="flex items-center space-x-4 p-4 bg-white rounded-xl border border-gray-100 hover:border-primary/30 hover:shadow-sm transition-all cursor-pointer">
+                <div className="flex items-center space-x-4 p-4 card-surface rounded-xl border border-border hover:border-primary/30 hover:shadow-sm transition-all cursor-pointer">
                   <Avatar className="w-12 h-12 flex-shrink-0">
                     <AvatarImage src={conv.other_user?.picture} />
                     <AvatarFallback className="bg-primary/20 text-primary">{conv.other_user?.full_name?.[0]}</AvatarFallback>
                   </Avatar>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between">
-                      <p className="font-medium text-gray-900 truncate">{conv.other_user?.full_name}</p>
+                      <p className="font-medium text-foreground truncate">{conv.other_user?.full_name}</p>
                       <span className="text-xs text-muted-foreground flex-shrink-0 ml-2">{formatTime(conv.last_message_at)}</span>
                     </div>
                     <p className="text-sm text-muted-foreground truncate mt-0.5">{conv.last_message || 'Start a conversation'}</p>
