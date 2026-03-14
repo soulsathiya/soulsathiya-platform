@@ -199,7 +199,7 @@ const DashboardPage = () => {
                 <p className="text-muted-foreground mb-4">
                   Verify your profile to build trust and increase your chances of finding a match
                 </p>
-                <Link to="/verification">
+                <Link to="/profile">
                   <Button variant="outline" data-testid="get-verified-btn">
                     Start Verification
                   </Button>
@@ -226,7 +226,7 @@ const DashboardPage = () => {
                 <p className="text-muted-foreground mb-2">
                   Get 3x more profile views! Appear at the top of matches for 24 hours.
                 </p>
-                <p className="text-sm font-medium text-amber-600">
+                <p className="text-sm font-medium text-amber-400">
                   Starting from just ₹299
                 </p>
               </div>
@@ -274,11 +274,11 @@ const DashboardPage = () => {
 
         {/* Subscription CTA */}
         {user.subscription_status === 'free' && (
-          <div className="card-surface p-8 bg-gradient-to-r from-primary to-secondary text-white">
+          <div className="card-surface p-8 bg-gradient-to-r from-primary to-secondary text-primary-foreground">
             <div className="flex flex-col md:flex-row items-center justify-between gap-6">
               <div className="flex-1 text-center md:text-left">
-                <h3 className="font-heading text-2xl mb-2">Upgrade to Premium</h3>
-                <p className="text-white/90">
+                <h3 className="font-heading text-2xl mb-2 text-primary-foreground">Upgrade to Premium</h3>
+                <p className="text-primary-foreground/80">
                   Unlock unlimited matches, advanced filters, and priority support
                 </p>
               </div>
