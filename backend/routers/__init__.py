@@ -7,6 +7,7 @@ from .subscriptions import router as subscriptions_router
 from .notifications import router as notifications_router
 from .boosts import router as boosts_router
 from .admin import admin_router
+from .account import router as account_router
 
 __all__ = [
     "auth_router",
@@ -18,4 +19,5 @@ __all__ = [
     "notifications_router",
     "boosts_router",
     "admin_router",
+    "account_router",
 ]

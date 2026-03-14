@@ -69,7 +69,11 @@ class AuthService:
         user = await self.get_user_by_email(email)
         if not user or user.get("is_google_auth"):
             return None
-        
+
+        # Reject soft-deleted accounts with a specific sentinel value
+        if not user.get("is_active", True) or user.get("status") == "deleted":
+            return "deleted"
+
         if not self.verify_password(password, user.get("password_hash", "")):
             return None
         
@@ -116,6 +120,10 @@ class AuthService:
             return None
         
         user = await self.get_user_by_id(session["user_id"])
+        if user and (not user.get("is_active", True) or user.get("status") == "deleted"):
+            # Deleted users cannot use existing sessions
+            await self.db.user_sessions.delete_one({"session_token": session_token})
+            return None
         return user
     
     async def delete_session(self, session_token: str):
@@ -156,6 +164,9 @@ class AuthService:
                         picture=picture
                     )
                 else:
+                    # Block deleted accounts from Google OAuth login
+                    if not user.get("is_active", True) or user.get("status") == "deleted":
+                        return None
                     await self.db.users.update_one(
                         {"user_id": user["user_id"]},
                         {"$set": {

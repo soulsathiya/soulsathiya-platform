@@ -7,7 +7,7 @@ from typing import Optional
 import logging
 import os
 
-from models.user import UserCreate, UserLogin
+from models.user import UserCreate, UserLogin, DELETED_ACCOUNT_ERROR
 from dependencies import auth_service, email_service, get_current_user
 
 logger = logging.getLogger(__name__)
@@ -101,6 +101,8 @@ async def register(request: Request, user_data: UserCreate):
 async def login(request: Request, credentials: UserLogin):
     """Login with email and password."""
     user = await auth_service.authenticate_user(credentials.email, credentials.password)
+    if user == "deleted":
+        raise HTTPException(status_code=403, detail=DELETED_ACCOUNT_ERROR)
     if not user:
         raise HTTPException(status_code=401, detail="Invalid email or password")
 

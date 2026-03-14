@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
-import { ShieldCheck, MapPin, Briefcase, GraduationCap, ArrowLeft, X, Lock, Loader2, UserPlus, MessageCircle, Star, Camera } from 'lucide-react';
+import { ShieldCheck, MapPin, Briefcase, GraduationCap, ArrowLeft, X, Lock, Loader2, UserPlus, MessageCircle, Star, Camera, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -26,6 +26,9 @@ const ProfileViewPage = () => {
   const [loading, setLoading] = useState(true);
   const [interestSent, setInterestSent] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [deleteConfirmText, setDeleteConfirmText] = useState('');
+  const [deleting, setDeleting] = useState(false);
   const isOwnProfile = !userId || userId === currentUser?.user_id;
   const targetUserId = userId || currentUser?.user_id;
 
@@ -104,6 +107,20 @@ const ProfileViewPage = () => {
       toast.success(currentHidden ? 'Photo is now visible' : 'Photo is now private');
     } catch {
       toast.error('Failed to update privacy');
+    }
+  };
+
+  const handleDeleteAccount = async () => {
+    if (deleteConfirmText !== 'DELETE') return;
+    setDeleting(true);
+    try {
+      await axios.delete(`${BACKEND_URL}/api/account`, { withCredentials: true });
+      toast.success('Account deleted. Goodbye!');
+      navigate('/login');
+    } catch (error) {
+      const detail = error?.response?.data?.detail;
+      toast.error(detail || 'Failed to delete account. Please try again.');
+      setDeleting(false);
     }
   };
 
@@ -192,6 +209,66 @@ const ProfileViewPage = () => {
                   <p className="text-sm font-medium capitalize">{value}</p>
                 </div>
               ) : null)}
+            </div>
+          </div>
+        )}
+
+        {/* Delete Account — own profile only */}
+        {isOwnProfile && (
+          <div className="card-surface p-8 mt-6 border border-red-900/40">
+            <h2 className="font-heading text-xl text-red-400 mb-2">Danger Zone</h2>
+            <p className="text-sm text-muted-foreground mb-4">
+              Deleting your account will hide your profile and disable login. This action cannot be undone.
+            </p>
+            <button
+              onClick={() => { setShowDeleteDialog(true); setDeleteConfirmText(''); }}
+              className="flex items-center gap-2 px-4 py-2 rounded-lg bg-red-900/30 border border-red-700/50 text-red-400 hover:bg-red-900/50 transition-colors text-sm font-medium"
+            >
+              <Trash2 className="w-4 h-4" />
+              Delete My Account
+            </button>
+          </div>
+        )}
+
+        {/* Delete Account Confirmation Dialog */}
+        {showDeleteDialog && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-4">
+            <div className="card-surface rounded-2xl p-8 max-w-md w-full shadow-2xl border border-red-900/40">
+              <h3 className="font-heading text-xl text-red-400 mb-3">Delete Your Account?</h3>
+              <p className="text-sm text-muted-foreground mb-2">
+                Are you sure you want to delete your account?
+              </p>
+              <p className="text-sm text-muted-foreground mb-6">
+                This will <span className="text-foreground font-medium">hide your profile</span> and <span className="text-foreground font-medium">disable login</span>. This action cannot be undone.
+              </p>
+              <p className="text-sm text-muted-foreground mb-2">
+                Type <span className="font-mono font-bold text-red-400">DELETE</span> to confirm:
+              </p>
+              <input
+                type="text"
+                value={deleteConfirmText}
+                onChange={e => setDeleteConfirmText(e.target.value)}
+                placeholder="Type DELETE here"
+                className="w-full px-4 py-2 rounded-lg bg-input border border-border text-foreground placeholder:text-muted-foreground mb-6 focus:outline-none focus:border-red-500 font-mono"
+                autoFocus
+              />
+              <div className="flex gap-3">
+                <button
+                  onClick={() => { setShowDeleteDialog(false); setDeleteConfirmText(''); }}
+                  disabled={deleting}
+                  className="flex-1 px-4 py-2 rounded-lg border border-border text-muted-foreground hover:text-foreground hover:border-foreground transition-colors text-sm"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleDeleteAccount}
+                  disabled={deleteConfirmText !== 'DELETE' || deleting}
+                  className="flex-1 px-4 py-2 rounded-lg bg-red-700 text-white text-sm font-medium hover:bg-red-600 transition-colors disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                >
+                  {deleting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
+                  {deleting ? 'Deleting...' : 'Delete Account'}
+                </button>
+              </div>
             </div>
           </div>
         )}

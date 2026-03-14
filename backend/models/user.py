@@ -3,6 +3,8 @@ from typing import Optional, List
 from datetime import datetime
 import re
 
+DELETED_ACCOUNT_ERROR = "Account has been deleted. Contact support if this is a mistake."
+
 
 class UserBase(BaseModel):
     email: EmailStr
@@ -36,6 +38,9 @@ class User(UserBase):
     verification_badge: Optional[str] = None
     subscription_status: str = "free"
     subscription_tier: Optional[str] = None
+    is_active: bool = True
+    status: str = "active"
+    deleted_at: Optional[datetime] = None
     created_at: datetime
     last_login: Optional[datetime] = None
 

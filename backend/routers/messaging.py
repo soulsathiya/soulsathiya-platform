@@ -143,7 +143,7 @@ async def get_conversations(current_user: dict = Depends(get_current_user)):
     for conv in conversations:
         other_user_id = conv["_id"]
         user = await db.users.find_one(
-            {"user_id": other_user_id},
+            {"user_id": other_user_id, "is_active": {"$ne": False}},
             {"_id": 0, "user_id": 1, "full_name": 1, "picture": 1}
         )
         

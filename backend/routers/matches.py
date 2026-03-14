@@ -43,16 +43,16 @@ async def get_matches(
         match_results = []
         for match in matches:
             user = await db.users.find_one(
-                {"user_id": match["matched_user_id"]},
+                {"user_id": match["matched_user_id"], "is_active": {"$ne": False}},
                 {"_id": 0, "user_id": 1, "full_name": 1, "picture": 1, "is_verified": 1}
             )
-            
+
             if user:
                 profile = await db.profiles.find_one(
                     {"user_id": match["matched_user_id"]},
                     {"_id": 0, "city": 1, "state": 1, "date_of_birth": 1, "occupation": 1}
                 )
-                
+
                 # Get archetype
                 psych = await db.psychometric_profiles.find_one(
                     {"user_id": match["matched_user_id"]},
@@ -103,16 +103,16 @@ async def get_matches(
     match_results = []
     for match in matches:
         user = await db.users.find_one(
-            {"user_id": match["matched_user_id"]},
+            {"user_id": match["matched_user_id"], "is_active": {"$ne": False}},
             {"_id": 0, "user_id": 1, "full_name": 1, "picture": 1, "is_verified": 1}
         )
-        
+
         if user:
             profile = await db.profiles.find_one(
                 {"user_id": match["matched_user_id"]},
                 {"_id": 0, "city": 1, "state": 1, "date_of_birth": 1, "occupation": 1}
             )
-            
+
             is_boosted = match["matched_user_id"] in boosted_user_ids
             
             match_results.append({
@@ -221,9 +221,10 @@ async def get_received_interests(current_user: dict = Depends(get_current_user))
     result = []
     for interest in interests:
         user = await db.users.find_one(
-            {"user_id": interest["from_user_id"]},
+            {"user_id": interest["from_user_id"], "is_active": {"$ne": False}},
             {"_id": 0, "user_id": 1, "full_name": 1, "picture": 1}
         )
-        result.append({**interest, "from_user": user})
+        if user:
+            result.append({**interest, "from_user": user})
     
     return {"interests": result}
