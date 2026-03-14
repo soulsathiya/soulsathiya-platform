@@ -8,7 +8,10 @@
       "Bash(git --version)",
       "Bash(SHELL=/bin/bash git --version)",
       "Bash(node -e \"const fs = require\\(''fs''\\); const p = ''C:/Users/DELL/CLAUDE1/soulsathiya-platform-main/frontend/src/pages/LoginPage.jsx''; const c = fs.readFileSync\\(p,''utf8''\\); console.log\\(c.substring\\(0,200\\)\\);\")",
-      "Bash(python -c \"print\\(''hello''\\)\")"
+      "Bash(python -c \"print\\(''hello''\\)\")",
+      "Bash(python -m pip install -r backend/requirements.txt --dry-run)",
+      "Bash(python -m pip install -r \"C:/Users/DELL/CLAUDE1/soulsathiya-platform-main/backend/requirements.txt\" --dry-run)",
+      "Bash(git -C \"C:/Users/DELL/CLAUDE1/soulsathiya-platform-main\" diff HEAD backend/requirements.txt)"
     ]
   }
 }
