@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useSearchParams, useNavigate } from 'react-router-dom';
 import {
-  Heart, Lock, Loader2, CheckCircle2, XCircle, Eye, EyeOff, ArrowLeft,
+  Lock, Loader2, CheckCircle2, XCircle, Eye, EyeOff, ArrowLeft,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -125,8 +125,8 @@ const ResetPasswordPage = () => {
   const Logo = () => (
     <div className="text-center mb-8">
       <Link to="/" className="inline-flex items-center space-x-2">
-        <Heart className="w-10 h-10 text-primary fill-primary" />
-        <span className="text-3xl font-heading font-bold text-foreground">SoulSathiya</span>
+        <img src="/logo.png" alt="SoulSathiya" className="w-10 h-10 object-contain" draggable={false} />
+        <span className="text-3xl font-heading font-bold text-foreground">Soul<span className="text-primary">Sathiya</span></span>
       </Link>
     </div>
   );
@@ -138,7 +138,7 @@ const ResetPasswordPage = () => {
   // Validating token…
   if (tokenStatus === 'validating') {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#FDFBF7] to-white px-4">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background to-card px-4">
         <div className="w-full max-w-md text-center space-y-6">
           <Logo />
           <div className="card-surface p-10 space-y-4">
@@ -153,11 +153,11 @@ const ResetPasswordPage = () => {
   // Invalid / expired token
   if (tokenStatus === 'invalid') {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#FDFBF7] to-white px-4">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background to-card px-4">
         <div className="w-full max-w-md text-center">
           <Logo />
           <div className="card-surface p-10 space-y-6">
-            <div className="w-20 h-20 rounded-full bg-red-100 flex items-center justify-center mx-auto">
+            <div className="w-20 h-20 rounded-full bg-red-900/30 border border-red-700/50 flex items-center justify-center mx-auto">
               <XCircle className="w-10 h-10 text-destructive" />
             </div>
             <h2 className="font-heading text-2xl">Link expired or invalid</h2>
@@ -182,14 +182,14 @@ const ResetPasswordPage = () => {
   // Success
   if (success) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#FDFBF7] to-white px-4">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background to-card px-4">
         <div className="w-full max-w-md text-center">
           <Logo />
           <div className="card-surface p-10 space-y-6">
-            <div className="w-20 h-20 rounded-full bg-green-100 flex items-center justify-center mx-auto">
-              <CheckCircle2 className="w-10 h-10 text-green-600" />
+            <div className="w-20 h-20 rounded-full bg-green-900/40 border border-green-700/50 flex items-center justify-center mx-auto">
+              <CheckCircle2 className="w-10 h-10 text-green-400" />
             </div>
-            <h2 className="font-heading text-2xl text-green-700">Password Reset!</h2>
+            <h2 className="font-heading text-2xl text-green-400">Password Reset!</h2>
             <p className="text-muted-foreground leading-relaxed">
               Your password has been reset successfully. Redirecting you to login…
             </p>
@@ -206,7 +206,7 @@ const ResetPasswordPage = () => {
   // Main form
   // ---------------------------------------------------------------------------
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#FDFBF7] to-white px-4 py-12">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background to-card px-4 py-12">
       <div className="w-full max-w-md">
         <Logo />
 

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Heart, Mail, Lock, Loader2 } from 'lucide-react';
+import { Mail, Lock, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -51,8 +51,8 @@ const LoginPage = () => {
         {/* Logo */}
         <div className="text-center mb-6">
           <Link to="/" className="inline-flex items-center space-x-2">
-            <Heart className="w-7 h-7 text-primary fill-primary" />
-            <span className="text-xl font-heading font-bold text-foreground">SoulSathiya</span>
+            <img src="/logo.png" alt="SoulSathiya" className="w-7 h-7 object-contain" draggable={false} />
+            <span className="text-xl font-heading font-bold text-foreground">Soul<span className="text-primary">Sathiya</span></span>
           </Link>
           <h2 className="font-heading text-xl mt-4 mb-1">Welcome Back</h2>
           <p className="text-muted-foreground text-sm">Sign in to continue your journey</p>
