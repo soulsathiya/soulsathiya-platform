@@ -11,9 +11,9 @@ import NotificationBell from '../components/NotificationBell';
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 const getScoreColor = (score) => {
-  if (score >= 85) return 'text-green-600';
+  if (score >= 85) return 'text-green-400';
   if (score >= 70) return 'text-primary';
-  if (score >= 55) return 'text-amber-600';
+  if (score >= 55) return 'text-amber-400';
   return 'text-muted-foreground';
 };
 
@@ -40,7 +40,7 @@ const MatchCard = ({ match, onSendInterest, interestsSent }) => {
   const alreadySent = interestsSent.has(user.user_id);
 
   return (
-    <div className="bg-white rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden" data-testid={`match-card-${user.user_id}`}>
+    <div className="card-surface rounded-xl overflow-hidden hover:shadow-lg transition-all duration-200" data-testid={`match-card-${user.user_id}`}>
       {/* Photo */}
       <div className="relative h-56 bg-gradient-to-br from-primary/10 to-secondary/10 flex items-center justify-center">
         {user.picture ? (
@@ -59,13 +59,13 @@ const MatchCard = ({ match, onSendInterest, interestsSent }) => {
         )}
         {user.is_verified && (
           <div className="absolute top-3 right-3">
-            <Badge className="bg-green-500 text-white text-xs">
+            <Badge className="bg-green-900/40 text-green-400 border border-green-700/50 text-xs">
               <ShieldCheck className="w-3 h-3 mr-1" /> Verified
             </Badge>
           </div>
         )}
         {/* Compatibility score overlay */}
-        <div className="absolute bottom-3 right-3 bg-white/90 backdrop-blur rounded-full px-3 py-1 flex items-center space-x-1 shadow-sm">
+        <div className="absolute bottom-3 right-3 bg-card/90 backdrop-blur rounded-full px-3 py-1 flex items-center space-x-1 shadow-sm">
           <Star className="w-3 h-3 text-amber-500 fill-amber-500" />
           <span className={`text-sm font-bold ${getScoreColor(compatibility_score)}`}>
             {compatibility_score?.toFixed(0)}%
@@ -77,7 +77,7 @@ const MatchCard = ({ match, onSendInterest, interestsSent }) => {
       <div className="p-4 space-y-3">
         <div className="flex items-start justify-between">
           <div>
-            <h3 className="font-heading text-lg font-semibold text-gray-900">{user.full_name}</h3>
+            <h3 className="font-heading text-lg font-semibold text-foreground">{user.full_name}</h3>
             <p className="text-sm text-muted-foreground">
               {age ? `${age} years` : ''}{archetype ? ` · ${archetype}` : ''}
             </p>
@@ -110,7 +110,7 @@ const MatchCard = ({ match, onSendInterest, interestsSent }) => {
             <span>Compatibility</span>
             <span className={getScoreColor(compatibility_score)}>{compatibility_score?.toFixed(1)}%</span>
           </div>
-          <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
+          <div className="h-1.5 bg-muted rounded-full overflow-hidden">
             <div
               className="h-full bg-gradient-to-r from-primary to-secondary rounded-full transition-all duration-500"
               style={{ width: `${Math.min(compatibility_score || 0, 100)}%` }}
@@ -176,7 +176,7 @@ const MatchesPage = () => {
       const detail = error?.response?.data?.detail;
       const msg = (Array.isArray(detail) ? detail[0]?.msg : detail) || error?.message || 'Failed to send interest';
       toast.error(msg);
-      if (msg.includes('upgrade')) {
+      if (msg.toLowerCase().includes('upgrade')) {
         setTimeout(() => navigate('/subscription'), 1500);
       }
     }
@@ -197,13 +197,13 @@ const MatchesPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#FDFBF7] to-white">
+    <div className="min-h-screen bg-gradient-to-b from-background to-card">
       {/* Header */}
       <header className="glass-card border-b sticky top-0 z-50">
         <div className="container mx-auto px-6 py-4 flex items-center justify-between">
           <Link to="/dashboard" className="flex items-center space-x-2">
-            <Heart className="w-8 h-8 text-primary fill-primary" />
-            <span className="text-2xl font-heading font-bold">SoulSathiya</span>
+            <img src="/logo.png" alt="SoulSathiya" className="w-8 h-8 object-contain" draggable={false} />
+            <span className="text-2xl font-heading font-bold">Soul<span className="text-primary">Sathiya</span></span>
           </Link>
           <div className="flex items-center space-x-3">
             <NotificationBell />
@@ -226,7 +226,7 @@ const MatchesPage = () => {
             <select
               value={sortBy}
               onChange={e => setSortBy(e.target.value)}
-              className="text-sm border border-gray-200 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-primary/30"
+              className="text-sm border border-border rounded-lg px-3 py-2 bg-input text-foreground focus:outline-none focus:ring-2 focus:ring-primary/30"
             >
               <option value="compatibility">Sort: Compatibility</option>
               <option value="boosted">Sort: Boosted First</option>
@@ -258,9 +258,9 @@ const MatchesPage = () => {
 
         {/* Upgrade CTA for free users */}
         {user?.subscription_status === 'free' && matches.length > 0 && (
-          <div className="mt-12 bg-gradient-to-r from-primary to-secondary rounded-2xl p-8 text-white text-center space-y-4">
+          <div className="mt-12 bg-gradient-to-r from-primary to-secondary rounded-2xl p-8 text-primary-foreground text-center space-y-4">
             <h3 className="font-heading text-2xl">Unlock More Connections</h3>
-            <p className="text-white/90">Free users can view matches but cannot send interests. Upgrade to connect.</p>
+            <p className="text-primary-foreground/80">Free users can view matches but cannot send interests. Upgrade to connect.</p>
             <Link to="/subscription">
               <Button variant="secondary" size="lg">Upgrade to Premium</Button>
             </Link>
