@@ -169,7 +169,7 @@ async def upload_photo(
             io.BytesIO(file_bytes),
             S3_BUCKET,
             s3_key,
-            ExtraArgs={"ContentType": file.content_type, "ACL": "public-read"},
+            ExtraArgs={"ContentType": file.content_type},
         )
     except NoCredentialsError:
         logger.error("AWS credentials not configured")
