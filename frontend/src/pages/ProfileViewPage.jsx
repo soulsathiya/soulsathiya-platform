@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
-import { Heart, ShieldCheck, MapPin, Briefcase, GraduationCap, ArrowLeft, Upload, X, Lock, Loader2, UserPlus, MessageCircle, Star, Camera } from 'lucide-react';
+import { ShieldCheck, MapPin, Briefcase, GraduationCap, ArrowLeft, X, Lock, Loader2, UserPlus, MessageCircle, Star, Camera } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -26,7 +26,6 @@ const ProfileViewPage = () => {
   const [loading, setLoading] = useState(true);
   const [interestSent, setInterestSent] = useState(false);
   const [uploading, setUploading] = useState(false);
-  const fileInputRef = useRef(null);
   const isOwnProfile = !userId || userId === currentUser?.user_id;
   const targetUserId = userId || currentUser?.user_id;
 
@@ -124,8 +123,8 @@ const ProfileViewPage = () => {
             <span className="text-sm">Back</span>
           </button>
           <Link to="/dashboard" className="flex items-center space-x-2">
-            <Heart className="w-7 h-7 text-primary fill-primary" />
-            <span className="text-xl font-heading font-bold">SoulSathiya</span>
+            <img src="/logo.png" alt="SoulSathiya" className="w-7 h-7 object-contain" draggable={false} />
+            <span className="text-xl font-heading font-bold">Soul<span className="text-primary">Sathiya</span></span>
           </Link>
           <div className="w-16" />
         </div>
@@ -143,7 +142,7 @@ const ProfileViewPage = () => {
               <div className="flex items-center space-x-3 mb-1 flex-wrap gap-2">
                 <h1 className="font-heading text-3xl">{user?.full_name}</h1>
                 {user?.is_verified && (
-                  <Badge className="bg-green-100 text-green-700 border-green-200">
+                  <Badge className="bg-green-900/40 text-green-400 border border-green-700/50">
                     <ShieldCheck className="w-3 h-3 mr-1" /> Verified
                   </Badge>
                 )}
@@ -202,13 +201,29 @@ const ProfileViewPage = () => {
           <div className="flex items-center justify-between mb-4">
             <h2 className="font-heading text-xl">Photos</h2>
             {isOwnProfile && photos.length < 6 && (
-              <>
-                <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handlePhotoUpload} />
-                <Button variant="outline" size="sm" disabled={uploading} onClick={() => fileInputRef.current?.click()} data-testid="upload-photo-btn">
-                  {uploading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Camera className="w-4 h-4 mr-2" />}
-                  {uploading ? 'Uploading...' : 'Add Photo'}
+              <label htmlFor="photo-upload" className="cursor-pointer">
+                <input
+                  id="photo-upload"
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  disabled={uploading}
+                  onChange={handlePhotoUpload}
+                  data-testid="upload-photo-input"
+                />
+                <Button
+                  variant="outline"
+                  size="sm"
+                  disabled={uploading}
+                  asChild
+                  data-testid="upload-photo-btn"
+                >
+                  <span>
+                    {uploading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Camera className="w-4 h-4 mr-2" />}
+                    {uploading ? 'Uploading...' : 'Add Photo'}
+                  </span>
                 </Button>
-              </>
+              </label>
             )}
           </div>
           {photos.length === 0 ? (

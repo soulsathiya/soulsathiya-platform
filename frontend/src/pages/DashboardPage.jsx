@@ -126,8 +126,8 @@ const DashboardPage = () => {
       <header className="glass-card border-b sticky top-0 z-50">
         <div className="container mx-auto px-6 py-4 flex items-center justify-between">
           <Link to="/" className="flex items-center space-x-2">
-            <Heart className="w-8 h-8 text-primary fill-primary" />
-            <span className="text-2xl font-heading font-bold text-foreground">SoulSathiya</span>
+            <img src="/logo.png" alt="SoulSathiya" className="w-8 h-8 object-contain" draggable={false} />
+            <span className="text-2xl font-heading font-bold text-foreground">Soul<span className="text-primary">Sathiya</span></span>
           </Link>
           <div className="flex items-center space-x-4">
             {user.subscription_status !== 'free' && (

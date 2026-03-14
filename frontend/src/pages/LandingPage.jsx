@@ -91,14 +91,14 @@ const LandingPage = () => {
               Soul<span className="text-primary">Sathiya</span>
             </span>
           </div>
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-2 sm:space-x-4">
             <Link to="/login">
-              <Button variant="ghost" className="text-muted-foreground hover:text-foreground" data-testid="header-login-btn">
+              <Button variant="ghost" className="hidden sm:inline-flex text-muted-foreground hover:text-foreground" data-testid="header-login-btn">
                 Login
               </Button>
             </Link>
             <Link to="/register">
-              <Button className="bg-primary text-primary-foreground hover:bg-primary/90 font-semibold shadow-lg shadow-primary/20" data-testid="header-register-btn">
+              <Button className="bg-primary text-primary-foreground hover:bg-primary/90 font-semibold shadow-lg shadow-primary/20 text-sm sm:text-base px-3 sm:px-4" data-testid="header-register-btn">
                 Get Started
               </Button>
             </Link>
@@ -157,7 +157,7 @@ const LandingPage = () => {
               </div>
 
               {/* Stats row */}
-              <div className="flex gap-8 pt-2">
+              <div className="flex flex-wrap gap-8 pt-2">
                 {[['10,000+', 'Members'], ['92%', 'Match Rate'], ['500+', 'Weddings']].map(([num, label]) => (
                   <div key={label}>
                     <p className="text-2xl font-heading font-bold text-primary">{num}</p>
@@ -239,7 +239,7 @@ const LandingPage = () => {
               <div
                 key={index}
                 className={`card-surface p-8 space-y-6 relative ${
-                  plan.popular ? 'ring-1 ring-primary shadow-xl shadow-primary/10 scale-105' : ''
+                  plan.popular ? 'ring-1 ring-primary shadow-xl shadow-primary/10 md:scale-105' : ''
                 }`}
                 data-testid={`pricing-card-${plan.tier.toLowerCase()}`}
               >
@@ -456,7 +456,7 @@ const LandingPage = () => {
       </div>
 
       {/* ── Footer ────────────────────────────────────────────────────────── */}
-      <footer className="bg-[#080E1C] text-foreground py-12 px-6 border-t border-primary/10">
+      <footer className="bg-background text-foreground py-12 px-6 border-t border-primary/10">
         <div className="container mx-auto max-w-6xl">
           <div className="grid md:grid-cols-4 gap-8 mb-8">
             <div>
