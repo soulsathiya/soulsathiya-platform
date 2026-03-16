@@ -920,8 +920,10 @@ const LandingPage = () => {
           <div className="flex items-center justify-center mb-2">
             <SoulSathiyaLogo className="w-20 h-20" />
           </div>
-          <h2 className="font-heading text-4xl text-foreground">
-            Ready to Find Your <span className="text-gold-gradient">Perfect Match</span>?
+          <h2 className="font-heading text-3xl sm:text-4xl text-foreground leading-snug">
+            Your Life Partner May Be{' '}
+            <span className="text-gold-gradient">One Compatibility Match</span>{' '}
+            Away.
           </h2>
           <p className="text-lg text-muted-foreground">
             Join thousands of Indians who found their life partners through deep compatibility intelligence
