@@ -6,7 +6,7 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import RadarChart from '../components/RadarChart';
-import { getDimensionInsight, getOverallInsight } from '../lib/compatibilityInsights';
+import { getDimensionInsight, getOverallInsight } from '../utils/compatibilityInsights';
 
 // ─── Brand logo ───────────────────────────────────────────────────────────────
 const SoulSathiyaLogo = ({ className = 'w-9 h-9' }) => (
