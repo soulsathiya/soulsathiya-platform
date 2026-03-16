@@ -103,10 +103,36 @@ const LandingPage = () => {
   ];
 
   const trustItems = [
-    { icon: <CheckCircle2 className="w-5 h-5" />, label: 'Verified Members', desc: 'Every profile KYC-verified for authenticity' },
-    { icon: <Lock className="w-5 h-5" />, label: 'Privacy-First Controls', desc: 'You decide who sees your photos and details' },
-    { icon: <Brain className="w-5 h-5" />, label: 'Compatibility-Driven', desc: 'AI-powered matching based on deep psychology' },
-    { icon: <Heart className="w-5 h-5" />, label: 'Marriage-Focused', desc: 'A serious community built for lasting commitment' },
+    {
+      icon:  <CheckCircle2 className="w-5 h-5" />,
+      label: 'Verified Members',
+      desc:  'Every profile is KYC-verified — no fake or anonymous accounts.',
+    },
+    {
+      icon:  <Brain className="w-5 h-5" />,
+      label: 'Psychology-Based Matching',
+      desc:  'Compatibility built on personality, values, and relationship style — not just filters.',
+    },
+    {
+      icon:  <Lock className="w-5 h-5" />,
+      label: 'Privacy-First Controls',
+      desc:  'You decide who sees your photos, contact details, and personal information.',
+    },
+    {
+      icon:  <Shield className="w-5 h-5" />,
+      label: 'Moderated Community',
+      desc:  'Profiles are reviewed to maintain authenticity and ensure respectful interactions.',
+    },
+    {
+      icon:  <Heart className="w-5 h-5" />,
+      label: 'Serious Marriage Intent',
+      desc:  'Designed for meaningful long-term relationships — not casual dating.',
+    },
+    {
+      icon:  <Users className="w-5 h-5" />,
+      label: 'Gated Communities',
+      desc:  'Connect within your professional, cultural, and value-aligned circles.',
+    },
   ];
 
   const radarDimensions = [
@@ -636,14 +662,26 @@ const LandingPage = () => {
               A secure, serious platform for people who are ready for a meaningful commitment
             </p>
           </div>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6">
             {trustItems.map((item, i) => (
-              <div key={i} className="card-surface p-6 space-y-3 text-center hover:border-primary/30 transition-all duration-200">
-                <div className="w-12 h-12 mx-auto bg-primary/10 border border-primary/20 rounded-full flex items-center justify-center text-primary">
+              <div
+                key={i}
+                className="card-surface feature-card p-6 flex items-start gap-4"
+              >
+                {/* Icon — circular, left-aligned for scan-friendly layout */}
+                <div className="feature-icon w-11 h-11 shrink-0 bg-primary/10 border border-primary/20 rounded-full flex items-center justify-center text-primary mt-0.5">
                   {item.icon}
                 </div>
-                <h4 className="font-heading text-lg text-foreground">{item.label}</h4>
-                <p className="text-sm text-muted-foreground leading-relaxed">{item.desc}</p>
+
+                {/* Text block */}
+                <div>
+                  <h4 className="font-heading text-base text-foreground leading-snug mb-1">
+                    {item.label}
+                  </h4>
+                  <p className="text-sm text-muted-foreground leading-relaxed">
+                    {item.desc}
+                  </p>
+                </div>
               </div>
             ))}
           </div>
