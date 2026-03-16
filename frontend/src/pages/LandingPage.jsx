@@ -198,11 +198,6 @@ const LandingPage = () => {
                 className="relative rounded-3xl shadow-2xl shadow-primary/20 w-full h-full object-cover border border-primary/15"
                 loading="eager"
               />
-              {/* Floating badge */}
-              <div className="absolute -bottom-4 -left-4 glass-card px-5 py-3 rounded-xl border border-primary/20">
-                <p className="text-xs text-muted-foreground">Average compatibility</p>
-                <p className="text-2xl font-heading font-bold text-primary">89%</p>
-              </div>
             </div>
           </div>
         </div>
