@@ -6,7 +6,7 @@ import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
 import axios from 'axios';
-import { getDimensionInsight } from '@/lib/compatibilityInsights';
+import { getDimensionInsight } from '../lib/compatibilityInsights';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 

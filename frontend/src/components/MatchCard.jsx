@@ -3,7 +3,7 @@ import { Heart, MapPin, Briefcase, Sparkles, Zap, CheckCircle2 } from 'lucide-re
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import DeepExplorationCTA from './DeepExplorationCTA';
-import { getOverallInsight } from '@/lib/compatibilityInsights';
+import { getOverallInsight } from '../lib/compatibilityInsights';
 
 // Derive a short compatibility headline + strengths from the score
 const getCompatibilityInsight = (score) => {

@@ -5,8 +5,8 @@ import {
   CheckCircle2, Heart, Lock, Star,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import RadarChart from '@/components/RadarChart';
-import { getDimensionInsight, getOverallInsight } from '@/lib/compatibilityInsights';
+import RadarChart from '../components/RadarChart';
+import { getDimensionInsight, getOverallInsight } from '../lib/compatibilityInsights';
 
 // ─── Brand logo ───────────────────────────────────────────────────────────────
 const SoulSathiyaLogo = ({ className = 'w-9 h-9' }) => (
