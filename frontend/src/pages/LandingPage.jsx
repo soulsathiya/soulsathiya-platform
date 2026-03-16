@@ -417,75 +417,170 @@ const LandingPage = () => {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-12 items-center">
-            {/* Radar chart */}
+          <div className="grid md:grid-cols-2 gap-12 items-start">
+
+            {/* ── Left: Radar chart ─────────────────────────────────────── */}
             <div className="flex flex-col items-center space-y-4">
-              <div className="card-surface p-6 rounded-2xl w-full max-w-sm mx-auto">
-                <div className="text-center mb-4">
-                  <p className="text-xs text-muted-foreground uppercase tracking-widest mb-1">Sample Compatibility</p>
-                  <div className="flex items-center justify-center gap-2 mb-2">
-                    <span className="text-4xl font-heading font-bold text-primary">89%</span>
-                    <div className="flex flex-col items-start">
-                      <span className="text-xs text-muted-foreground">Overall</span>
-                      <span className="text-xs font-medium text-primary">Strong Match</span>
+              <div className="card-surface p-6 rounded-2xl w-full">
+
+                {/* Overall score header */}
+                <div className="text-center mb-2">
+                  <p className="text-xs text-muted-foreground uppercase tracking-widest mb-2">
+                    Sample Compatibility
+                  </p>
+                  <div className="flex items-center justify-center gap-3 mb-2">
+                    <span className="text-5xl font-heading font-bold text-primary">89%</span>
+                    <div className="flex flex-col items-start gap-0.5">
+                      <span className="text-xs text-muted-foreground">Overall Score</span>
+                      <span className="text-sm font-semibold text-primary">Strong Match ✦</span>
                     </div>
                   </div>
                   <p className="text-xs text-muted-foreground/80 italic leading-snug max-w-xs mx-auto">
                     {getOverallInsight(89)}
                   </p>
                 </div>
-                <div className="flex justify-center">
-                  <RadarChart dimensions={radarDimensions} size={220} />
+
+                {/* Radar */}
+                <div className="flex justify-center mt-2">
+                  <RadarChart dimensions={radarDimensions} size={300} />
+                </div>
+
+                {/* Legend row */}
+                <div className="flex items-center justify-center gap-5 mt-1 flex-wrap">
+                  <div className="flex items-center gap-1.5">
+                    <span className="w-3 h-3 rounded-full bg-primary/30 border border-primary/70 inline-block" />
+                    <span className="text-xs text-muted-foreground">Compatibility zone</span>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <span className="w-3 h-0.5 bg-primary/70 inline-block" />
+                    <span className="text-xs text-muted-foreground">Score boundary</span>
+                  </div>
                 </div>
               </div>
             </div>
 
-            {/* Sample insights */}
-            <div className="space-y-5">
-              <div className="card-surface p-6 space-y-4 rounded-2xl">
-                <h3 className="font-heading text-xl text-foreground">Sample Compatibility Insights</h3>
-                <div className="space-y-3">
+            {/* ── Right: Structured insights ────────────────────────────── */}
+            <div className="space-y-4">
+              <div className="card-surface p-6 rounded-2xl">
+                <h3 className="font-heading text-xl text-foreground mb-4">
+                  Sample Compatibility Insights
+                </h3>
+
+                {/*
+                 * Each row: score bar + 3 human-readable lines
+                 *   Insight    — what the score reveals
+                 *   Means      — practical day-to-day implication
+                 *   Why        — why this dimension matters in a marriage
+                 */}
+                <div className="space-y-4">
                   {[
-                    { label: 'Emotional Alignment', value: 92, status: 'strong' },
-                    { label: 'Life Goals', value: 88, status: 'strong' },
-                    { label: 'Communication Style', value: 78, status: 'strong' },
-                    { label: 'Conflict Resolution', value: 72, status: 'growth' },
-                    { label: 'Family Values', value: 85, status: 'strong' },
+                    {
+                      label:   'Emotional Alignment',
+                      value:   92,
+                      status:  'strong',
+                      insight: 'You both prioritise open emotional expression and vulnerability.',
+                      means:   'Deep, honest conversations will feel natural and safe.',
+                      why:     'Emotional safety is the bedrock of lasting intimacy.',
+                    },
+                    {
+                      label:   'Life Goals',
+                      value:   88,
+                      status:  'strong',
+                      insight: 'Your long-term visions — career, family, lifestyle — closely align.',
+                      means:   'Major life decisions are likely to feel collaborative.',
+                      why:     'Shared direction keeps couples connected through every life stage.',
+                    },
+                    {
+                      label:   'Communication Style',
+                      value:   78,
+                      status:  'strong',
+                      insight: 'You both prefer directness, though your pacing differs slightly.',
+                      means:   'Conversations flow well with minor adjustments in approach.',
+                      why:     'Communication style shapes how trust is built day by day.',
+                    },
+                    {
+                      label:   'Conflict Resolution',
+                      value:   72,
+                      status:  'growth',
+                      insight: 'One tends to withdraw; the other seeks immediate resolution.',
+                      means:   'Arguments may escalate without a shared de-escalation plan.',
+                      why:     'Learning conflict patterns early prevents long-term friction.',
+                    },
+                    {
+                      label:   'Family Values',
+                      value:   85,
+                      status:  'strong',
+                      insight: 'You share similar expectations around family roles and parenting.',
+                      means:   'Family decisions are likely to feel natural and agreed upon.',
+                      why:     'Value alignment here is a key predictor of marital harmony.',
+                    },
                   ].map((item, i) => (
-                    <div key={i} className="space-y-1">
-                      <div className="flex items-center justify-between text-sm">
+                    <div key={i} className="border-b border-primary/8 last:border-0 pb-4 last:pb-0">
+
+                      {/* Label row */}
+                      <div className="flex items-center justify-between text-sm mb-1.5">
                         <div className="flex items-center gap-2">
                           {item.status === 'strong'
-                            ? <Check className="w-3.5 h-3.5 text-primary" />
-                            : <span className="text-primary/60 text-xs">▲</span>
+                            ? <Check className="w-3.5 h-3.5 text-primary flex-shrink-0" />
+                            : <span className="text-amber-400/80 text-xs flex-shrink-0">▲</span>
                           }
-                          <span className="text-foreground font-medium">{item.label}</span>
+                          <span className="text-foreground font-semibold">{item.label}</span>
                         </div>
-                        <span className="text-primary font-bold">{item.value}%</span>
+                        <span className={`text-sm font-bold ${item.status === 'strong' ? 'text-primary' : 'text-amber-400/80'}`}>
+                          {item.value}%
+                        </span>
                       </div>
-                      <div className="w-full h-1.5 bg-muted rounded-full overflow-hidden">
+
+                      {/* Progress bar */}
+                      <div className="w-full h-1.5 bg-muted rounded-full overflow-hidden mb-2.5">
                         <div
-                          className="h-full bg-gradient-to-r from-primary to-secondary rounded-full"
+                          className={`h-full rounded-full ${
+                            item.status === 'strong'
+                              ? 'bg-gradient-to-r from-primary to-secondary'
+                              : 'bg-gradient-to-r from-amber-500/70 to-amber-400/50'
+                          }`}
                           style={{ width: `${item.value}%` }}
                         />
                       </div>
-                      <p className="text-xs text-muted-foreground/80 italic leading-snug">
-                        {getDimensionInsight(item.label, item.value)}
-                      </p>
+
+                      {/* 3-line structured insight */}
+                      <div className="space-y-1">
+                        <div className="flex gap-2.5 items-baseline">
+                          <span className="text-[9px] font-bold text-primary/70 uppercase tracking-wider w-11 shrink-0">
+                            Insight
+                          </span>
+                          <p className="text-xs text-foreground/90 leading-snug">{item.insight}</p>
+                        </div>
+                        <div className="flex gap-2.5 items-baseline">
+                          <span className="text-[9px] font-bold text-primary/45 uppercase tracking-wider w-11 shrink-0">
+                            Means
+                          </span>
+                          <p className="text-xs text-muted-foreground leading-snug">{item.means}</p>
+                        </div>
+                        <div className="flex gap-2.5 items-baseline">
+                          <span className="text-[9px] font-bold text-primary/35 uppercase tracking-wider w-11 shrink-0">
+                            Why
+                          </span>
+                          <p className="text-xs text-muted-foreground/70 leading-snug">{item.why}</p>
+                        </div>
+                      </div>
                     </div>
                   ))}
                 </div>
-                <div className="border-t border-primary/10 pt-3 grid grid-cols-2 gap-3">
+
+                {/* Summary footer */}
+                <div className="mt-4 grid grid-cols-2 gap-3 border-t border-primary/10 pt-4">
                   <div className="bg-primary/8 border border-primary/15 rounded-lg p-3">
-                    <p className="text-xs font-semibold text-primary mb-1">Strong Alignment</p>
-                    <p className="text-xs text-muted-foreground">Emotional Stability · Life Vision · Communication</p>
+                    <p className="text-xs font-semibold text-primary mb-1">✦ Strong Alignment</p>
+                    <p className="text-xs text-muted-foreground">Emotional · Life Goals · Values</p>
                   </div>
-                  <div className="bg-muted/40 border border-primary/10 rounded-lg p-3">
-                    <p className="text-xs font-semibold text-muted-foreground mb-1">Growth Area</p>
+                  <div className="bg-amber-500/5 border border-amber-500/15 rounded-lg p-3">
+                    <p className="text-xs font-semibold text-amber-400/80 mb-1">▲ Growth Area</p>
                     <p className="text-xs text-muted-foreground">Conflict Style — explore together</p>
                   </div>
                 </div>
               </div>
+
               <div className="text-center">
                 <Link to="/deep/demo-report">
                   <Button variant="outline" className="border-primary/40 hover:bg-primary/10 hover:border-primary" data-testid="view-sample-report-btn">
@@ -495,6 +590,7 @@ const LandingPage = () => {
                 </Link>
               </div>
             </div>
+
           </div>
         </div>
       </section>
