@@ -159,6 +159,60 @@ code {
     }
 }
 
+/* ── Mandala Hero Animations ──────────────────────────────────────────────── */
+
+/* 1. Background glow: slow breathing pulse on the blur backdrop */
+.mandala-glow-pulse {
+    animation: mandala-glow-pulse 5s ease-in-out infinite;
+    will-change: opacity, transform;
+}
+@keyframes mandala-glow-pulse {
+    0%,  100% { opacity: 0.55; transform: scale(0.95); }
+    50%        { opacity: 0.82; transform: scale(1.05); }
+}
+
+/* 2. Ring overlay: gentle golden shimmer on the image border */
+.mandala-ring-pulse {
+    animation: mandala-ring-pulse 5s ease-in-out infinite;
+    will-change: box-shadow, opacity;
+}
+@keyframes mandala-ring-pulse {
+    0%,  100% {
+        box-shadow:
+            0 0 18px rgba(212, 165, 32, 0.08),
+            inset 0 0 18px rgba(212, 165, 32, 0.04);
+        opacity: 0.6;
+    }
+    50% {
+        box-shadow:
+            0 0 48px rgba(212, 165, 32, 0.28),
+            inset 0 0 32px rgba(212, 165, 32, 0.12);
+        opacity: 1;
+    }
+}
+
+/* 3. Particles: tiny golden orbs floating upward and fading out */
+.mandala-particle {
+    position: absolute;
+    border-radius: 9999px;
+    /* radial-gradient gives each dot a soft glowing centre */
+    background: radial-gradient(
+        circle,
+        rgba(240, 200, 66, 0.95) 0%,
+        rgba(212, 165, 32, 0.5)  45%,
+        rgba(212, 165, 32, 0)    100%
+    );
+    pointer-events: none;
+    will-change: transform, opacity;
+    animation: particle-float var(--p-dur, 7s) ease-in-out var(--p-delay, 0s) infinite;
+}
+@keyframes particle-float {
+    0%   { transform: translateY(0px)   translateX(0px);              opacity: 0;   }
+    12%  { opacity: 0.85; }
+    75%  { opacity: 0.35; }
+    100% { transform: translateY(-72px) translateX(var(--p-drift, 6px)); opacity: 0; }
+}
+
 @layer base {
     [data-debug-wrapper="true"] {
         display: contents !important;

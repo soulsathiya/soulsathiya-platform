@@ -19,6 +19,22 @@ const SoulSathiyaLogo = ({ className = 'w-9 h-9' }) => (
   />
 );
 
+// ─── Mandala particle data ────────────────────────────────────────────────────
+// Each particle: position within image bounds, size, animation duration + delay,
+// horizontal drift direction. Kept to 10 items to stay lightweight.
+const MANDALA_PARTICLES = [
+  { top: '78%', left: '18%', size: '3px', dur: '6s',   delay: '0s',   drift: '8px'   },
+  { top: '82%', left: '45%', size: '2px', dur: '8s',   delay: '1.8s', drift: '-5px'  },
+  { top: '70%', left: '72%', size: '3px', dur: '7s',   delay: '0.5s', drift: '6px'   },
+  { top: '88%', left: '30%', size: '2px', dur: '9s',   delay: '2.5s', drift: '-8px'  },
+  { top: '75%', left: '60%', size: '2px', dur: '5.5s', delay: '1.2s', drift: '10px'  },
+  { top: '85%', left: '82%', size: '3px', dur: '7.5s', delay: '3.2s', drift: '-6px'  },
+  { top: '91%', left: '12%', size: '2px', dur: '6.5s', delay: '0.8s', drift: '4px'   },
+  { top: '80%', left: '55%', size: '2px', dur: '8.5s', delay: '4s',   drift: '-10px' },
+  { top: '73%', left: '88%', size: '3px', dur: '6s',   delay: '2s',   drift: '7px'   },
+  { top: '94%', left: '40%', size: '2px', dur: '7s',   delay: '1s',   drift: '-4px'  },
+];
+
 // ─── Page ─────────────────────────────────────────────────────────────────────
 const LandingPage = () => {
 
@@ -196,15 +212,42 @@ const LandingPage = () => {
               </div>
             </div>
 
-            {/* Right: Hero image */}
+            {/* Right: Hero image — animated mandala effect */}
             <div className="relative" style={{ minHeight: '320px', aspectRatio: '4 / 3' }}>
-              <div className="absolute inset-0 bg-gradient-to-br from-primary/25 to-secondary/15 rounded-3xl blur-2xl scale-95 opacity-70" />
+
+              {/* Animated golden glow backdrop (slow breathing pulse) */}
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/25 to-secondary/15 rounded-3xl blur-2xl mandala-glow-pulse" />
+
+              {/* Main image */}
               <img
                 src="/hero-mandala.jpg"
                 alt="Couple before golden mandala — SoulSathiya"
                 className="relative rounded-3xl shadow-2xl shadow-primary/20 w-full h-full object-cover border border-primary/15"
                 loading="eager"
               />
+
+              {/* Pulsing golden ring overlay — sits on top of image, non-blocking */}
+              <div
+                className="absolute inset-0 rounded-3xl pointer-events-none mandala-ring-pulse"
+                style={{ border: '1px solid rgba(212,165,32,0.18)' }}
+              />
+
+              {/* Floating particle orbs rising from the mandala */}
+              {MANDALA_PARTICLES.map((p, i) => (
+                <span
+                  key={i}
+                  className="mandala-particle"
+                  style={{
+                    width:        p.size,
+                    height:       p.size,
+                    top:          p.top,
+                    left:         p.left,
+                    '--p-dur':    p.dur,
+                    '--p-delay':  p.delay,
+                    '--p-drift':  p.drift,
+                  }}
+                />
+              ))}
             </div>
           </div>
         </div>
