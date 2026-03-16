@@ -178,12 +178,19 @@ const LandingPage = () => {
                 </Link>
               </div>
 
-              {/* Stats row */}
-              <div className="flex flex-wrap gap-8 pt-2">
-                {[['10,000+', 'Members'], ['92%', 'Match Rate'], ['500+', 'Weddings']].map(([num, label]) => (
-                  <div key={label}>
-                    <p className="text-2xl font-heading font-bold text-primary">{num}</p>
-                    <p className="text-xs text-muted-foreground">{label}</p>
+              {/* Trust signals row */}
+              <div className="flex flex-wrap gap-6 pt-2">
+                {[
+                  { icon: <Brain className="w-4 h-4" />, title: 'Psychology-Based Compatibility', desc: 'Matched on personality, values & relationship style' },
+                  { icon: <Shield className="w-4 h-4" />, title: 'Verified Profiles', desc: 'KYC-verified members for authentic connections' },
+                  { icon: <Lock className="w-4 h-4" />, title: 'Privacy-First Platform', desc: 'You control who sees your photos & details' },
+                ].map(({ icon, title, desc }) => (
+                  <div key={title} className="flex items-start gap-2 min-w-[140px]">
+                    <span className="text-primary shrink-0 mt-0.5">{icon}</span>
+                    <div>
+                      <p className="text-sm font-semibold text-foreground leading-tight">{title}</p>
+                      <p className="text-xs text-muted-foreground leading-snug mt-0.5">{desc}</p>
+                    </div>
                   </div>
                 ))}
               </div>
