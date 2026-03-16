@@ -167,8 +167,8 @@ code {
     will-change: opacity, transform;
 }
 @keyframes mandala-glow-pulse {
-    0%,  100% { opacity: 0.55; transform: scale(0.95); }
-    50%        { opacity: 0.82; transform: scale(1.05); }
+    0%,  100% { opacity: 0.4;  transform: scale(0.92); }
+    50%        { opacity: 1;    transform: scale(1.08); }
 }
 
 /* 2. Ring overlay: gentle golden shimmer on the image border */
@@ -179,14 +179,15 @@ code {
 @keyframes mandala-ring-pulse {
     0%,  100% {
         box-shadow:
-            0 0 18px rgba(212, 165, 32, 0.08),
-            inset 0 0 18px rgba(212, 165, 32, 0.04);
-        opacity: 0.6;
+            0 0 20px  rgba(212, 165, 32, 0.15),
+            inset 0 0 20px rgba(212, 165, 32, 0.06);
+        opacity: 0.5;
     }
     50% {
         box-shadow:
-            0 0 48px rgba(212, 165, 32, 0.28),
-            inset 0 0 32px rgba(212, 165, 32, 0.12);
+            0 0 60px  rgba(212, 165, 32, 0.55),
+            0 0 100px rgba(212, 165, 32, 0.20),
+            inset 0 0 40px rgba(212, 165, 32, 0.20);
         opacity: 1;
     }
 }
@@ -207,10 +208,10 @@ code {
     animation: particle-float var(--p-dur, 7s) ease-in-out var(--p-delay, 0s) infinite;
 }
 @keyframes particle-float {
-    0%   { transform: translateY(0px)   translateX(0px);              opacity: 0;   }
-    12%  { opacity: 0.85; }
-    75%  { opacity: 0.35; }
-    100% { transform: translateY(-72px) translateX(var(--p-drift, 6px)); opacity: 0; }
+    0%   { transform: translateY(0px)    translateX(0px);               opacity: 0;    }
+    10%  { opacity: 1; }
+    70%  { opacity: 0.6; }
+    100% { transform: translateY(-90px) translateX(var(--p-drift, 6px)); opacity: 0; }
 }
 
 /* ── Stage connector node: gentle gold pulse ──────────────────────────────── */

@@ -23,16 +23,16 @@ const SoulSathiyaLogo = ({ className = 'w-9 h-9' }) => (
 // Each particle: position within image bounds, size, animation duration + delay,
 // horizontal drift direction. Kept to 10 items to stay lightweight.
 const MANDALA_PARTICLES = [
-  { top: '78%', left: '18%', size: '3px', dur: '6s',   delay: '0s',   drift: '8px'   },
-  { top: '82%', left: '45%', size: '2px', dur: '8s',   delay: '1.8s', drift: '-5px'  },
-  { top: '70%', left: '72%', size: '3px', dur: '7s',   delay: '0.5s', drift: '6px'   },
-  { top: '88%', left: '30%', size: '2px', dur: '9s',   delay: '2.5s', drift: '-8px'  },
-  { top: '75%', left: '60%', size: '2px', dur: '5.5s', delay: '1.2s', drift: '10px'  },
-  { top: '85%', left: '82%', size: '3px', dur: '7.5s', delay: '3.2s', drift: '-6px'  },
-  { top: '91%', left: '12%', size: '2px', dur: '6.5s', delay: '0.8s', drift: '4px'   },
-  { top: '80%', left: '55%', size: '2px', dur: '8.5s', delay: '4s',   drift: '-10px' },
-  { top: '73%', left: '88%', size: '3px', dur: '6s',   delay: '2s',   drift: '7px'   },
-  { top: '94%', left: '40%', size: '2px', dur: '7s',   delay: '1s',   drift: '-4px'  },
+  { top: '76%', left: '18%', size: '5px', dur: '5s',   delay: '0s',   drift: '10px'  },
+  { top: '80%', left: '45%', size: '4px', dur: '7s',   delay: '1.2s', drift: '-7px'  },
+  { top: '68%', left: '72%', size: '6px', dur: '6s',   delay: '0.4s', drift: '8px'   },
+  { top: '84%', left: '30%', size: '4px', dur: '8s',   delay: '2s',   drift: '-10px' },
+  { top: '73%', left: '60%', size: '5px', dur: '5.5s', delay: '0.9s', drift: '12px'  },
+  { top: '82%', left: '82%', size: '4px', dur: '7s',   delay: '2.8s', drift: '-8px'  },
+  { top: '88%', left: '12%', size: '5px', dur: '6s',   delay: '0.6s', drift: '6px'   },
+  { top: '78%', left: '55%', size: '4px', dur: '8s',   delay: '3.2s', drift: '-12px' },
+  { top: '71%', left: '88%', size: '6px', dur: '5.5s', delay: '1.6s', drift: '9px'   },
+  { top: '90%', left: '40%', size: '4px', dur: '6.5s', delay: '0.8s', drift: '-6px'  },
 ];
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
