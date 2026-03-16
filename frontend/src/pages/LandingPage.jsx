@@ -905,7 +905,7 @@ const LandingPage = () => {
                     variant={plan.popular ? 'default' : 'outline'}
                     data-testid={`select-plan-${plan.tier.toLowerCase()}-btn`}
                   >
-                    Get Started
+                    {plan.tier === 'Free' ? 'Start Your Compatibility Profile' : 'Get Started'}
                   </Button>
                 </Link>
               </div>
