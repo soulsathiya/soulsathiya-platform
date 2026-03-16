@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import RadarChart from '../components/RadarChart';
+import RotatingTagline from '../components/RotatingTagline';
 import { getDimensionInsight, getOverallInsight } from '../utils/compatibilityInsights';
 
 // ─── Brand logo ───────────────────────────────────────────────────────────────
@@ -145,6 +146,9 @@ const LandingPage = () => {
                 <span className="text-gold-gradient">Truly Understands</span>{' '}
                 You
               </h1>
+
+              {/* ── Rotating tagline ─────────────────────────────── */}
+              <RotatingTagline />
 
               <p className="text-lg text-muted-foreground leading-relaxed max-w-lg">
                 India's first AI-powered relationship intelligence platform that matches
