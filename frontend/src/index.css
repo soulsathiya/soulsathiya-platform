@@ -213,6 +213,16 @@ code {
     100% { transform: translateY(-72px) translateX(var(--p-drift, 6px)); opacity: 0; }
 }
 
+/* ── Stage connector node: gentle gold pulse ──────────────────────────────── */
+.stage-connector-node {
+    animation: stage-node-pulse 2.8s ease-in-out infinite;
+    will-change: box-shadow;
+}
+@keyframes stage-node-pulse {
+    0%,  100% { box-shadow: 0 0 0   0   rgba(212, 165, 32, 0.0); }
+    50%        { box-shadow: 0 0 12px 4px rgba(212, 165, 32, 0.25); }
+}
+
 @layer base {
     [data-debug-wrapper="true"] {
         display: contents !important;

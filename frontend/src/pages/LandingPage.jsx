@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import {
-  Shield, Users, Sparkles, Check, ArrowRight, Brain,
+  Shield, Users, Sparkles, Check, ArrowRight, ArrowDown, Brain,
   CheckCircle2, Heart, Lock, Star,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -279,9 +279,14 @@ const LandingPage = () => {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-8">
-            {/* Stage 1 */}
-            <div className="card-surface p-8 space-y-5 relative overflow-hidden">
+          {/*
+           * Layout: flex-col on mobile (cards stacked), flex-row on desktop.
+           * The middle slot holds the Stage 1 → Stage 2 flow connector.
+           */}
+          <div className="flex flex-col md:flex-row md:items-stretch gap-6 md:gap-0">
+
+            {/* ── Stage 1 ───────────────────────────────────────────────── */}
+            <div className="flex-1 card-surface p-8 space-y-5 relative overflow-hidden">
               <div className="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-primary to-secondary rounded-l-2xl" />
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-full bg-primary/15 border border-primary/30 flex items-center justify-center text-primary font-heading font-bold text-lg">
@@ -311,8 +316,50 @@ const LandingPage = () => {
               </div>
             </div>
 
-            {/* Stage 2 */}
-            <div className="card-surface p-8 space-y-5 relative overflow-hidden">
+            {/* ── Flow connector ────────────────────────────────────────── */}
+            {/*
+             * Mobile  (flex-col parent): renders as a vertical connector
+             *   — line top → pulsing node → arrow down → line bottom
+             * Desktop (flex-row parent): renders as a horizontal connector
+             *   — line left → pulsing node → arrow right → line right
+             * The connector is purely presentational (aria-hidden).
+             */}
+            <div
+              aria-hidden="true"
+              className="flex-none flex flex-col md:flex-row items-center justify-center
+                         py-2 md:py-0 px-0 md:px-5 gap-0"
+            >
+              {/* Top line (mobile) / Left line (desktop) */}
+              <div className="w-px h-6 md:h-px md:w-8
+                              bg-gradient-to-b   md:bg-gradient-to-r
+                              from-primary/10 to-primary/40" />
+
+              {/* Central node — glowing gold circle */}
+              <div className="flex flex-col md:flex-row items-center gap-1 mx-0 my-1 md:my-0 md:mx-1">
+                <div className="w-9 h-9 rounded-full
+                                bg-card border border-primary/40
+                                flex items-center justify-center
+                                stage-connector-node">
+                  {/* Arrow icon: down on mobile, right on desktop */}
+                  <ArrowDown  className="w-4 h-4 text-primary md:hidden" />
+                  <ArrowRight className="w-4 h-4 text-primary hidden md:flex" />
+                </div>
+                {/* Label */}
+                <span className="text-[10px] font-semibold text-primary/50
+                                 uppercase tracking-widest
+                                 md:hidden">
+                  then
+                </span>
+              </div>
+
+              {/* Bottom line (mobile) / Right line (desktop) */}
+              <div className="w-px h-6 md:h-px md:w-8
+                              bg-gradient-to-b   md:bg-gradient-to-r
+                              from-primary/40 to-primary/10" />
+            </div>
+
+            {/* ── Stage 2 ───────────────────────────────────────────────── */}
+            <div className="flex-1 card-surface p-8 space-y-5 relative overflow-hidden">
               <div className="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-secondary to-primary/50 rounded-l-2xl" />
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-full bg-primary/15 border border-primary/30 flex items-center justify-center text-primary font-heading font-bold text-lg">
@@ -341,6 +388,7 @@ const LandingPage = () => {
                 Available as a mutual exploration
               </div>
             </div>
+
           </div>
         </div>
       </section>
