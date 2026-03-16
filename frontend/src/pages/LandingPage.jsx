@@ -926,7 +926,7 @@ const LandingPage = () => {
             Away.
           </h2>
           <p className="text-lg text-muted-foreground">
-            Join thousands of Indians who found their life partners through deep compatibility intelligence
+            Join thousands of Indians who are finding their life partners through deep compatibility intelligence
           </p>
           <Link to="/register">
             <Button
