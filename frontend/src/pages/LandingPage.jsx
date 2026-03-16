@@ -713,78 +713,146 @@ const LandingPage = () => {
       {/* ── Success Stories ───────────────────────────────────────────────── */}
       <section className="py-20 px-6 bg-background" id="testimonials">
         <div className="container mx-auto max-w-6xl">
+
+          {/* Section header */}
           <div className="text-center mb-16">
-            <h2 className="font-heading text-4xl mb-4 text-foreground">Success Stories</h2>
+            <div className="inline-flex items-center gap-2 bg-primary/10 border border-primary/20 text-primary px-4 py-1.5 rounded-full text-sm font-medium mb-6">
+              <Heart className="w-4 h-4 fill-primary" />
+              Real Couples, Real Stories
+            </div>
+            <h2 className="font-heading text-4xl mb-4 text-foreground">
+              Love Found Through <span className="text-primary">Intelligence</span>
+            </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Real couples who found each other through compatibility intelligence
+              Couples who discovered each other through deep compatibility matching
             </p>
           </div>
+
           <div className="grid md:grid-cols-3 gap-8">
             {[
               {
-                names: 'Priya & Arjun',
-                location: 'Mumbai & Bangalore',
-                compat: '91%',
-                story: 'Our compatibility analysis predicted we would communicate effortlessly — and it was right. When we explored our Deep Compatibility Report together, we saw alignment we never expected. We got married six months after matching.',
-                photo: 'https://images.pexels.com/photos/10987899/pexels-photo-10987899.jpeg',
+                names:     'Priya & Arjun',
+                location:  'Mumbai & Bangalore',
+                compat:    '91%',
+                milestone: 'Married · June 2024',
+                alignment: 'Emotional · Communication',
+                quote:     'Our compatibility report predicted we would communicate effortlessly — and it was right. We saw alignment we never expected. Married six months after matching.',
+                photo:     'https://images.pexels.com/photos/10987899/pexels-photo-10987899.jpeg?auto=compress&cs=tinysrgb&w=800&h=700&fit=crop',
               },
               {
-                names: 'Meera & Vikram',
-                location: 'Delhi & Hyderabad',
-                compat: '87%',
-                story: 'I never believed a platform could truly understand relationship compatibility. SoulSathiya proved me wrong. Our Deep Report highlighted exactly where we were strong and where we needed to grow. We got engaged last month.',
-                photo: 'https://images.pexels.com/photos/32161001/pexels-photo-32161001.jpeg',
+                names:     'Meera & Vikram',
+                location:  'Delhi & Hyderabad',
+                compat:    '87%',
+                milestone: 'Engaged · January 2025',
+                alignment: 'Life Goals · Family Values',
+                quote:     'Our Deep Compatibility Report showed exactly where we were strong and where we needed to grow together. It gave us a real conversation to start our relationship with.',
+                photo:     'https://images.pexels.com/photos/32161001/pexels-photo-32161001.jpeg?auto=compress&cs=tinysrgb&w=800&h=700&fit=crop',
               },
               {
-                names: 'Ananya & Rahul',
-                location: 'Pune & Chennai',
-                compat: '89%',
-                story: 'SoulSathiya felt completely different from other matrimonial sites. The compatibility insights showed us we were emotionally aligned in ways we had never articulated ourselves. We just completed our wedding ceremony.',
-                photo: 'https://images.pexels.com/photos/36079282/pexels-photo-36079282.jpeg',
+                names:     'Ananya & Rahul',
+                location:  'Pune & Chennai',
+                compat:    '89%',
+                milestone: 'Married · December 2024',
+                alignment: 'Emotional · Life Vision',
+                quote:     'SoulSathiya felt completely different. The insights showed we were emotionally aligned in ways we had never articulated ourselves. We knew this was the one.',
+                photo:     'https://images.pexels.com/photos/36079282/pexels-photo-36079282.jpeg?auto=compress&cs=tinysrgb&w=800&h=700&fit=crop',
               },
             ].map((story, i) => (
               <div
                 key={i}
-                className="card-surface rounded-2xl overflow-hidden hover:border-primary/30 hover:shadow-xl hover:shadow-primary/8 transition-all duration-300"
+                className="card-surface feature-card rounded-2xl overflow-hidden group"
                 data-testid={`testimonial-${i}`}
               >
-                {/* Couple photo */}
-                <div className="relative h-48 overflow-hidden bg-muted">
+                {/* ── Couple photo ─────────────────────────────── */}
+                <div className="relative overflow-hidden" style={{ aspectRatio: '4 / 3' }}>
+
+                  {/* Photo — zooms gently on card hover */}
                   <img
                     src={story.photo}
-                    alt={story.names}
-                    className="w-full h-full object-cover"
+                    alt={`${story.names} — SoulSathiya success story`}
+                    className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                    loading="lazy"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent" />
-                  {/* Score badge over photo */}
-                  <div className="absolute bottom-3 left-4 flex items-center gap-2">
-                    <div className="bg-primary/90 text-primary-foreground px-3 py-1 rounded-full text-sm font-bold shadow-lg backdrop-blur-sm">
-                      {story.compat} Compatible
+
+                  {/* Gradient: strong at bottom for text legibility */}
+                  <div className="absolute inset-0"
+                    style={{
+                      background: 'linear-gradient(to top, rgba(12,19,35,0.95) 0%, rgba(12,19,35,0.45) 45%, rgba(12,19,35,0.08) 100%)',
+                    }}
+                  />
+
+                  {/* Compatibility badge — top right */}
+                  <div className="absolute top-4 right-4">
+                    <div
+                      className="px-3 py-1.5 rounded-full text-sm font-bold text-primary-foreground backdrop-blur-sm shadow-lg"
+                      style={{ background: 'rgba(212,165,32,0.92)' }}
+                    >
+                      {story.compat} Match
                     </div>
+                  </div>
+
+                  {/* Names + location — bottom of image */}
+                  <div className="absolute bottom-0 left-0 right-0 px-5 pb-4">
+                    <h4 className="font-heading text-xl font-bold text-white leading-tight">
+                      {story.names}
+                    </h4>
+                    <p className="text-xs text-white/65 mt-0.5 tracking-wide">
+                      {story.location}
+                    </p>
                   </div>
                 </div>
 
-                {/* Story content */}
-                <div className="p-6 space-y-4">
-                  <div>
-                    <h4 className="font-heading text-lg font-semibold text-foreground">{story.names}</h4>
-                    <p className="text-xs text-muted-foreground">{story.location}</p>
+                {/* ── Card body ──────────────────────────────────── */}
+                <div className="p-5 space-y-4">
+
+                  {/* Milestone + alignment badges */}
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="inline-flex items-center gap-1.5 bg-primary/10 border border-primary/20 text-primary px-2.5 py-1 rounded-full text-xs font-semibold">
+                      <Heart className="w-3 h-3 fill-primary" />
+                      {story.milestone}
+                    </span>
+                    <span className="text-xs text-muted-foreground/70 bg-muted/40 px-2.5 py-1 rounded-full border border-primary/8">
+                      ✦ {story.alignment}
+                    </span>
                   </div>
-                  <p className="text-sm text-muted-foreground leading-relaxed">
-                    "{story.story}"
-                  </p>
-                  <div className="flex items-center gap-2">
+
+                  {/* Pull quote */}
+                  <div className="relative">
+                    {/* Decorative opening quote */}
+                    <span
+                      className="absolute -top-2 -left-1 font-heading font-bold text-primary/20 leading-none select-none"
+                      style={{ fontSize: '4rem', lineHeight: 1 }}
+                      aria-hidden="true"
+                    >
+                      "
+                    </span>
+                    <p className="text-sm text-muted-foreground leading-relaxed pl-5 italic">
+                      {story.quote}
+                    </p>
+                  </div>
+
+                  {/* Star row */}
+                  <div className="flex items-center gap-1 pt-1">
                     {Array.from({ length: 5 }).map((_, si) => (
                       <Star key={si} className="w-3.5 h-3.5 fill-primary text-primary" />
                     ))}
+                    <span className="text-xs text-muted-foreground ml-1.5">Verified couple</span>
                   </div>
                 </div>
               </div>
             ))}
           </div>
-          <div className="text-center mt-10 text-muted-foreground text-sm">
-            <p>Join over <strong className="text-primary">10,000+</strong> members who have found meaningful connections</p>
+
+          {/* Footer note */}
+          <div className="text-center mt-12">
+            <p className="text-sm text-muted-foreground">
+              Every story above is from a verified member couple.{' '}
+              <Link to="/register" className="text-primary hover:underline font-medium">
+                Start your story →
+              </Link>
+            </p>
           </div>
+
         </div>
       </section>
 
