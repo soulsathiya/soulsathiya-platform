@@ -610,10 +610,11 @@ const LandingPage = () => {
             {features.map((feature, index) => (
               <div
                 key={index}
-                className="card-surface p-6 space-y-4 text-center hover:border-primary/30 transition-all duration-200"
+                className="card-surface feature-card p-6 space-y-4 text-center"
                 data-testid={`feature-card-${index}`}
               >
-                <div className="w-12 h-12 mx-auto bg-primary/10 border border-primary/20 rounded-xl flex items-center justify-center text-primary">
+                {/* Icon wrapper — glows on parent card hover via .feature-card:hover .feature-icon */}
+                <div className="feature-icon w-12 h-12 mx-auto bg-primary/10 border border-primary/20 rounded-xl flex items-center justify-center text-primary">
                   {feature.icon}
                 </div>
                 <h3 className="font-heading text-xl text-foreground">{feature.title}</h3>

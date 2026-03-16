@@ -242,6 +242,43 @@ code {
     100% { color: rgba(212, 165, 32, 0.45); text-shadow: none; }
 }
 
+/* ── Feature card micro-interactions ─────────────────────────────────────── */
+/*
+ * Lift + shadow on card hover, glow on icon hover.
+ * `@media (hover: hover)` restricts the effect to pointer devices —
+ * touch screens never trigger a stuck hover state.
+ */
+.feature-card {
+    transition:
+        transform     300ms cubic-bezier(0.34, 1.4, 0.64, 1),
+        box-shadow    300ms ease,
+        border-color  300ms ease;
+    will-change: transform, box-shadow;
+}
+.feature-icon {
+    transition:
+        box-shadow        300ms ease,
+        background-color  300ms ease,
+        border-color      300ms ease;
+    will-change: box-shadow;
+}
+@media (hover: hover) and (pointer: fine) {
+    .feature-card:hover {
+        transform:   translateY(-5px);
+        box-shadow:
+            0 20px 48px rgba(0, 0, 0, 0.45),
+            0  6px 20px rgba(212, 165, 32, 0.10);
+        border-color: rgba(212, 165, 32, 0.32) !important;
+    }
+    .feature-card:hover .feature-icon {
+        background-color: rgba(212, 165, 32, 0.20);
+        border-color:     rgba(212, 165, 32, 0.45);
+        box-shadow:
+            0 0 22px rgba(212, 165, 32, 0.40),
+            0 0  8px rgba(240, 200,  66, 0.25);
+    }
+}
+
 /* ── Stage connector node: gentle gold pulse ──────────────────────────────── */
 .stage-connector-node {
     animation: stage-node-pulse 2.8s ease-in-out infinite;
