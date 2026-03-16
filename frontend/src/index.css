@@ -214,6 +214,34 @@ code {
     100% { transform: translateY(-90px) translateX(var(--p-drift, 6px)); opacity: 0; }
 }
 
+/* ── Brand-bar sequential word highlight ─────────────────────────────────── */
+/*
+ * All three words share the same 3.6 s keyframe.
+ * Staggered negative delays place each word in the correct phase at t=0:
+ *   Word 1  delay:  0s    → active  0.0–1.2 s
+ *   Word 2  delay: -2.4s  → active  1.2–2.4 s
+ *   Word 3  delay: -1.2s  → active  2.4–3.6 s
+ */
+.brand-word {
+    color: rgba(212, 165, 32, 0.45);           /* dim state */
+    animation: brand-word-glow 3.6s ease-in-out infinite;
+    display: inline;
+}
+@keyframes brand-word-glow {
+    /* Ramp up */
+    0%   { color: hsl(43, 82%, 60%);
+           text-shadow: 0 0 18px rgba(212, 165, 32, 0.55),
+                        0 0  6px rgba(240, 200,  66, 0.40); }
+    /* Hold bright */
+    28%  { color: hsl(43, 82%, 60%);
+           text-shadow: 0 0 18px rgba(212, 165, 32, 0.55),
+                        0 0  6px rgba(240, 200,  66, 0.40); }
+    /* Fade out */
+    36%  { color: rgba(212, 165, 32, 0.45); text-shadow: none; }
+    /* Stay dim for the rest of the cycle */
+    100% { color: rgba(212, 165, 32, 0.45); text-shadow: none; }
+}
+
 /* ── Stage connector node: gentle gold pulse ──────────────────────────────── */
 .stage-connector-node {
     animation: stage-node-pulse 2.8s ease-in-out infinite;

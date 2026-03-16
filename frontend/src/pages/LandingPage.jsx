@@ -256,8 +256,20 @@ const LandingPage = () => {
       {/* ── Brand Motif Bar ───────────────────────────────────────────────── */}
       <div className="py-5 px-6 border-y border-primary/15 bg-card/60">
         <div className="container mx-auto max-w-3xl">
-          <p className="text-center font-heading text-sm sm:text-base tracking-[0.35em] text-primary/80 uppercase select-none">
-            Compatibility &nbsp;•&nbsp; Connection &nbsp;•&nbsp; Commitment
+          {/*
+           * Each word uses the shared .brand-word keyframe (3.6 s cycle).
+           * Negative delays kick every word into its correct phase at page load
+           * so the sequence starts immediately with no blank pause.
+           *   Word 1:  delay  0s   → lit  0.0–1.2 s
+           *   Word 2:  delay -2.4s → lit  1.2–2.4 s
+           *   Word 3:  delay -1.2s → lit  2.4–3.6 s
+           */}
+          <p className="text-center font-heading text-sm sm:text-base tracking-[0.35em] uppercase select-none">
+            <span className="brand-word" style={{ animationDelay: '0s'   }}>Compatibility</span>
+            <span className="text-primary/25">&nbsp;•&nbsp;</span>
+            <span className="brand-word" style={{ animationDelay: '-2.4s' }}>Connection</span>
+            <span className="text-primary/25">&nbsp;•&nbsp;</span>
+            <span className="brand-word" style={{ animationDelay: '-1.2s' }}>Commitment</span>
           </p>
         </div>
       </div>
