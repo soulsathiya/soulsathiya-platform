@@ -1,9 +1,14 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Shield, Users, Sparkles, Check, ArrowRight, Brain } from 'lucide-react';
+import {
+  Shield, Users, Sparkles, Check, ArrowRight, Brain,
+  CheckCircle2, Heart, Lock, Star,
+} from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import RadarChart from '@/components/RadarChart';
+import { getDimensionInsight, getOverallInsight } from '@/lib/compatibilityInsights';
 
-// ─── Brand logo mark — real 3D gold "S" image ────────────────────────────────
+// ─── Brand logo ───────────────────────────────────────────────────────────────
 const SoulSathiyaLogo = ({ className = 'w-9 h-9' }) => (
   <img
     src="/logo.png"
@@ -13,70 +18,87 @@ const SoulSathiyaLogo = ({ className = 'w-9 h-9' }) => (
   />
 );
 
-// ─── Page component ───────────────────────────────────────────────────────────
+// ─── Page ─────────────────────────────────────────────────────────────────────
 const LandingPage = () => {
+
   const features = [
     {
       icon: <Brain className="w-6 h-6" />,
-      title: "AI-Powered Compatibility",
-      description: "Advanced psychometric matching for deeper, lasting connections",
+      title: 'AI-Powered Matching',
+      description: 'Intelligent compatibility analysis that goes beyond surface-level filters',
     },
     {
       icon: <Shield className="w-6 h-6" />,
-      title: "Verified Profiles",
-      description: "KYC-verified members for trust and authentic relationships",
+      title: 'Verified Profiles',
+      description: 'KYC-verified members for authentic, trustworthy connections',
     },
     {
       icon: <Users className="w-6 h-6" />,
-      title: "Gated Communities",
-      description: "Connect within your professional and cultural circles",
+      title: 'Gated Communities',
+      description: 'Connect within your professional and cultural circles',
     },
     {
       icon: <Sparkles className="w-6 h-6" />,
-      title: "Privacy First",
-      description: "Control photo visibility and personal information with ease",
+      title: 'Privacy First',
+      description: 'Control photo visibility and personal information with ease',
     },
   ];
 
   const subscriptionPlans = [
     {
-      tier: "Free",
-      price: "₹0",
+      tier: 'Free',
+      price: '₹0',
       features: [
-        "Create profile",
-        "View up to 10 matches",
-        "Send 3 interests per month",
-        "Basic filters",
+        'Create compatibility profile',
+        'View up to 10 matches',
+        'Send 3 interests per month',
+        'Basic compatibility filters',
       ],
     },
     {
-      tier: "Premium",
-      price: "₹1,999",
-      period: "/ month",
+      tier: 'Premium',
+      price: '₹1,999',
+      period: '/ month',
       popular: true,
       features: [
-        "Unlimited profile views",
-        "Unlimited interests",
-        "Advanced compatibility filters",
-        "See who viewed your profile",
-        "Priority customer support",
-        "Deep Couple Compatibility (₹999/pair add-on)",
+        'Unlimited profile views',
+        'Unlimited interests',
+        'Advanced compatibility filters',
+        'See who viewed your profile',
+        'Priority customer support',
+        'Deep Compatibility Report (₹999/pair add-on)',
       ],
     },
     {
-      tier: "Elite",
-      price: "₹4,999",
-      period: "/ month",
+      tier: 'Elite',
+      price: '₹4,999',
+      period: '/ month',
       features: [
-        "All Premium features",
-        "Profile boost",
-        "Dedicated relationship manager",
-        "Verified badge priority",
-        "Exclusive events access",
-        "Unlimited Deep Couple Compatibility Exploration",
+        'All Premium features',
+        'Profile boost',
+        'Dedicated relationship manager',
+        'Verified badge priority',
+        'Exclusive events access',
+        'Unlimited Deep Compatibility Reports',
       ],
-      badge: "Most Comprehensive",
+      badge: 'Most Comprehensive',
     },
+  ];
+
+  const trustItems = [
+    { icon: <CheckCircle2 className="w-5 h-5" />, label: 'Verified Members', desc: 'Every profile KYC-verified for authenticity' },
+    { icon: <Lock className="w-5 h-5" />, label: 'Privacy-First Controls', desc: 'You decide who sees your photos and details' },
+    { icon: <Brain className="w-5 h-5" />, label: 'Compatibility-Driven', desc: 'AI-powered matching based on deep psychology' },
+    { icon: <Heart className="w-5 h-5" />, label: 'Marriage-Focused', desc: 'A serious community built for lasting commitment' },
+  ];
+
+  const radarDimensions = [
+    { label: 'Emotional Alignment', value: 92 },
+    { label: 'Life Goals', value: 88 },
+    { label: 'Communication', value: 78 },
+    { label: 'Conflict Resolution', value: 72 },
+    { label: 'Family Values', value: 85 },
+    { label: 'Intimacy', value: 80 },
   ];
 
   return (
@@ -113,24 +135,20 @@ const LandingPage = () => {
 
             {/* Left: Copy */}
             <div className="space-y-8 animate-fade-in">
-              {/* Tag */}
               <div className="inline-flex items-center gap-2 bg-primary/10 border border-primary/20 text-primary px-4 py-1.5 rounded-full text-sm font-medium tracking-wide">
                 <Sparkles className="w-4 h-4" />
                 India's First Relationship Intelligence Platform
               </div>
 
               <h1 className="font-heading leading-tight text-foreground">
-                Find Your{' '}
-                <span className="text-gold-gradient">Soulmate</span>
-                <br />
-                Through Deep
-                <br />
-                Compatibility
+                Find a Partner Who{' '}
+                <span className="text-gold-gradient">Truly Understands</span>{' '}
+                You
               </h1>
 
               <p className="text-lg text-muted-foreground leading-relaxed max-w-lg">
-                SoulSathiya uses advanced psychometric assessment and AI-powered matching
-                to help you find a lifelong partner who truly understands you.
+                India's first AI-powered relationship intelligence platform that matches
+                people based on deep psychological compatibility.
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4">
@@ -140,7 +158,7 @@ const LandingPage = () => {
                     className="w-full sm:w-auto bg-primary text-primary-foreground hover:bg-primary/90 shadow-xl shadow-primary/25 font-semibold"
                     data-testid="hero-get-started-btn"
                   >
-                    Start Your Journey
+                    Build Your Compatibility Profile
                     <ArrowRight className="ml-2 w-5 h-5" />
                   </Button>
                 </Link>
@@ -151,7 +169,7 @@ const LandingPage = () => {
                     className="w-full sm:w-auto border-primary/40 text-foreground hover:bg-primary/10 hover:border-primary"
                     data-testid="hero-login-btn"
                   >
-                    Already a Member?
+                    Browse Verified Profiles
                   </Button>
                 </Link>
               </div>
@@ -167,9 +185,8 @@ const LandingPage = () => {
               </div>
             </div>
 
-            {/* Right: Hero Image */}
+            {/* Right: Hero image */}
             <div className="relative" style={{ minHeight: '320px', aspectRatio: '4 / 3' }}>
-              {/* Ambient glow behind image */}
               <div className="absolute inset-0 bg-gradient-to-br from-primary/25 to-secondary/15 rounded-3xl blur-2xl scale-95 opacity-70" />
               <img
                 src="/hero-mandala.jpg"
@@ -177,7 +194,7 @@ const LandingPage = () => {
                 className="relative rounded-3xl shadow-2xl shadow-primary/20 w-full h-full object-cover border border-primary/15"
                 loading="eager"
               />
-              {/* Floating compatibility badge */}
+              {/* Floating badge */}
               <div className="absolute -bottom-4 -left-4 glass-card px-5 py-3 rounded-xl border border-primary/20">
                 <p className="text-xs text-muted-foreground">Average compatibility</p>
                 <p className="text-2xl font-heading font-bold text-primary">89%</p>
@@ -196,8 +213,185 @@ const LandingPage = () => {
         </div>
       </div>
 
+      {/* ── How It Works — Relationship Intelligence ───────────────────── */}
+      <section className="py-20 px-6 bg-background" id="how-it-works">
+        <div className="container mx-auto max-w-6xl">
+          <div className="text-center mb-16">
+            <div className="inline-flex items-center gap-2 bg-primary/10 border border-primary/20 text-primary px-4 py-1.5 rounded-full text-sm font-medium mb-6">
+              <Brain className="w-4 h-4" />
+              How SoulSathiya Works
+            </div>
+            <h2 className="font-heading text-4xl mb-4 text-foreground">
+              Relationship <span className="text-primary">Intelligence Reports</span>
+            </h2>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              Compatibility insights are delivered in two meaningful stages, giving you a
+              complete picture of your relationship potential.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-8">
+            {/* Stage 1 */}
+            <div className="card-surface p-8 space-y-5 relative overflow-hidden">
+              <div className="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-primary to-secondary rounded-l-2xl" />
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-primary/15 border border-primary/30 flex items-center justify-center text-primary font-heading font-bold text-lg">
+                  1
+                </div>
+                <span className="text-xs font-semibold text-primary/70 uppercase tracking-widest">Stage One</span>
+              </div>
+              <h3 className="font-heading text-2xl text-foreground">
+                Psychological Compatibility Analysis
+              </h3>
+              <p className="text-muted-foreground leading-relaxed">
+                Build your compatibility profile and let our intelligence engine understand
+                your personality, values, and relationship style. Used to intelligently
+                match you with people who are truly aligned with who you are.
+              </p>
+              <ul className="space-y-2">
+                {['Personality & values alignment', 'Communication and emotional style', 'Life goals and vision', 'Relationship expectations'].map((item, i) => (
+                  <li key={i} className="flex items-center gap-2 text-sm text-foreground">
+                    <Check className="w-4 h-4 text-primary flex-shrink-0" />
+                    {item}
+                  </li>
+                ))}
+              </ul>
+              <div className="inline-flex items-center gap-2 bg-primary/10 border border-primary/20 text-primary px-3 py-1.5 rounded-lg text-sm font-medium">
+                <Sparkles className="w-4 h-4" />
+                Powers your intelligent matches
+              </div>
+            </div>
+
+            {/* Stage 2 */}
+            <div className="card-surface p-8 space-y-5 relative overflow-hidden">
+              <div className="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-secondary to-primary/50 rounded-l-2xl" />
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-primary/15 border border-primary/30 flex items-center justify-center text-primary font-heading font-bold text-lg">
+                  2
+                </div>
+                <span className="text-xs font-semibold text-primary/70 uppercase tracking-widest">Stage Two</span>
+              </div>
+              <h3 className="font-heading text-2xl text-foreground">
+                Deep Compatibility Report
+              </h3>
+              <p className="text-muted-foreground leading-relaxed">
+                When you and a match want to explore deeper, unlock a comprehensive
+                compatibility report. Reveals how you align across the full spectrum
+                of a real relationship.
+              </p>
+              <ul className="space-y-2">
+                {['Conflict resolution compatibility', 'Attachment and trust patterns', 'Intimacy and communication analysis', 'Family and lifestyle integration'].map((item, i) => (
+                  <li key={i} className="flex items-center gap-2 text-sm text-foreground">
+                    <Check className="w-4 h-4 text-primary flex-shrink-0" />
+                    {item}
+                  </li>
+                ))}
+              </ul>
+              <div className="inline-flex items-center gap-2 bg-primary/10 border border-primary/20 text-primary px-3 py-1.5 rounded-lg text-sm font-medium">
+                <Brain className="w-4 h-4" />
+                Available as a mutual exploration
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Compatibility Insights Preview ─────────────────────────────── */}
+      <section className="py-20 px-6 bg-card/40" id="compatibility-preview">
+        <div className="container mx-auto max-w-6xl">
+          <div className="text-center mb-16">
+            <h2 className="font-heading text-4xl mb-4 text-foreground">
+              What Your <span className="text-primary">Compatibility Report</span> Reveals
+            </h2>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              A sample of the depth and clarity our compatibility intelligence delivers
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-12 items-center">
+            {/* Radar chart */}
+            <div className="flex flex-col items-center space-y-4">
+              <div className="card-surface p-6 rounded-2xl w-full max-w-sm mx-auto">
+                <div className="text-center mb-4">
+                  <p className="text-xs text-muted-foreground uppercase tracking-widest mb-1">Sample Compatibility</p>
+                  <div className="flex items-center justify-center gap-2 mb-2">
+                    <span className="text-4xl font-heading font-bold text-primary">89%</span>
+                    <div className="flex flex-col items-start">
+                      <span className="text-xs text-muted-foreground">Overall</span>
+                      <span className="text-xs font-medium text-primary">Strong Match</span>
+                    </div>
+                  </div>
+                  <p className="text-xs text-muted-foreground/80 italic leading-snug max-w-xs mx-auto">
+                    {getOverallInsight(89)}
+                  </p>
+                </div>
+                <div className="flex justify-center">
+                  <RadarChart dimensions={radarDimensions} size={220} />
+                </div>
+              </div>
+            </div>
+
+            {/* Sample insights */}
+            <div className="space-y-5">
+              <div className="card-surface p-6 space-y-4 rounded-2xl">
+                <h3 className="font-heading text-xl text-foreground">Sample Compatibility Insights</h3>
+                <div className="space-y-3">
+                  {[
+                    { label: 'Emotional Alignment', value: 92, status: 'strong' },
+                    { label: 'Life Goals', value: 88, status: 'strong' },
+                    { label: 'Communication Style', value: 78, status: 'strong' },
+                    { label: 'Conflict Resolution', value: 72, status: 'growth' },
+                    { label: 'Family Values', value: 85, status: 'strong' },
+                  ].map((item, i) => (
+                    <div key={i} className="space-y-1">
+                      <div className="flex items-center justify-between text-sm">
+                        <div className="flex items-center gap-2">
+                          {item.status === 'strong'
+                            ? <Check className="w-3.5 h-3.5 text-primary" />
+                            : <span className="text-primary/60 text-xs">▲</span>
+                          }
+                          <span className="text-foreground font-medium">{item.label}</span>
+                        </div>
+                        <span className="text-primary font-bold">{item.value}%</span>
+                      </div>
+                      <div className="w-full h-1.5 bg-muted rounded-full overflow-hidden">
+                        <div
+                          className="h-full bg-gradient-to-r from-primary to-secondary rounded-full"
+                          style={{ width: `${item.value}%` }}
+                        />
+                      </div>
+                      <p className="text-xs text-muted-foreground/80 italic leading-snug">
+                        {getDimensionInsight(item.label, item.value)}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+                <div className="border-t border-primary/10 pt-3 grid grid-cols-2 gap-3">
+                  <div className="bg-primary/8 border border-primary/15 rounded-lg p-3">
+                    <p className="text-xs font-semibold text-primary mb-1">Strong Alignment</p>
+                    <p className="text-xs text-muted-foreground">Emotional Stability · Life Vision · Communication</p>
+                  </div>
+                  <div className="bg-muted/40 border border-primary/10 rounded-lg p-3">
+                    <p className="text-xs font-semibold text-muted-foreground mb-1">Growth Area</p>
+                    <p className="text-xs text-muted-foreground">Conflict Style — explore together</p>
+                  </div>
+                </div>
+              </div>
+              <div className="text-center">
+                <Link to="/deep/demo-report">
+                  <Button variant="outline" className="border-primary/40 hover:bg-primary/10 hover:border-primary" data-testid="view-sample-report-btn">
+                    <Sparkles className="w-4 h-4 mr-2" />
+                    View Full Sample Report
+                  </Button>
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* ── Features Section ──────────────────────────────────────────────── */}
-      <section className="py-20 px-6 bg-card/40">
+      <section className="py-20 px-6 bg-background">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center mb-16">
             <h2 className="font-heading text-4xl mb-4 text-foreground">
@@ -211,22 +405,125 @@ const LandingPage = () => {
             {features.map((feature, index) => (
               <div
                 key={index}
-                className="card-surface p-6 space-y-4 text-center"
+                className="card-surface p-6 space-y-4 text-center hover:border-primary/30 transition-all duration-200"
                 data-testid={`feature-card-${index}`}
               >
                 <div className="w-12 h-12 mx-auto bg-primary/10 border border-primary/20 rounded-xl flex items-center justify-center text-primary">
                   {feature.icon}
                 </div>
                 <h3 className="font-heading text-xl text-foreground">{feature.title}</h3>
-                <p className="text-muted-foreground text-sm">{feature.description}</p>
+                <p className="text-muted-foreground text-sm leading-relaxed">{feature.description}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
+      {/* ── Trust & Safety Section ────────────────────────────────────────── */}
+      <section className="py-20 px-6 bg-card/40" id="trust-safety">
+        <div className="container mx-auto max-w-6xl">
+          <div className="text-center mb-14">
+            <h2 className="font-heading text-4xl mb-4 text-foreground">
+              Built on <span className="text-primary">Trust & Safety</span>
+            </h2>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              A secure, serious platform for people who are ready for a meaningful commitment
+            </p>
+          </div>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {trustItems.map((item, i) => (
+              <div key={i} className="card-surface p-6 space-y-3 text-center hover:border-primary/30 transition-all duration-200">
+                <div className="w-12 h-12 mx-auto bg-primary/10 border border-primary/20 rounded-full flex items-center justify-center text-primary">
+                  {item.icon}
+                </div>
+                <h4 className="font-heading text-lg text-foreground">{item.label}</h4>
+                <p className="text-sm text-muted-foreground leading-relaxed">{item.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── Success Stories ───────────────────────────────────────────────── */}
+      <section className="py-20 px-6 bg-background" id="testimonials">
+        <div className="container mx-auto max-w-6xl">
+          <div className="text-center mb-16">
+            <h2 className="font-heading text-4xl mb-4 text-foreground">Success Stories</h2>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              Real couples who found each other through compatibility intelligence
+            </p>
+          </div>
+          <div className="grid md:grid-cols-3 gap-8">
+            {[
+              {
+                names: 'Priya & Arjun',
+                location: 'Mumbai & Bangalore',
+                compat: '91%',
+                story: 'Our compatibility analysis predicted we would communicate effortlessly — and it was right. When we explored our Deep Compatibility Report together, we saw alignment we never expected. We got married six months after matching.',
+                photo: 'https://images.pexels.com/photos/10987899/pexels-photo-10987899.jpeg',
+              },
+              {
+                names: 'Meera & Vikram',
+                location: 'Delhi & Hyderabad',
+                compat: '87%',
+                story: 'I never believed a platform could truly understand relationship compatibility. SoulSathiya proved me wrong. Our Deep Report highlighted exactly where we were strong and where we needed to grow. We got engaged last month.',
+                photo: 'https://images.pexels.com/photos/32161001/pexels-photo-32161001.jpeg',
+              },
+              {
+                names: 'Ananya & Rahul',
+                location: 'Pune & Chennai',
+                compat: '89%',
+                story: 'SoulSathiya felt completely different from other matrimonial sites. The compatibility insights showed us we were emotionally aligned in ways we had never articulated ourselves. We just completed our wedding ceremony.',
+                photo: 'https://images.pexels.com/photos/36079282/pexels-photo-36079282.jpeg',
+              },
+            ].map((story, i) => (
+              <div
+                key={i}
+                className="card-surface rounded-2xl overflow-hidden hover:border-primary/30 hover:shadow-xl hover:shadow-primary/8 transition-all duration-300"
+                data-testid={`testimonial-${i}`}
+              >
+                {/* Couple photo */}
+                <div className="relative h-48 overflow-hidden bg-muted">
+                  <img
+                    src={story.photo}
+                    alt={story.names}
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent" />
+                  {/* Score badge over photo */}
+                  <div className="absolute bottom-3 left-4 flex items-center gap-2">
+                    <div className="bg-primary/90 text-primary-foreground px-3 py-1 rounded-full text-sm font-bold shadow-lg backdrop-blur-sm">
+                      {story.compat} Compatible
+                    </div>
+                  </div>
+                </div>
+
+                {/* Story content */}
+                <div className="p-6 space-y-4">
+                  <div>
+                    <h4 className="font-heading text-lg font-semibold text-foreground">{story.names}</h4>
+                    <p className="text-xs text-muted-foreground">{story.location}</p>
+                  </div>
+                  <p className="text-sm text-muted-foreground leading-relaxed">
+                    "{story.story}"
+                  </p>
+                  <div className="flex items-center gap-2">
+                    {Array.from({ length: 5 }).map((_, si) => (
+                      <Star key={si} className="w-3.5 h-3.5 fill-primary text-primary" />
+                    ))}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="text-center mt-10 text-muted-foreground text-sm">
+            <p>Join over <strong className="text-primary">10,000+</strong> members who have found meaningful connections</p>
+          </div>
+        </div>
+      </section>
+
       {/* ── Pricing Section ───────────────────────────────────────────────── */}
-      <section className="py-20 px-6 bg-background">
+      <section className="py-20 px-6 bg-card/40">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center mb-16">
             <h2 className="font-heading text-4xl mb-4 text-foreground">Choose Your Plan</h2>
@@ -238,7 +535,7 @@ const LandingPage = () => {
             {subscriptionPlans.map((plan, index) => (
               <div
                 key={index}
-                className={`card-surface p-8 space-y-6 relative ${
+                className={`card-surface p-8 space-y-6 relative rounded-2xl ${
                   plan.popular ? 'ring-1 ring-primary shadow-xl shadow-primary/10 md:scale-105' : ''
                 }`}
                 data-testid={`pricing-card-${plan.tier.toLowerCase()}`}
@@ -283,146 +580,6 @@ const LandingPage = () => {
         </div>
       </section>
 
-      {/* ── Deep Exploration Feature ──────────────────────────────────────── */}
-      <section className="py-20 px-6 bg-card/40" id="deep-exploration">
-        <div className="container mx-auto max-w-6xl">
-          <div className="grid md:grid-cols-2 gap-12 items-center">
-            <div className="space-y-6">
-              <div className="inline-flex items-center space-x-2 bg-primary/10 border border-primary/20 text-primary px-4 py-2 rounded-full">
-                <Sparkles className="w-5 h-5" />
-                <span className="font-medium">Premium Feature</span>
-              </div>
-              <h2 className="font-heading text-4xl text-foreground">
-                Deep Couple Compatibility Exploration
-              </h2>
-              <p className="text-lg text-muted-foreground">
-                Go beyond surface-level compatibility with our comprehensive 108-question deep assessment.
-                Discover how you and your match align on critical relationship dimensions.
-              </p>
-              <ul className="space-y-3">
-                {[
-                  'Expectations & Roles Assessment',
-                  'Conflict Resolution Styles',
-                  'Attachment & Trust Patterns',
-                  'Lifestyle Integration Compatibility',
-                  'Intimacy & Communication Analysis',
-                  'Family & In-Law Dynamics',
-                ].map((item, i) => (
-                  <li key={i} className="flex items-center space-x-2">
-                    <Check className="w-5 h-5 text-primary" />
-                    <span className="text-foreground">{item}</span>
-                  </li>
-                ))}
-              </ul>
-              <div className="flex flex-col sm:flex-row gap-4">
-                <Link to="/deep/demo-report">
-                  <Button variant="outline" size="lg" className="border-primary/40 hover:bg-primary/10 hover:border-primary" data-testid="view-sample-report-btn">
-                    <Sparkles className="w-5 h-5 mr-2" />
-                    View Sample Report
-                  </Button>
-                </Link>
-                <Link to="/register">
-                  <Button size="lg" data-testid="deep-get-started-btn">
-                    Get Started
-                    <ArrowRight className="w-5 h-5 ml-2" />
-                  </Button>
-                </Link>
-              </div>
-            </div>
-
-            {/* Score card */}
-            <div className="relative">
-              <div className="card-surface p-8 space-y-4">
-                <div className="text-center mb-6">
-                  <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-gradient-to-br from-primary to-secondary mb-4">
-                    <span className="text-2xl font-bold text-primary-foreground">87%</span>
-                  </div>
-                  <h3 className="font-heading text-xl text-foreground">Sample Deep Score</h3>
-                </div>
-                <div className="space-y-3">
-                  {[
-                    { label: 'Emotional Alignment', value: 92 },
-                    { label: 'Life Goals', value: 88 },
-                    { label: 'Communication', value: 85 },
-                    { label: 'Values Match', value: 82 },
-                  ].map((item, i) => (
-                    <div key={i} className="flex items-center justify-between">
-                      <span className="text-sm text-muted-foreground">{item.label}</span>
-                      <div className="flex items-center space-x-2">
-                        <div className="w-32 h-2 bg-muted rounded-full overflow-hidden">
-                          <div
-                            className="h-full bg-gradient-to-r from-primary to-secondary rounded-full"
-                            style={{ width: `${item.value}%` }}
-                          />
-                        </div>
-                        <span className="text-sm font-medium text-foreground">{item.value}%</span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ── Testimonials ──────────────────────────────────────────────────── */}
-      <section className="py-20 px-6 bg-background" id="testimonials">
-        <div className="container mx-auto max-w-6xl">
-          <div className="text-center mb-16">
-            <h2 className="font-heading text-4xl mb-4 text-foreground">Success Stories</h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Thousands of couples have found their perfect match through SoulSathiya
-            </p>
-          </div>
-          <div className="grid md:grid-cols-3 gap-8">
-            {[
-              {
-                names: "Priya & Arjun",
-                location: "Mumbai & Bangalore",
-                compat: "91%",
-                quote: "We were matched at 91% compatibility. SoulSathiya understood us better than we understood ourselves. Our Deep Exploration report predicted our communication style perfectly.",
-                photo: "https://images.pexels.com/photos/10987899/pexels-photo-10987899.jpeg",
-              },
-              {
-                names: "Meera & Vikram",
-                location: "Delhi & Hyderabad",
-                compat: "87%",
-                quote: "The psychometric assessment felt like it was reading my mind. When I saw our Deep Compatibility report, I knew Vikram was different. We got engaged last month.",
-                photo: "https://images.pexels.com/photos/32161001/pexels-photo-32161001.jpeg",
-              },
-              {
-                names: "Ananya & Rahul",
-                location: "Pune & Chennai",
-                compat: "89%",
-                quote: "I was skeptical about matrimonial sites. But SoulSathiya's approach is completely different — no superficial filters, just genuine compatibility. We just completed our wedding.",
-                photo: "https://images.pexels.com/photos/36079282/pexels-photo-36079282.jpeg",
-              },
-            ].map((story, i) => (
-              <div key={i} className="card-surface p-8 space-y-4" data-testid={`testimonial-${i}`}>
-                <div className="flex items-center space-x-2 mb-3">
-                  <span className="text-2xl font-bold text-primary">{story.compat}</span>
-                  <span className="text-sm text-muted-foreground">compatibility</span>
-                </div>
-                <p className="text-muted-foreground text-sm leading-relaxed italic">"{story.quote}"</p>
-                <div className="flex items-center space-x-3 pt-2">
-                  <div className="w-10 h-10 rounded-full border border-primary/30 overflow-hidden">
-                    <img src={story.photo} alt={story.names} className="w-full h-full object-cover" />
-                  </div>
-                  <div>
-                    <p className="font-heading font-semibold text-sm text-foreground">{story.names}</p>
-                    <p className="text-xs text-muted-foreground">{story.location}</p>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-          <div className="text-center mt-8 text-muted-foreground text-sm">
-            <p>Join over <strong className="text-primary">10,000+</strong> members who have found meaningful connections</p>
-          </div>
-        </div>
-      </section>
-
       {/* ── CTA Section ───────────────────────────────────────────────────── */}
       <section className="mandala-bg py-20 px-6 bg-card border-t border-primary/10">
         <div className="container mx-auto max-w-4xl text-center space-y-6">
@@ -433,7 +590,7 @@ const LandingPage = () => {
             Ready to Find Your <span className="text-gold-gradient">Perfect Match</span>?
           </h2>
           <p className="text-lg text-muted-foreground">
-            Join thousands of Indians who found their life partners through deep compatibility
+            Join thousands of Indians who found their life partners through deep compatibility intelligence
           </p>
           <Link to="/register">
             <Button
@@ -441,7 +598,7 @@ const LandingPage = () => {
               className="bg-primary text-primary-foreground hover:bg-primary/90 shadow-xl shadow-primary/25 font-semibold mt-2"
               data-testid="cta-register-btn"
             >
-              Create Your Free Profile
+              Build Your Compatibility Profile
               <ArrowRight className="ml-2 w-5 h-5" />
             </Button>
           </Link>

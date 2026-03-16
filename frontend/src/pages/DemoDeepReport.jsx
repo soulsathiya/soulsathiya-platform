@@ -6,6 +6,7 @@ import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
 import axios from 'axios';
+import { getDimensionInsight } from '@/lib/compatibilityInsights';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
@@ -89,14 +90,17 @@ const DemoDeepReport = () => {
       content: (
         <div className="grid md:grid-cols-2 gap-4">
           {Object.entries(report.dimension_scores).map(([dimension, score]) => (
-            <div key={dimension} className="p-4 bg-gray-50 rounded-lg">
-              <div className="flex justify-between items-center mb-2">
-                <span className="font-medium capitalize">{dimension.replace(/_/g, ' ')}</span>
-                <Badge variant={score >= 80 ? "default" : score >= 60 ? "secondary" : "outline"}>
+            <div key={dimension} className="p-4 card-surface rounded-xl border border-primary/10 space-y-2">
+              <div className="flex items-center gap-2">
+                <span className="font-medium capitalize text-foreground flex-1 min-w-0 truncate">{dimension.replace(/_/g, ' ')}</span>
+                <Badge variant={score >= 80 ? "default" : score >= 60 ? "secondary" : "outline"} className="flex-shrink-0">
                   {score}%
                 </Badge>
               </div>
               <Progress value={score} className="h-2" />
+              <p className="text-xs text-muted-foreground italic leading-snug">
+                {getDimensionInsight(dimension, score)}
+              </p>
             </div>
           ))}
         </div>
