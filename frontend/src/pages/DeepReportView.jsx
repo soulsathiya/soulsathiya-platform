@@ -80,13 +80,13 @@ const DeepReportView = () => {
       content: (
         <div className="space-y-4">
           {report.strengths.map((strength, index) => (
-            <div key={index} className="flex items-start space-x-3 p-4 bg-green-50 rounded-lg border border-green-200">
-              <div className="w-6 h-6 rounded-full bg-green-500 flex items-center justify-center flex-shrink-0 mt-0.5">
-                <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+            <div key={index} className="flex items-start space-x-3 p-4 bg-primary/8 rounded-xl border border-primary/20">
+              <div className="w-6 h-6 rounded-full bg-primary flex items-center justify-center flex-shrink-0 mt-0.5">
+                <svg className="w-4 h-4 text-primary-foreground" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                 </svg>
               </div>
-              <p className="flex-1 text-green-900">{strength}</p>
+              <p className="flex-1 text-foreground text-sm leading-relaxed">{strength}</p>
             </div>
           ))}
         </div>
@@ -122,9 +122,9 @@ const DeepReportView = () => {
           <p className="text-muted-foreground leading-relaxed">
             Understanding how you both handle disagreements and express needs is key to relationship success.
           </p>
-          <div className="p-4 bg-amber-50 rounded-lg border border-amber-200">
-            <h4 className="font-medium mb-2">Your Communication Pattern</h4>
-            <p className="text-sm text-amber-900">
+          <div className="p-4 card-surface rounded-xl border border-primary/20">
+            <h4 className="font-medium mb-2 text-foreground">Your Communication Pattern</h4>
+            <p className="text-sm text-muted-foreground leading-relaxed">
               Based on your responses, you both value open dialogue and tend to address issues directly.
               This creates a foundation for healthy conflict resolution.
             </p>
@@ -141,15 +141,15 @@ const DeepReportView = () => {
             Your attachment styles and trust needs shape how you connect and provide security for each other.
           </p>
           <div className="grid md:grid-cols-2 gap-4">
-            <div className="p-4 bg-blue-50 rounded-lg">
-              <h4 className="font-medium mb-2">Trust Foundation</h4>
-              <p className="text-sm text-blue-900">
+            <div className="p-4 card-surface rounded-xl border border-primary/15">
+              <h4 className="font-medium mb-2 text-foreground">Trust Foundation</h4>
+              <p className="text-sm text-muted-foreground leading-relaxed">
                 Both of you show secure attachment patterns with healthy boundaries.
               </p>
             </div>
-            <div className="p-4 bg-purple-50 rounded-lg">
-              <h4 className="font-medium mb-2">Emotional Security</h4>
-              <p className="text-sm text-purple-900">
+            <div className="p-4 card-surface rounded-xl border border-primary/15">
+              <h4 className="font-medium mb-2 text-foreground">Emotional Security</h4>
+              <p className="text-sm text-muted-foreground leading-relaxed">
                 You provide emotional safety and consistent reassurance to each other.
               </p>
             </div>
@@ -186,12 +186,12 @@ const DeepReportView = () => {
             Every relationship has areas for continued growth and deeper understanding.
           </p>
           {report.growth_areas.map((area, index) => (
-            <div key={index} className="p-4 bg-blue-50 rounded-lg border border-blue-200">
+            <div key={index} className="p-4 card-surface rounded-xl border border-primary/15">
               <div className="flex items-start space-x-3">
-                <div className="w-6 h-6 rounded-full bg-blue-500 text-white flex items-center justify-center flex-shrink-0 mt-0.5 text-sm font-bold">
+                <div className="w-6 h-6 rounded-full bg-primary/20 border border-primary/30 text-primary flex items-center justify-center flex-shrink-0 mt-0.5 text-xs font-bold">
                   {index + 1}
                 </div>
-                <p className="flex-1 text-blue-900">{area}</p>
+                <p className="flex-1 text-foreground text-sm leading-relaxed">{area}</p>
               </div>
             </div>
           ))}
@@ -220,13 +220,13 @@ const DeepReportView = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#FDFBF7] to-white">
+    <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="glass-card border-b sticky top-0 z-50">
+      <header className="glass-card border-b border-primary/10 sticky top-0 z-50">
         <div className="container mx-auto px-6 py-4 flex items-center justify-between">
-          <Link to="/dashboard" className="flex items-center space-x-2">
-            <Heart className="w-8 h-8 text-primary fill-primary" />
-            <span className="text-2xl font-heading font-bold">SoulSathiya</span>
+          <Link to="/dashboard" className="flex items-center space-x-2.5">
+            <img src="/logo.png" alt="SoulSathiya" className="w-8 h-8 object-contain" draggable={false} />
+            <span className="text-2xl font-heading font-bold text-foreground">Soul<span className="text-primary">Sathiya</span></span>
           </Link>
           <Link to="/dashboard">
             <Button variant="ghost">Back to Dashboard</Button>

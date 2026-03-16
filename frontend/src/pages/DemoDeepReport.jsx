@@ -72,13 +72,13 @@ const DemoDeepReport = () => {
       content: (
         <div className="space-y-4">
           {report.strengths.map((strength, index) => (
-            <div key={index} className="flex items-start space-x-3 p-4 bg-green-50 rounded-lg border border-green-200">
-              <div className="w-6 h-6 rounded-full bg-green-500 flex items-center justify-center flex-shrink-0 mt-0.5">
-                <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+            <div key={index} className="flex items-start space-x-3 p-4 bg-primary/8 rounded-xl border border-primary/20">
+              <div className="w-6 h-6 rounded-full bg-primary flex items-center justify-center flex-shrink-0 mt-0.5">
+                <svg className="w-4 h-4 text-primary-foreground" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                 </svg>
               </div>
-              <p className="flex-1 text-green-900">{strength}</p>
+              <p className="flex-1 text-foreground text-sm leading-relaxed">{strength}</p>
             </div>
           ))}
         </div>
@@ -115,12 +115,12 @@ const DemoDeepReport = () => {
             Every relationship has areas for continued growth and deeper understanding.
           </p>
           {report.growth_areas.map((area, index) => (
-            <div key={index} className="p-4 bg-blue-50 rounded-lg border border-blue-200">
+            <div key={index} className="p-4 card-surface rounded-xl border border-primary/15">
               <div className="flex items-start space-x-3">
-                <div className="w-6 h-6 rounded-full bg-blue-500 text-white flex items-center justify-center flex-shrink-0 mt-0.5 text-sm font-bold">
+                <div className="w-6 h-6 rounded-full bg-primary/20 border border-primary/30 text-primary flex items-center justify-center flex-shrink-0 mt-0.5 text-xs font-bold">
                   {index + 1}
                 </div>
-                <p className="flex-1 text-blue-900">{area}</p>
+                <p className="flex-1 text-foreground text-sm leading-relaxed">{area}</p>
               </div>
             </div>
           ))}
@@ -149,13 +149,13 @@ const DemoDeepReport = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#FDFBF7] to-white">
+    <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="glass-card border-b sticky top-0 z-50">
+      <header className="glass-card border-b border-primary/10 sticky top-0 z-50">
         <div className="container mx-auto px-6 py-4 flex items-center justify-between">
-          <Link to="/" className="flex items-center space-x-2">
-            <Heart className="w-8 h-8 text-primary fill-primary" />
-            <span className="text-2xl font-heading font-bold">SoulSathiya</span>
+          <Link to="/" className="flex items-center space-x-2.5">
+            <img src="/logo.png" alt="SoulSathiya" className="w-8 h-8 object-contain" draggable={false} />
+            <span className="text-2xl font-heading font-bold text-foreground">Soul<span className="text-primary">Sathiya</span></span>
           </Link>
           <Link to="/register">
             <Button data-testid="demo-get-started-btn">Get Started</Button>
