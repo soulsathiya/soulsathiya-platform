@@ -445,44 +445,66 @@ const LandingPage = () => {
 
           <div className="grid md:grid-cols-2 gap-12 items-start">
 
-            {/* ── Left: Radar chart ─────────────────────────────────────── */}
-            <div className="flex flex-col items-center space-y-4">
-              <div className="card-surface p-6 rounded-2xl w-full">
+            {/* ── Left: Radar chart card ─────────────────────────────── */}
+            <div className="card-surface rounded-2xl overflow-hidden w-full">
 
-                {/* Overall score header */}
-                <div className="text-center mb-2">
-                  <p className="text-xs text-muted-foreground uppercase tracking-widest mb-2">
-                    Sample Compatibility
-                  </p>
-                  <div className="flex items-center justify-center gap-3 mb-2">
-                    <span className="text-5xl font-heading font-bold text-primary">89%</span>
-                    <div className="flex flex-col items-start gap-0.5">
-                      <span className="text-xs text-muted-foreground">Overall Score</span>
-                      <span className="text-sm font-semibold text-primary">Strong Match ✦</span>
+              {/* ── Score hero header ──────────────────────────────────── */}
+              <div className="relative px-8 pt-8 pb-6 text-center"
+                style={{
+                  background: 'linear-gradient(160deg, rgba(212,165,32,0.12) 0%, rgba(20,31,53,0) 60%)',
+                  borderBottom: '1px solid rgba(212,165,32,0.10)',
+                }}>
+                <p className="text-xs font-semibold text-primary/60 uppercase tracking-[0.25em] mb-4">
+                  Sample Compatibility
+                </p>
+
+                {/* Big score */}
+                <div
+                  className="text-8xl font-heading font-bold text-primary leading-none mb-2"
+                  style={{ textShadow: '0 0 48px rgba(212,165,32,0.45), 0 0 16px rgba(212,165,32,0.25)' }}
+                >
+                  89%
+                </div>
+                <p className="text-base font-semibold text-primary/90 tracking-wide mb-3">
+                  Strong Match &nbsp;✦
+                </p>
+                <p className="text-sm text-muted-foreground/80 italic leading-relaxed max-w-xs mx-auto">
+                  {getOverallInsight(89)}
+                </p>
+              </div>
+
+              {/* ── Radar chart — labels disabled, external grid used instead ── */}
+              <div className="flex justify-center px-4 py-6"
+                style={{ background: 'radial-gradient(ellipse at center, rgba(212,165,32,0.05) 0%, transparent 70%)' }}>
+                <RadarChart dimensions={radarDimensions} size={340} showLabels={false} />
+              </div>
+
+              {/* ── Dimension score grid — 3 × 2 ──────────────────────────── */}
+              <div className="grid grid-cols-3 gap-px bg-primary/8 border-t border-primary/10">
+                {radarDimensions.map((d, i) => (
+                  <div
+                    key={i}
+                    className="bg-card px-3 py-4 text-center"
+                  >
+                    {/* Score */}
+                    <p className="text-xl font-heading font-bold text-primary leading-none mb-1">
+                      {d.value}%
+                    </p>
+                    {/* Label */}
+                    <p className="text-[11px] text-muted-foreground leading-tight">
+                      {d.label}
+                    </p>
+                    {/* Mini bar */}
+                    <div className="mt-2 h-0.5 rounded-full bg-muted/60 overflow-hidden">
+                      <div
+                        className="h-full rounded-full bg-gradient-to-r from-primary to-secondary"
+                        style={{ width: `${d.value}%` }}
+                      />
                     </div>
                   </div>
-                  <p className="text-xs text-muted-foreground/80 italic leading-snug max-w-xs mx-auto">
-                    {getOverallInsight(89)}
-                  </p>
-                </div>
-
-                {/* Radar */}
-                <div className="flex justify-center mt-2">
-                  <RadarChart dimensions={radarDimensions} size={300} />
-                </div>
-
-                {/* Legend row */}
-                <div className="flex items-center justify-center gap-5 mt-1 flex-wrap">
-                  <div className="flex items-center gap-1.5">
-                    <span className="w-3 h-3 rounded-full bg-primary/30 border border-primary/70 inline-block" />
-                    <span className="text-xs text-muted-foreground">Compatibility zone</span>
-                  </div>
-                  <div className="flex items-center gap-1.5">
-                    <span className="w-3 h-0.5 bg-primary/70 inline-block" />
-                    <span className="text-xs text-muted-foreground">Score boundary</span>
-                  </div>
-                </div>
+                ))}
               </div>
+
             </div>
 
             {/* ── Right: Structured insights ────────────────────────────── */}
