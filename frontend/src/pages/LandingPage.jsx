@@ -813,38 +813,57 @@ const LandingPage = () => {
                     onMouseEnter={() => setHoveredSD(i)}
                     onMouseLeave={() => setHoveredSD(null)}
                     style={{
-                      background:    '#0F1A2E',
-                      border:        `1px solid ${isHovered ? 'rgba(212,175,55,0.35)' : '#1f2a44'}`,
-                      borderRadius:  '0.75rem',
-                      padding:       '1rem',
-                      opacity:       isRevealed ? (isDimmed ? 0.45 : 1) : 0,
-                      transform:     isRevealed ? (isHovered ? 'translateY(-4px)' : 'none') : 'translateY(24px)',
-                      boxShadow:     isHovered ? '0 16px 36px rgba(0,0,0,0.45)' : 'none',
-                      transition:    `opacity 0.5s ${i * 100}ms, transform 0.5s ${i * 100}ms, box-shadow 0.3s, border-color 0.3s`,
+                      background:    isHovered
+                        ? 'linear-gradient(135deg, #142038 0%, #0F1A2E 100%)'
+                        : '#0F1A2E',
+                      border:        `1px solid ${isHovered ? 'rgba(212,175,55,0.45)' : 'rgba(31,42,68,0.9)'}`,
+                      borderLeft:    `3px solid ${isHovered ? '#D4AF37' : 'rgba(212,175,55,0.25)'}`,
+                      borderRadius:  '1rem',
+                      padding:       '1.5rem',
+                      opacity:       isRevealed ? (isDimmed ? 0.4 : 1) : 0,
+                      transform:     isRevealed ? (isHovered ? 'translateY(-5px)' : 'none') : 'translateY(24px)',
+                      boxShadow:     isHovered ? '0 20px 40px rgba(0,0,0,0.5), 0 0 0 1px rgba(212,175,55,0.08)' : 'none',
+                      transition:    `opacity 0.5s ${i * 100}ms, transform 0.5s ${i * 100}ms, box-shadow 0.3s, border-color 0.3s, background 0.3s`,
                       cursor:        'default',
                     }}
                   >
-                    <h4 style={{ fontWeight: 700, fontSize: '0.7rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: '#D4AF37', marginBottom: '0.6rem' }}>
+                    {/* Title */}
+                    <h4 style={{
+                      fontWeight:    700,
+                      fontSize:      '1rem',
+                      color:         '#D4AF37',
+                      marginBottom:  '0.75rem',
+                      letterSpacing: '0.01em',
+                    }}>
                       {card.title}
                     </h4>
-                    <ul style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap', marginBottom: '0.75rem' }}>
+
+                    {/* Traits — pill row */}
+                    <ul style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '1rem' }}>
                       {card.traits.map((t, ti) => (
-                        <li key={ti} style={{ fontSize: '0.72rem', color: 'rgba(255,255,255,0.5)', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
-                          {ti > 0 && <span style={{ color: 'rgba(212,175,55,0.4)' }}>•</span>}
+                        <li key={ti} style={{
+                          fontSize:     '0.85rem',
+                          color:        'rgba(255,255,255,0.75)',
+                          background:   'rgba(255,255,255,0.05)',
+                          border:       '1px solid rgba(255,255,255,0.08)',
+                          borderRadius: '999px',
+                          padding:      '0.2rem 0.75rem',
+                        }}>
                           {t}
                         </li>
                       ))}
                     </ul>
+
                     {/* Insight — reveals on hover */}
                     <p style={{
-                      fontSize:   '0.72rem',
+                      fontSize:   '0.875rem',
                       fontStyle:  'italic',
                       color:      '#D4AF37',
                       opacity:    isHovered ? 1 : 0,
                       transition: 'opacity 0.3s',
-                      borderTop:  '1px solid rgba(212,175,55,0.12)',
-                      paddingTop: '0.6rem',
-                      minHeight:  '1.4rem',
+                      borderTop:  '1px solid rgba(212,175,55,0.15)',
+                      paddingTop: '0.75rem',
+                      minHeight:  '1.6rem',
                     }}>
                       ✨ {card.impact}
                     </p>
@@ -866,7 +885,7 @@ const LandingPage = () => {
           >
             <div className="flex items-center gap-4 max-w-lg mx-auto">
               <div className="flex-1 h-px bg-primary/20" />
-              <p className="text-sm text-muted-foreground/60 italic whitespace-nowrap">
+              <p className="text-base text-muted-foreground/70 italic whitespace-nowrap">
                 "Now imagine when the right patterns align…"
               </p>
               <div className="flex-1 h-px bg-primary/20" />
@@ -897,30 +916,59 @@ const LandingPage = () => {
                     onMouseEnter={() => setHoveredSim(i)}
                     onMouseLeave={() => setHoveredSim(null)}
                     style={{
-                      background:   '#0F1A2E',
-                      border:       `1px solid ${isHovered ? 'rgba(212,175,55,0.35)' : '#1f2a44'}`,
-                      borderRadius: '0.75rem',
-                      padding:      '1.5rem',
-                      display:      'flex',
-                      flexDirection:'column',
-                      gap:          '1rem',
-                      opacity:      isRevealed ? (isDimmed ? 0.45 : 1) : 0,
-                      transform:    isRevealed ? (isHovered ? 'translateY(-4px)' : 'none') : 'translateY(24px)',
-                      boxShadow:    isHovered ? '0 20px 44px rgba(0,0,0,0.5)' : 'none',
-                      transition:   `opacity 0.5s ${i * 120}ms, transform 0.5s ${i * 120}ms, box-shadow 0.3s, border-color 0.3s`,
+                      background:    isHovered
+                        ? 'linear-gradient(135deg, #142038 0%, #0F1A2E 100%)'
+                        : '#0F1A2E',
+                      border:        `1px solid ${isHovered ? 'rgba(212,175,55,0.45)' : 'rgba(31,42,68,0.9)'}`,
+                      borderRadius:  '1rem',
+                      padding:       '2rem',
+                      display:       'flex',
+                      flexDirection: 'column',
+                      gap:           '1.25rem',
+                      opacity:       isRevealed ? (isDimmed ? 0.4 : 1) : 0,
+                      transform:     isRevealed ? (isHovered ? 'translateY(-5px)' : 'none') : 'translateY(24px)',
+                      boxShadow:     isHovered ? '0 24px 48px rgba(0,0,0,0.55), 0 0 0 1px rgba(212,175,55,0.1)' : 'none',
+                      transition:    `opacity 0.5s ${i * 120}ms, transform 0.5s ${i * 120}ms, box-shadow 0.3s, border-color 0.3s, background 0.3s`,
                     }}
                   >
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                      <span style={{ fontSize: '1.4rem', lineHeight: 1 }}>{card.emoji}</span>
-                      <h4 className="font-heading" style={{ fontWeight: 700, fontSize: '0.95rem', color: 'var(--foreground)' }}>
+                    {/* Header: emoji + title */}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                      <span style={{
+                        fontSize:   '2rem',
+                        lineHeight:  1,
+                        filter:      isHovered ? 'drop-shadow(0 0 8px rgba(212,175,55,0.4))' : 'none',
+                        transition:  'filter 0.3s',
+                      }}>
+                        {card.emoji}
+                      </span>
+                      <h4 className="font-heading" style={{
+                        fontWeight:  700,
+                        fontSize:    '1.15rem',
+                        color:       'var(--foreground)',
+                        lineHeight:  1.2,
+                      }}>
                         {card.title}
                       </h4>
                     </div>
 
-                    <ul style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem', flex: 1 }}>
+                    {/* Points */}
+                    <ul style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', flex: 1 }}>
                       {card.points.map((pt, pi) => (
-                        <li key={pi} style={{ display: 'flex', alignItems: 'flex-start', gap: '0.5rem', fontSize: '0.82rem', color: 'rgba(255,255,255,0.55)' }}>
-                          <span style={{ color: '#D4AF37', fontSize: '0.75rem', marginTop: '0.15rem', flexShrink: 0 }}>{card.emoji}</span>
+                        <li key={pi} style={{
+                          display:    'flex',
+                          alignItems: 'center',
+                          gap:        '0.65rem',
+                          fontSize:   '0.95rem',
+                          color:      'rgba(255,255,255,0.75)',
+                        }}>
+                          <span style={{
+                            width:        '6px',
+                            height:       '6px',
+                            borderRadius: '50%',
+                            background:   '#D4AF37',
+                            flexShrink:   0,
+                            boxShadow:    '0 0 6px rgba(212,175,55,0.5)',
+                          }} />
                           {pt}
                         </li>
                       ))}
@@ -928,16 +976,17 @@ const LandingPage = () => {
 
                     {/* Insight badge */}
                     <div style={{
-                      fontSize:        '0.72rem',
-                      fontWeight:      600,
-                      color:           '#D4AF37',
-                      background:      'rgba(212,175,55,0.07)',
-                      border:          '1px solid rgba(212,175,55,0.18)',
-                      borderRadius:    '0.5rem',
-                      padding:         '0.45rem 0.75rem',
-                      textAlign:       'center',
-                      opacity:         isHovered ? 1 : 0.7,
-                      transition:      'opacity 0.3s',
+                      fontSize:     '0.875rem',
+                      fontWeight:   600,
+                      fontStyle:    'italic',
+                      color:        '#D4AF37',
+                      background:   'rgba(212,175,55,0.08)',
+                      border:       '1px solid rgba(212,175,55,0.2)',
+                      borderRadius: '0.625rem',
+                      padding:      '0.6rem 1rem',
+                      textAlign:    'center',
+                      opacity:      isHovered ? 1 : 0.75,
+                      transition:   'opacity 0.3s',
                     }}>
                       ✨ {card.impact}
                     </div>
