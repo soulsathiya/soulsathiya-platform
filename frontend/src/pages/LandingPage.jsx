@@ -692,17 +692,17 @@ const LandingPage = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {[
               {
-                photo:   'https://images.pexels.com/photos/10987899/pexels-photo-10987899.jpeg?auto=compress&cs=tinysrgb&w=800&h=700&fit=crop',
+                photo:   '/wedding-kerala.jpg',
                 title:   'Discover Deep Compatibility',
                 body:    'Go beyond biodata and surface traits. SoulSathiya analyses emotional alignment, life goals, communication styles, and deeper relationship patterns to reveal true compatibility.',
               },
               {
-                photo:   'https://images.pexels.com/photos/32161001/pexels-photo-32161001.jpeg?auto=compress&cs=tinysrgb&w=800&h=700&fit=crop',
+                photo:   '/wedding-north-indian.jpg',
                 title:   'Understand Relationship Dynamics',
                 body:    'Every couple has patterns — how they communicate, resolve conflict, and build intimacy. Our compatibility intelligence helps you understand these dynamics before commitment.',
               },
               {
-                photo:   'https://images.pexels.com/photos/36079282/pexels-photo-36079282.jpeg?auto=compress&cs=tinysrgb&w=800&h=700&fit=crop',
+                photo:   '/wedding-couple.jpg',
                 title:   'Build Relationships That Last',
                 body:    'Compatibility isn\'t luck. It\'s the alignment of values, emotional rhythms, and life direction. SoulSathiya helps you discover partners with the foundation for lasting relationships.',
               },
