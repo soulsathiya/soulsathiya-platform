@@ -20,6 +20,7 @@ from routers import (
     boosts_router,
     admin_router,
     account_router,
+    kyc_router,
 )
 
 logger = logging.getLogger(__name__)
@@ -147,6 +148,7 @@ app.include_router(subscriptions_router, prefix="/api")
 app.include_router(notifications_router, prefix="/api")
 app.include_router(boosts_router, prefix="/api")
 app.include_router(account_router, prefix="/api")
+app.include_router(kyc_router,     prefix="/api")
 # Admin router has its own /api/admin prefix built-in
 app.include_router(admin_router)
 

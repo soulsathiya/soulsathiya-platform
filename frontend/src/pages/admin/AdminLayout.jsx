@@ -12,7 +12,8 @@ import {
   Menu,
   X,
   Shield,
-  ChevronDown
+  ChevronDown,
+  BadgeCheck
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
@@ -23,13 +24,14 @@ import axios from 'axios';
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 const navItems = [
-  { path: '/admin/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { path: '/admin/users', label: 'Users', icon: Users },
-  { path: '/admin/profiles', label: 'Profiles', icon: UserCircle },
-  { path: '/admin/subscriptions', label: 'Subscriptions', icon: CreditCard },
-  { path: '/admin/deep', label: 'Deep Exploration', icon: Heart },
-  { path: '/admin/reports', label: 'Reports', icon: Flag },
-  { path: '/admin/analytics', label: 'Analytics', icon: BarChart3 },
+  { path: '/admin/dashboard',     label: 'Dashboard',      icon: LayoutDashboard },
+  { path: '/admin/users',         label: 'Users',          icon: Users           },
+  { path: '/admin/profiles',      label: 'Profiles',       icon: UserCircle      },
+  { path: '/admin/kyc',           label: 'KYC Verify',     icon: BadgeCheck      },
+  { path: '/admin/subscriptions', label: 'Subscriptions',  icon: CreditCard      },
+  { path: '/admin/deep',          label: 'Deep Exploration',icon: Heart          },
+  { path: '/admin/reports',       label: 'Reports',        icon: Flag            },
+  { path: '/admin/analytics',     label: 'Analytics',      icon: BarChart3       },
 ];
 
 const AdminLayout = () => {

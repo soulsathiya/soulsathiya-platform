@@ -7,3 +7,4 @@ export { default as AdminSubscriptions } from './AdminSubscriptions';
 export { default as AdminDeep } from './AdminDeep';
 export { default as AdminReports } from './AdminReports';
 export { default as AdminAnalytics } from './AdminAnalytics';
+export { default as AdminKYC } from './AdminKYC';

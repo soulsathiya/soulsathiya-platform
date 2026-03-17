@@ -38,8 +38,11 @@ import SubscriptionPage from './pages/SubscriptionPage';
 import NotificationPreferencesPage from './pages/NotificationPreferencesPage';
 import UnsubscribePage from './pages/UnsubscribePage';
 
+// KYC
+import KYCVerificationPage from './pages/KYCVerificationPage';
+
 // Admin Pages
-import { AdminLogin, AdminLayout, AdminDashboard, AdminUsers, AdminProfiles, AdminSubscriptions, AdminDeep, AdminReports, AdminAnalytics } from './pages/admin';
+import { AdminLogin, AdminLayout, AdminDashboard, AdminUsers, AdminProfiles, AdminSubscriptions, AdminDeep, AdminReports, AdminAnalytics, AdminKYC } from './pages/admin';
 
 function AppRouter() {
   const location = useLocation();
@@ -77,6 +80,9 @@ function AppRouter() {
       <Route path="/profile" element={<ProfileViewPage />} />
       <Route path="/profile/:userId" element={<ProfileViewPage />} />
 
+      {/* KYC Verification */}
+      <Route path="/kyc-verification" element={<KYCVerificationPage />} />
+
       {/* Monetization */}
       <Route path="/boost" element={<BoostPage />} />
       <Route path="/subscription" element={<SubscriptionPage />} />
@@ -105,6 +111,7 @@ function AppRouter() {
         <Route path="deep" element={<AdminDeep />} />
         <Route path="reports" element={<AdminReports />} />
         <Route path="analytics" element={<AdminAnalytics />} />
+        <Route path="kyc" element={<AdminKYC />} />
       </Route>
 
       {/* Fallback */}
