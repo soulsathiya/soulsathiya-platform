@@ -443,10 +443,10 @@ const LandingPage = () => {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-12 items-start">
+          <div className="grid md:grid-cols-2 gap-12 items-stretch">
 
             {/* ── Left: Radar chart card ─────────────────────────────── */}
-            <div className="card-surface rounded-2xl overflow-hidden w-full">
+            <div className="card-surface rounded-2xl overflow-hidden w-full flex flex-col">
 
               {/* ── Score hero header ──────────────────────────────────── */}
               <div className="relative px-8 pt-8 pb-6 text-center"
@@ -473,43 +473,17 @@ const LandingPage = () => {
                 </p>
               </div>
 
-              {/* ── Radar chart — labels disabled, external grid used instead ── */}
-              <div className="flex justify-center px-4 py-6"
+              {/* ── Radar chart — vertex labels enabled ────────────────── */}
+              <div className="flex-1 flex items-center justify-center px-4 py-8"
                 style={{ background: 'radial-gradient(ellipse at center, rgba(212,165,32,0.05) 0%, transparent 70%)' }}>
-                <RadarChart dimensions={radarDimensions} size={340} showLabels={false} />
-              </div>
-
-              {/* ── Dimension score grid — 3 × 2 ──────────────────────────── */}
-              <div className="grid grid-cols-3 gap-px bg-primary/8 border-t border-primary/10">
-                {radarDimensions.map((d, i) => (
-                  <div
-                    key={i}
-                    className="bg-card px-3 py-4 text-center"
-                  >
-                    {/* Score */}
-                    <p className="text-xl font-heading font-bold text-primary leading-none mb-1">
-                      {d.value}%
-                    </p>
-                    {/* Label */}
-                    <p className="text-[11px] text-muted-foreground leading-tight">
-                      {d.label}
-                    </p>
-                    {/* Mini bar */}
-                    <div className="mt-2 h-0.5 rounded-full bg-muted/60 overflow-hidden">
-                      <div
-                        className="h-full rounded-full bg-gradient-to-r from-primary to-secondary"
-                        style={{ width: `${d.value}%` }}
-                      />
-                    </div>
-                  </div>
-                ))}
+                <RadarChart dimensions={radarDimensions} size={400} showLabels={true} />
               </div>
 
             </div>
 
             {/* ── Right: Structured insights ────────────────────────────── */}
-            <div className="space-y-4">
-              <div className="card-surface p-6 rounded-2xl">
+            <div className="flex flex-col">
+              <div className="card-surface p-6 rounded-2xl flex-1">
                 <h3 className="font-heading text-xl text-foreground mb-4">
                   Sample Compatibility Insights
                 </h3>
