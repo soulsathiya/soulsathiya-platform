@@ -520,98 +520,46 @@ const LandingPage = () => {
                  *   Means      — practical day-to-day implication
                  *   Why        — why this dimension matters in a marriage
                  */}
-                <div className="space-y-4">
+                <div className="space-y-1">
                   {[
-                    {
-                      label:   'Emotional Alignment',
-                      value:   92,
-                      status:  'strong',
-                      insight: 'You both prioritise open emotional expression and vulnerability.',
-                      means:   'Deep, honest conversations will feel natural and safe.',
-                      why:     'Emotional safety is the bedrock of lasting intimacy.',
-                    },
-                    {
-                      label:   'Life Goals',
-                      value:   88,
-                      status:  'strong',
-                      insight: 'Your long-term visions — career, family, lifestyle — closely align.',
-                      means:   'Major life decisions are likely to feel collaborative.',
-                      why:     'Shared direction keeps couples connected through every life stage.',
-                    },
-                    {
-                      label:   'Communication Style',
-                      value:   78,
-                      status:  'strong',
-                      insight: 'You both prefer directness, though your pacing differs slightly.',
-                      means:   'Conversations flow well with minor adjustments in approach.',
-                      why:     'Communication style shapes how trust is built day by day.',
-                    },
-                    {
-                      label:   'Conflict Resolution',
-                      value:   72,
-                      status:  'growth',
-                      insight: 'One tends to withdraw; the other seeks immediate resolution.',
-                      means:   'Arguments may escalate without a shared de-escalation plan.',
-                      why:     'Learning conflict patterns early prevents long-term friction.',
-                    },
-                    {
-                      label:   'Family Values',
-                      value:   85,
-                      status:  'strong',
-                      insight: 'You share similar expectations around family roles and parenting.',
-                      means:   'Family decisions are likely to feel natural and agreed upon.',
-                      why:     'Value alignment here is a key predictor of marital harmony.',
-                    },
+                    { label: 'Emotional Alignment',  value: 92, status: 'strong', insight: 'You both naturally express emotions openly, creating strong emotional safety.' },
+                    { label: 'Life Goals',            value: 88, status: 'strong', insight: 'Your long-term visions for life, career, and family closely align.' },
+                    { label: 'Communication',         value: 78, status: 'strong', insight: 'Your communication styles complement each other naturally and intuitively.' },
+                    { label: 'Conflict Resolution',   value: 72, status: 'growth', insight: 'Both of you tend toward calm resolution, rarely letting tension escalate.' },
+                    { label: 'Family Values',         value: 85, status: 'strong', insight: 'Shared vision for family life makes long-term planning feel effortless.' },
+                    { label: 'Intimacy',              value: 79, status: 'strong', insight: 'Compatible rhythms and lifestyle choices build natural closeness over time.' },
                   ].map((item, i) => (
-                    <div key={i} className="border-b border-primary/8 last:border-0 pb-4 last:pb-0">
+                    <div key={i} className="border-b border-primary/8 last:border-0 py-2.5">
 
-                      {/* Label row */}
-                      <div className="flex items-center justify-between text-sm mb-1.5">
+                      {/* Label + score row */}
+                      <div className="flex items-center justify-between mb-1.5">
                         <div className="flex items-center gap-2">
                           {item.status === 'strong'
                             ? <Check className="w-3.5 h-3.5 text-primary flex-shrink-0" />
                             : <span className="text-amber-400/80 text-xs flex-shrink-0">▲</span>
                           }
-                          <span className="text-foreground font-semibold">{item.label}</span>
+                          <span className="text-sm text-foreground font-semibold">{item.label}</span>
                         </div>
                         <span className={`text-sm font-bold ${item.status === 'strong' ? 'text-primary' : 'text-amber-400/80'}`}>
                           {item.value}%
                         </span>
                       </div>
 
-                      {/* Progress bar */}
-                      <div className="w-full h-1.5 bg-muted rounded-full overflow-hidden mb-2.5">
+                      {/* h-2 gold gradient progress bar */}
+                      <div className="w-full h-2 bg-muted rounded-full overflow-hidden mb-1.5">
                         <div
-                          className={`h-full rounded-full ${
-                            item.status === 'strong'
-                              ? 'bg-gradient-to-r from-primary to-secondary'
-                              : 'bg-gradient-to-r from-amber-500/70 to-amber-400/50'
-                          }`}
-                          style={{ width: `${item.value}%` }}
+                          className="h-full rounded-full"
+                          style={{
+                            width: `${item.value}%`,
+                            background: item.status === 'strong'
+                              ? 'linear-gradient(90deg, #b8860b 0%, #D4AF37 60%, #f5d060 100%)'
+                              : 'linear-gradient(90deg, #7c4f1a 0%, #b87333 100%)',
+                          }}
                         />
                       </div>
 
-                      {/* 3-line structured insight */}
-                      <div className="space-y-1">
-                        <div className="flex gap-2.5 items-baseline">
-                          <span className="text-[9px] font-bold text-primary/70 uppercase tracking-wider w-11 shrink-0">
-                            Insight
-                          </span>
-                          <p className="text-xs text-foreground/90 leading-snug">{item.insight}</p>
-                        </div>
-                        <div className="flex gap-2.5 items-baseline">
-                          <span className="text-[9px] font-bold text-primary/45 uppercase tracking-wider w-11 shrink-0">
-                            Means
-                          </span>
-                          <p className="text-xs text-muted-foreground leading-snug">{item.means}</p>
-                        </div>
-                        <div className="flex gap-2.5 items-baseline">
-                          <span className="text-[9px] font-bold text-primary/35 uppercase tracking-wider w-11 shrink-0">
-                            Why
-                          </span>
-                          <p className="text-xs text-muted-foreground/70 leading-snug">{item.why}</p>
-                        </div>
-                      </div>
+                      {/* Single-line insight */}
+                      <p className="text-xs text-muted-foreground leading-snug">{item.insight}</p>
                     </div>
                   ))}
                 </div>
