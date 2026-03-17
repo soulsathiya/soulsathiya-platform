@@ -632,147 +632,101 @@ const LandingPage = () => {
         </div>
       </section>
 
-      {/* ── Success Stories ───────────────────────────────────────────────── */}
+      {/* ── Love Story / Aspirational Feature Section ─────────────────────── */}
       <section className="py-20 px-6 bg-background" id="testimonials">
         <div className="container mx-auto max-w-6xl">
 
           {/* Section header */}
-          <div className="text-center mb-16">
+          <div className="text-center mb-14">
             <div className="inline-flex items-center gap-2 bg-primary/10 border border-primary/20 text-primary px-4 py-1.5 rounded-full text-sm font-medium mb-6">
-              <Heart className="w-4 h-4 fill-primary" />
-              Real Couples, Real Stories
+              <Sparkles className="w-4 h-4" />
+              Your Journey Starts Here
             </div>
             <h2 className="font-heading text-4xl mb-4 text-foreground">
-              Love Found Through <span className="text-primary">Intelligence</span>
+              Write Your Own <span className="text-primary">Love Story</span>
             </h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Couples who discovered each other through deep compatibility matching
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-3">
+              Powered by SoulSathiya's world-class relationship compatibility intelligence.
+            </p>
+            <p className="text-sm text-muted-foreground/70 max-w-xl mx-auto">
+              Thousands search for partners. Few understand compatibility. SoulSathiya helps you discover the difference.
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8">
+          {/* 3 feature cards */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {[
               {
-                names:     'Priya & Arjun',
-                location:  'Mumbai & Bangalore',
-                compat:    '91%',
-                milestone: 'Married · June 2024',
-                alignment: 'Emotional · Communication',
-                quote:     'Our compatibility report predicted we would communicate effortlessly — and it was right. We saw alignment we never expected. Married six months after matching.',
-                photo:     'https://images.pexels.com/photos/10987899/pexels-photo-10987899.jpeg?auto=compress&cs=tinysrgb&w=800&h=700&fit=crop',
+                photo:   'https://images.pexels.com/photos/10987899/pexels-photo-10987899.jpeg?auto=compress&cs=tinysrgb&w=800&h=700&fit=crop',
+                title:   'Discover Deep Compatibility',
+                body:    'Go beyond biodata and surface traits. SoulSathiya analyses emotional alignment, life goals, communication styles, and deeper relationship patterns to reveal true compatibility.',
               },
               {
-                names:     'Meera & Vikram',
-                location:  'Delhi & Hyderabad',
-                compat:    '87%',
-                milestone: 'Engaged · January 2025',
-                alignment: 'Life Goals · Family Values',
-                quote:     'Our Deep Compatibility Report showed exactly where we were strong and where we needed to grow together. It gave us a real conversation to start our relationship with.',
-                photo:     'https://images.pexels.com/photos/32161001/pexels-photo-32161001.jpeg?auto=compress&cs=tinysrgb&w=800&h=700&fit=crop',
+                photo:   'https://images.pexels.com/photos/32161001/pexels-photo-32161001.jpeg?auto=compress&cs=tinysrgb&w=800&h=700&fit=crop',
+                title:   'Understand Relationship Dynamics',
+                body:    'Every couple has patterns — how they communicate, resolve conflict, and build intimacy. Our compatibility intelligence helps you understand these dynamics before commitment.',
               },
               {
-                names:     'Ananya & Rahul',
-                location:  'Pune & Chennai',
-                compat:    '89%',
-                milestone: 'Married · December 2024',
-                alignment: 'Emotional · Life Vision',
-                quote:     'SoulSathiya felt completely different. The insights showed we were emotionally aligned in ways we had never articulated ourselves. We knew this was the one.',
-                photo:     'https://images.pexels.com/photos/36079282/pexels-photo-36079282.jpeg?auto=compress&cs=tinysrgb&w=800&h=700&fit=crop',
+                photo:   'https://images.pexels.com/photos/36079282/pexels-photo-36079282.jpeg?auto=compress&cs=tinysrgb&w=800&h=700&fit=crop',
+                title:   'Build Relationships That Last',
+                body:    'Compatibility isn\'t luck. It\'s the alignment of values, emotional rhythms, and life direction. SoulSathiya helps you discover partners with the foundation for lasting relationships.',
               },
-            ].map((story, i) => (
+            ].map((card, i) => (
               <div
                 key={i}
                 className="card-surface feature-card rounded-2xl overflow-hidden group"
-                data-testid={`testimonial-${i}`}
+                data-testid={`story-card-${i}`}
               >
-                {/* ── Couple photo ─────────────────────────────── */}
+                {/* Photo with overlay */}
                 <div className="relative overflow-hidden" style={{ aspectRatio: '4 / 3' }}>
-
-                  {/* Photo — zooms gently on card hover */}
                   <img
-                    src={story.photo}
-                    alt={`${story.names} — SoulSathiya success story`}
+                    src={card.photo}
+                    alt={card.title}
                     className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
                     loading="lazy"
                   />
 
-                  {/* Gradient: strong at bottom for text legibility */}
-                  <div className="absolute inset-0"
-                    style={{
-                      background: 'linear-gradient(to top, rgba(12,19,35,0.95) 0%, rgba(12,19,35,0.45) 45%, rgba(12,19,35,0.08) 100%)',
-                    }}
+                  {/* Dark gradient over full image */}
+                  <div
+                    className="absolute inset-0"
+                    style={{ background: 'linear-gradient(to top, rgba(12,19,35,0.80) 0%, rgba(12,19,35,0.35) 55%, rgba(12,19,35,0.15) 100%)' }}
                   />
 
-                  {/* Compatibility badge — top right */}
-                  <div className="absolute top-4 right-4">
-                    <div
-                      className="px-3 py-1.5 rounded-full text-sm font-bold text-primary-foreground backdrop-blur-sm shadow-lg"
-                      style={{ background: 'rgba(212,165,32,0.92)' }}
+                  {/* "Your Story Could Begin Here" overlay — bottom of image */}
+                  <div className="absolute bottom-0 left-0 right-0 px-4 pb-4">
+                    <span
+                      className="inline-block text-xs font-semibold text-white/90 px-3 py-1.5 rounded-lg backdrop-blur-sm"
+                      style={{ background: 'rgba(12,19,35,0.55)', border: '1px solid rgba(255,255,255,0.12)' }}
                     >
-                      {story.compat} Match
-                    </div>
-                  </div>
-
-                  {/* Names + location — bottom of image */}
-                  <div className="absolute bottom-0 left-0 right-0 px-5 pb-4">
-                    <h4 className="font-heading text-xl font-bold text-white leading-tight">
-                      {story.names}
-                    </h4>
-                    <p className="text-xs text-white/65 mt-0.5 tracking-wide">
-                      {story.location}
-                    </p>
+                      Your Story Could Begin Here
+                    </span>
                   </div>
                 </div>
 
-                {/* ── Card body ──────────────────────────────────── */}
-                <div className="p-5 space-y-4">
-
-                  {/* Milestone + alignment badges */}
-                  <div className="flex flex-wrap items-center gap-2">
-                    <span className="inline-flex items-center gap-1.5 bg-primary/10 border border-primary/20 text-primary px-2.5 py-1 rounded-full text-xs font-semibold">
-                      <Heart className="w-3 h-3 fill-primary" />
-                      {story.milestone}
-                    </span>
-                    <span className="text-xs text-muted-foreground/70 bg-muted/40 px-2.5 py-1 rounded-full border border-primary/8">
-                      ✦ {story.alignment}
-                    </span>
-                  </div>
-
-                  {/* Pull quote */}
-                  <div className="relative">
-                    {/* Decorative opening quote */}
-                    <span
-                      className="absolute -top-2 -left-1 font-heading font-bold text-primary/20 leading-none select-none"
-                      style={{ fontSize: '4rem', lineHeight: 1 }}
-                      aria-hidden="true"
-                    >
-                      "
-                    </span>
-                    <p className="text-sm text-muted-foreground leading-relaxed pl-5 italic">
-                      {story.quote}
-                    </p>
-                  </div>
-
-                  {/* Star row */}
-                  <div className="flex items-center gap-1 pt-1">
-                    {Array.from({ length: 5 }).map((_, si) => (
-                      <Star key={si} className="w-3.5 h-3.5 fill-primary text-primary" />
-                    ))}
-                    <span className="text-xs text-muted-foreground ml-1.5">Verified couple</span>
-                  </div>
+                {/* Card body */}
+                <div className="p-5">
+                  <h4 className="font-heading text-base font-bold text-foreground mb-2">
+                    {card.title}
+                  </h4>
+                  <p className="text-sm text-muted-foreground leading-relaxed">
+                    {card.body}
+                  </p>
                 </div>
               </div>
             ))}
           </div>
 
-          {/* Footer note */}
-          <div className="text-center mt-12">
-            <p className="text-sm text-muted-foreground">
-              Every story above is from a verified member couple.{' '}
-              <Link to="/register" className="text-primary hover:underline font-medium">
-                Start your story →
-              </Link>
-            </p>
+          {/* CTA below */}
+          <div className="text-center mt-14">
+            <h3 className="font-heading text-2xl font-bold text-foreground mb-4">
+              Begin Your Compatibility Journey
+            </h3>
+            <Link to="/register">
+              <Button size="lg" className="px-8">
+                <Sparkles className="w-4 h-4 mr-2" />
+                Start Your Compatibility Profile
+              </Button>
+            </Link>
           </div>
 
         </div>
