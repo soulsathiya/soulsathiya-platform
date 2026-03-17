@@ -458,6 +458,10 @@ const LandingPage = () => {
       <section className="py-20 px-6 bg-card/40" id="compatibility-preview">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center mb-16">
+            <div className="inline-flex items-center gap-2 bg-primary/10 border border-primary/20 text-primary px-4 py-1.5 rounded-full text-sm font-medium mb-6">
+              <Sparkles className="w-4 h-4" />
+              Deep Compatibility Intelligence
+            </div>
             <h2 className="font-heading text-4xl mb-4 text-foreground">
               What Your <span className="text-primary">Compatibility Report</span> Reveals
             </h2>
@@ -507,7 +511,7 @@ const LandingPage = () => {
             {/* ── Right: Structured insights ────────────────────────────── */}
             <div className="flex flex-col">
               <div className="card-surface p-6 rounded-2xl flex-1">
-                <h3 className="font-heading text-xl text-foreground mb-4">
+                <h3 className="font-heading text-2xl text-foreground mb-4">
                   Sample Compatibility Insights
                 </h3>
 
@@ -592,6 +596,10 @@ const LandingPage = () => {
       <section className="py-20 px-6 bg-background">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center mb-16">
+            <div className="inline-flex items-center gap-2 bg-primary/10 border border-primary/20 text-primary px-4 py-1.5 rounded-full text-sm font-medium mb-6">
+              <Shield className="w-4 h-4" />
+              Platform Advantages
+            </div>
             <h2 className="font-heading text-4xl mb-4 text-foreground">
               Why Choose <span className="text-primary">SoulSathiya</span>?
             </h2>
@@ -621,7 +629,11 @@ const LandingPage = () => {
       {/* ── Trust & Safety Section ────────────────────────────────────────── */}
       <section className="py-20 px-6 bg-card/40" id="trust-safety">
         <div className="container mx-auto max-w-6xl">
-          <div className="text-center mb-14">
+          <div className="text-center mb-16">
+            <div className="inline-flex items-center gap-2 bg-primary/10 border border-primary/20 text-primary px-4 py-1.5 rounded-full text-sm font-medium mb-6">
+              <Lock className="w-4 h-4" />
+              Verified & Secure
+            </div>
             <h2 className="font-heading text-4xl mb-4 text-foreground">
               Built on <span className="text-primary">Trust & Safety</span>
             </h2>
@@ -727,7 +739,7 @@ const LandingPage = () => {
                 </div>
 
                 {/* Card body */}
-                <div className="p-5">
+                <div className="p-6">
                   <h4 className="font-heading text-base font-bold text-foreground mb-2">
                     {card.title}
                   </h4>
@@ -740,7 +752,7 @@ const LandingPage = () => {
           </div>
 
           {/* CTA below */}
-          <div className="text-center mt-14">
+          <div className="text-center mt-16">
             <h3 className="font-heading text-2xl font-bold text-foreground mb-4">
               Begin Your Compatibility Journey
             </h3>
@@ -765,7 +777,7 @@ const LandingPage = () => {
               <Brain className="w-4 h-4" />
               Psychology-Driven Matching
             </div>
-            <h2 className="font-heading text-3xl md:text-4xl mb-4 text-foreground leading-tight">
+            <h2 className="font-heading text-4xl mb-4 text-foreground leading-tight">
               Imagine Your Future Relationship —{' '}
               <span className="text-primary">And Understand Yourself First</span>
             </h2>
@@ -776,7 +788,7 @@ const LandingPage = () => {
 
           {/* ── Part 1: Self Discovery ─────────────────────────────────────── */}
           <div>
-            <h3 className="font-heading text-xl font-bold text-foreground text-center mb-8">
+            <h3 className="font-heading text-2xl text-foreground text-center mb-8">
               What Kind of Partner Are You?
             </h3>
 
@@ -863,7 +875,7 @@ const LandingPage = () => {
 
           {/* ── Part 2: Compatibility Simulator ───────────────────────────── */}
           <div>
-            <h3 className="font-heading text-xl font-bold text-foreground text-center mb-8">
+            <h3 className="font-heading text-2xl text-foreground text-center mb-8">
               Imagine the Intelligence of Your Future Relationship
             </h3>
 
@@ -943,10 +955,7 @@ const LandingPage = () => {
             <Link to="/register">
               <Button
                 size="lg"
-                className="px-8"
-                style={{ transition: 'transform 0.3s, box-shadow 0.3s' }}
-                onMouseEnter={e => { e.currentTarget.style.transform = 'scale(1.05)'; }}
-                onMouseLeave={e => { e.currentTarget.style.transform = 'scale(1)';    }}
+                className="px-8 hover:scale-105 transition-all duration-300"
               >
                 <Sparkles className="w-4 h-4 mr-2" />
                 Start Your Compatibility Profile
@@ -964,6 +973,10 @@ const LandingPage = () => {
       <section className="py-20 px-6 bg-card/40">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center mb-16">
+            <div className="inline-flex items-center gap-2 bg-primary/10 border border-primary/20 text-primary px-4 py-1.5 rounded-full text-sm font-medium mb-6">
+              <Sparkles className="w-4 h-4" />
+              Transparent Pricing
+            </div>
             <h2 className="font-heading text-4xl mb-4 text-foreground">Choose Your Plan</h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
               Start free and upgrade when you're ready to accelerate your journey
@@ -1024,7 +1037,7 @@ const LandingPage = () => {
           <div className="flex items-center justify-center mb-2">
             <SoulSathiyaLogo className="w-20 h-20" />
           </div>
-          <h2 className="font-heading text-3xl sm:text-4xl text-foreground leading-snug">
+          <h2 className="font-heading text-4xl text-foreground leading-snug">
             Your Life Partner May Be{' '}
             <span className="text-gold-gradient">One Compatibility Match</span>{' '}
             Away.
