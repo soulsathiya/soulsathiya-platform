@@ -732,6 +732,184 @@ const LandingPage = () => {
         </div>
       </section>
 
+      {/* ── Self-Discovery + Compatibility Simulator ──────────────────────── */}
+      <section className="py-20 px-6 bg-card/30" id="self-discovery">
+        <div className="container mx-auto max-w-6xl">
+
+          {/* Section header */}
+          <div className="text-center mb-14">
+            <div className="inline-flex items-center gap-2 bg-primary/10 border border-primary/20 text-primary px-4 py-1.5 rounded-full text-sm font-medium mb-6">
+              <Brain className="w-4 h-4" />
+              Psychology-Driven Matching
+            </div>
+            <h2 className="font-heading text-3xl md:text-4xl mb-4 text-foreground leading-tight">
+              Imagine Your Future Relationship —{' '}
+              <span className="text-primary">And Understand Yourself First</span>
+            </h2>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              Discover how your patterns shape the partner you truly connect with.
+            </p>
+          </div>
+
+          {/* ── Part 1: Self Discovery ─────────────────────────────────────── */}
+          <h3 className="font-heading text-xl font-bold text-foreground text-center mb-8">
+            What Kind of Partner Are You?
+          </h3>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+            {[
+              {
+                title:  'Emotional Style',
+                traits: ['Deeply empathetic', 'Open to vulnerability', 'Emotionally present'],
+                impact: 'You create safety wherever you go.',
+              },
+              {
+                title:  'Communication Pattern',
+                traits: ['Direct and honest', 'Listens before speaking', 'Values clarity'],
+                impact: 'Conversations with you feel effortless and real.',
+              },
+              {
+                title:  'Conflict Response',
+                traits: ['Stays calm under pressure', 'Seeks resolution', 'Avoids blame'],
+                impact: 'Disagreements with you lead to understanding.',
+              },
+              {
+                title:  'Life Direction',
+                traits: ['Career-driven and purposeful', 'Family-oriented planner', 'Growth-focused'],
+                impact: 'You attract partners who match your pace.',
+              },
+              {
+                title:  'Family Values',
+                traits: ['Tradition-grounded', 'Flexible with roles', 'Prioritises togetherness'],
+                impact: 'Shared values build a lasting foundation.',
+              },
+              {
+                title:  'Intimacy Pattern',
+                traits: ['Emotionally intimate first', 'Physical affection matters', 'Needs consistent closeness'],
+                impact: 'You bond deeply when truly understood.',
+              },
+            ].map((card, i) => (
+              <div
+                key={i}
+                className="rounded-xl p-4 border"
+                style={{ background: '#0F1A2E', borderColor: '#1f2a44' }}
+              >
+                <h4 className="font-heading text-sm font-bold text-primary mb-3 tracking-wide uppercase">
+                  {card.title}
+                </h4>
+                <ul className="space-y-1.5 mb-4">
+                  {card.traits.map((t, ti) => (
+                    <li key={ti} className="flex items-start gap-2 text-xs text-muted-foreground">
+                      <span className="text-primary mt-0.5">•</span>
+                      {t}
+                    </li>
+                  ))}
+                </ul>
+                <p className="text-xs text-foreground/70 italic border-t border-primary/10 pt-3">
+                  ✨ {card.impact}
+                </p>
+              </div>
+            ))}
+          </div>
+
+          {/* ── Transition divider ─────────────────────────────────────────── */}
+          <div className="text-center my-12">
+            <div className="flex items-center gap-4 max-w-lg mx-auto">
+              <div className="flex-1 h-px bg-primary/20" />
+              <p className="text-sm text-muted-foreground/70 italic whitespace-nowrap">
+                "Now imagine when the right patterns align…"
+              </p>
+              <div className="flex-1 h-px bg-primary/20" />
+            </div>
+          </div>
+
+          {/* ── Part 2: Compatibility Simulator ───────────────────────────── */}
+          <h3 className="font-heading text-xl font-bold text-foreground text-center mb-8">
+            Imagine the Intelligence of Your Future Relationship
+          </h3>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-14">
+            {[
+              {
+                emoji:  '❤️',
+                title:  'Emotional Alignment',
+                points: [
+                  'Conversations feel natural',
+                  'Vulnerability feels safe',
+                  'Silence feels comfortable',
+                ],
+                impact: 'Deep trust and emotional connection',
+              },
+              {
+                emoji:  '🎯',
+                title:  'Life Goals',
+                points: [
+                  'Decisions become easier',
+                  'Careers support each other',
+                  'Future feels shared',
+                ],
+                impact: 'Less friction, more direction',
+              },
+              {
+                emoji:  '⚖️',
+                title:  'Conflict Styles',
+                points: [
+                  'Arguments resolve faster',
+                  'Both partners feel heard',
+                  'Disagreements build understanding',
+                ],
+                impact: 'Conflict becomes growth',
+              },
+            ].map((card, i) => (
+              <div
+                key={i}
+                className="rounded-xl p-6 border flex flex-col gap-5"
+                style={{ background: '#0F1A2E', borderColor: '#1f2a44' }}
+              >
+                <div className="flex items-center gap-3">
+                  <span className="text-2xl leading-none">{card.emoji}</span>
+                  <h4 className="font-heading text-base font-bold text-foreground">
+                    {card.title}
+                  </h4>
+                </div>
+
+                <ul className="space-y-2.5 flex-1">
+                  {card.points.map((pt, pi) => (
+                    <li key={pi} className="flex items-start gap-2.5 text-sm text-muted-foreground">
+                      <span className="text-primary text-xs mt-1 shrink-0">
+                        {card.emoji}
+                      </span>
+                      {pt}
+                    </li>
+                  ))}
+                </ul>
+
+                <div
+                  className="text-xs font-semibold text-primary px-3 py-2 rounded-lg text-center"
+                  style={{ background: 'rgba(212,175,55,0.08)', border: '1px solid rgba(212,175,55,0.18)' }}
+                >
+                  ✨ {card.impact}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* CTA */}
+          <div className="text-center">
+            <h3 className="font-heading text-2xl font-bold text-foreground mb-4">
+              Discover Your Compatibility Intelligence
+            </h3>
+            <Link to="/register">
+              <Button size="lg" className="px-8">
+                <Sparkles className="w-4 h-4 mr-2" />
+                Start Your Compatibility Profile
+              </Button>
+            </Link>
+          </div>
+
+        </div>
+      </section>
+
       {/* ── Pricing Section ───────────────────────────────────────────────── */}
       <section className="py-20 px-6 bg-card/40">
         <div className="container mx-auto max-w-6xl">
