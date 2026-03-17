@@ -190,40 +190,70 @@ class CompatibilityEngine:
         return profile_id
     
     async def get_ranked_matches(self, user_id: str, limit: int = 50) -> List[Dict]:
+        """Compute compatibility scores live against all users with psychometric profiles."""
         user_profile = await self.db.psychometric_profiles.find_one(
             {"user_id": user_id},
             {"_id": 0}
         )
-        
+
         if not user_profile:
             return []
-        
-        matches = await self.db.matches.find(
-            {"user_id": user_id, "status": "computed"},
-            {"_id": 0}
-        ).to_list(100)
-        
+
+        # Fetch all other users who have completed the psychometric assessment
+        other_profiles = await self.db.psychometric_profiles.find(
+            {"user_id": {"$ne": user_id}},
+            {"_id": 0, "user_id": 1}
+        ).to_list(300)
+
+        if not other_profiles:
+            return []
+
+        # Build supplementary lookup from pre-computed matches (distance, boost signals)
+        pre_computed = await self.db.matches.find(
+            {"user_id": user_id},
+            {"_id": 0, "matched_user_id": 1, "match_id": 1,
+             "compatibility_score": 1, "distance_km": 1, "is_boosted": 1}
+        ).to_list(300)
+        pre_computed_map = {m["matched_user_id"]: m for m in pre_computed}
+
+        # Build active-user set to skip inactive accounts
+        active_user_ids = set()
+        raw_users = await self.db.users.find(
+            {"is_active": {"$ne": False}},
+            {"_id": 0, "user_id": 1}
+        ).to_list(500)
+        for u in raw_users:
+            active_user_ids.add(u["user_id"])
+
         enriched_matches = []
-        
-        for match in matches:
-            compat_data = await self.calculate_compatibility(user_id, match["matched_user_id"])
-            
+
+        for other in other_profiles:
+            other_user_id = other["user_id"]
+
+            if other_user_id not in active_user_ids:
+                continue
+
+            compat_data = await self.calculate_compatibility(user_id, other_user_id)
             psychometric_score = compat_data["compatibility_percentage"]
-            
+
+            pre = pre_computed_map.get(other_user_id, {})
+
             rank_score = (
-                psychometric_score * 0.55 +
-                match.get("compatibility_score", 50) * 0.20 +
-                match.get("profile_score", 50) * 0.10 +
-                (100 - min(match.get("distance_km", 0), 100)) * 0.08 +
-                50 * 0.05 +
-                (10 if match.get("is_boosted") else 0) * 0.02
+                psychometric_score * 0.65 +
+                pre.get("compatibility_score", 50) * 0.15 +
+                (100 - min(pre.get("distance_km", 0), 100)) * 0.10 +
+                (10 if pre.get("is_boosted") else 0) * 0.10
             )
-            
-            match["psychometric_score"] = round(psychometric_score, 1)
-            match["rank_score"] = round(rank_score, 2)
-            match["compatibility_data"] = compat_data
-            enriched_matches.append(match)
-        
+
+            enriched_matches.append({
+                "matched_user_id": other_user_id,
+                "match_id": pre.get("match_id", f"match_{uuid.uuid4().hex[:8]}"),
+                "psychometric_score": round(psychometric_score, 1),
+                "rank_score": round(rank_score, 2),
+                "compatibility_data": compat_data,
+                "distance_km": pre.get("distance_km"),
+                "is_boosted": pre.get("is_boosted", False),
+            })
+
         enriched_matches.sort(key=lambda x: x["rank_score"], reverse=True)
-        
         return enriched_matches[:limit]

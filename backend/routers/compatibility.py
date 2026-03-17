@@ -1,11 +1,65 @@
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import APIRouter, HTTPException, Depends, BackgroundTasks
 from datetime import datetime, timezone
 from typing import Optional
 import uuid
+import logging
 
 from models.psychometric_extended import PsychometricProfileCreate
 from dependencies import db, get_current_user, compatibility_engine
 from data.psychometric_questions import PSYCHOMETRIC_QUESTIONS_36
+
+logger = logging.getLogger(__name__)
+
+
+async def _backfill_matches(user_id: str):
+    """
+    After a psychometric profile is submitted, compute and upsert match
+    documents against every other user who also has a psychometric profile.
+    This populates the `matches` collection so the basic-match fallback path
+    also works, and surfaces the new user to others.
+    """
+    try:
+        other_profiles = await db.psychometric_profiles.find(
+            {"user_id": {"$ne": user_id}},
+            {"_id": 0, "user_id": 1}
+        ).to_list(300)
+
+        for other in other_profiles:
+            other_id = other["user_id"]
+            compat = await compatibility_engine.calculate_compatibility(user_id, other_id)
+            score = compat.get("compatibility_percentage", 0)
+
+            match_base = {
+                "compatibility_score": score,
+                "status": "computed",
+                "computed_at": datetime.now(timezone.utc),
+            }
+
+            # Upsert match: current user → other
+            await db.matches.update_one(
+                {"user_id": user_id, "matched_user_id": other_id},
+                {"$set": match_base,
+                 "$setOnInsert": {"match_id": f"match_{uuid.uuid4().hex[:8]}",
+                                  "user_id": user_id,
+                                  "matched_user_id": other_id,
+                                  "created_at": datetime.now(timezone.utc)}},
+                upsert=True,
+            )
+
+            # Upsert reciprocal match: other → current user
+            await db.matches.update_one(
+                {"user_id": other_id, "matched_user_id": user_id},
+                {"$set": match_base,
+                 "$setOnInsert": {"match_id": f"match_{uuid.uuid4().hex[:8]}",
+                                  "user_id": other_id,
+                                  "matched_user_id": user_id,
+                                  "created_at": datetime.now(timezone.utc)}},
+                upsert=True,
+            )
+
+        logger.info(f"Backfilled {len(other_profiles)} match(es) for user {user_id}")
+    except Exception as exc:
+        logger.error(f"_backfill_matches failed for {user_id}: {exc}")
 
 router = APIRouter(tags=["compatibility"])
 
@@ -88,27 +142,35 @@ async def get_psychometric_questions():
 @router.post("/psychometric/submit")
 async def submit_psychometric_profile(
     profile_data: PsychometricProfileCreate,
+    background_tasks: BackgroundTasks,
     current_user: dict = Depends(get_current_user)
 ):
     """Submit complete psychometric profile"""
     if len(profile_data.responses) != 36:
         raise HTTPException(status_code=400, detail="Must submit all 36 responses")
-    
+
     # Convert responses to list of dicts
     responses = [r.model_dump() for r in profile_data.responses]
-    
-    # Create profile using compatibility engine
+
+    # Save psychometric profile and compute domain scores / archetype
     profile_id = await compatibility_engine.create_psychometric_profile(
         user_id=current_user["user_id"],
         responses=responses
     )
-    
-    # Update user profile completion
+
+    # Mark profile as complete
     await db.users.update_one(
         {"user_id": current_user["user_id"]},
-        {"$set": {"is_profile_complete": True}}
+        {"$set": {
+            "is_profile_complete": True,
+            "psychometric_completed_at": datetime.now(timezone.utc),
+        }}
     )
-    
+
+    # Compute and store match scores against all existing psychometric profiles
+    # (runs in background so the API response is instant)
+    background_tasks.add_task(_backfill_matches, current_user["user_id"])
+
     return {
         "message": "Psychometric profile created successfully",
         "profile_id": profile_id
