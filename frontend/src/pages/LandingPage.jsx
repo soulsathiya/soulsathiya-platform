@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
   Shield, Users, Sparkles, Check, ArrowRight, ArrowDown, Brain,
@@ -37,6 +37,29 @@ const MANDALA_PARTICLES = [
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
 const LandingPage = () => {
+
+  // ── Scroll-reveal state for self-discovery section ─────────────────────
+  const [revealed,   setRevealed]   = useState(new Set());
+  const [hoveredSD,  setHoveredSD]  = useState(null);
+  const [hoveredSim, setHoveredSim] = useState(null);
+
+  useEffect(() => {
+    const els = document.querySelectorAll('[data-reveal]');
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const key = entry.target.dataset.idx;
+            setRevealed(prev => new Set([...prev, key]));
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.12 }
+    );
+    els.forEach(el => observer.observe(el));
+    return () => observer.disconnect();
+  }, []);
 
   const features = [
     {
@@ -734,10 +757,10 @@ const LandingPage = () => {
 
       {/* ── Self-Discovery + Compatibility Simulator ──────────────────────── */}
       <section className="py-20 px-6 bg-card/30" id="self-discovery">
-        <div className="container mx-auto max-w-6xl">
+        <div className="container mx-auto max-w-6xl space-y-12">
 
           {/* Section header */}
-          <div className="text-center mb-14">
+          <div className="text-center">
             <div className="inline-flex items-center gap-2 bg-primary/10 border border-primary/20 text-primary px-4 py-1.5 rounded-full text-sm font-medium mb-6">
               <Brain className="w-4 h-4" />
               Psychology-Driven Matching
@@ -752,71 +775,86 @@ const LandingPage = () => {
           </div>
 
           {/* ── Part 1: Self Discovery ─────────────────────────────────────── */}
-          <h3 className="font-heading text-xl font-bold text-foreground text-center mb-8">
-            What Kind of Partner Are You?
-          </h3>
+          <div>
+            <h3 className="font-heading text-xl font-bold text-foreground text-center mb-8">
+              What Kind of Partner Are You?
+            </h3>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-            {[
-              {
-                title:  'Emotional Style',
-                traits: ['Deeply empathetic', 'Open to vulnerability', 'Emotionally present'],
-                impact: 'You create safety wherever you go.',
-              },
-              {
-                title:  'Communication Pattern',
-                traits: ['Direct and honest', 'Listens before speaking', 'Values clarity'],
-                impact: 'Conversations with you feel effortless and real.',
-              },
-              {
-                title:  'Conflict Response',
-                traits: ['Stays calm under pressure', 'Seeks resolution', 'Avoids blame'],
-                impact: 'Disagreements with you lead to understanding.',
-              },
-              {
-                title:  'Life Direction',
-                traits: ['Career-driven and purposeful', 'Family-oriented planner', 'Growth-focused'],
-                impact: 'You attract partners who match your pace.',
-              },
-              {
-                title:  'Family Values',
-                traits: ['Tradition-grounded', 'Flexible with roles', 'Prioritises togetherness'],
-                impact: 'Shared values build a lasting foundation.',
-              },
-              {
-                title:  'Intimacy Pattern',
-                traits: ['Emotionally intimate first', 'Physical affection matters', 'Needs consistent closeness'],
-                impact: 'You bond deeply when truly understood.',
-              },
-            ].map((card, i) => (
-              <div
-                key={i}
-                className="rounded-xl p-4 border"
-                style={{ background: '#0F1A2E', borderColor: '#1f2a44' }}
-              >
-                <h4 className="font-heading text-sm font-bold text-primary mb-3 tracking-wide uppercase">
-                  {card.title}
-                </h4>
-                <ul className="space-y-1.5 mb-4">
-                  {card.traits.map((t, ti) => (
-                    <li key={ti} className="flex items-start gap-2 text-xs text-muted-foreground">
-                      <span className="text-primary mt-0.5">•</span>
-                      {t}
-                    </li>
-                  ))}
-                </ul>
-                <p className="text-xs text-foreground/70 italic border-t border-primary/10 pt-3">
-                  ✨ {card.impact}
-                </p>
-              </div>
-            ))}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {[
+                { title: 'Emotional Style',      traits: ['Empathetic',       'Vulnerability-open'],  impact: 'You create safety'         },
+                { title: 'Communication',         traits: ['Direct',           'Active listener'],     impact: 'Effortless conversations'  },
+                { title: 'Conflict Response',     traits: ['Calm under pressure', 'Resolution-first'], impact: 'Conflict becomes clarity'  },
+                { title: 'Life Direction',        traits: ['Purpose-driven',   'Growth-focused'],      impact: 'Attracts aligned partners' },
+                { title: 'Family Values',         traits: ['Tradition-grounded','Togetherness first'], impact: 'Built to last'             },
+                { title: 'Intimacy Pattern',      traits: ['Emotionally led',  'Needs closeness'],     impact: 'Bonds run deep'            },
+              ].map((card, i) => {
+                const key       = `sd-${i}`;
+                const isRevealed = revealed.has(key);
+                const isHovered  = hoveredSD === i;
+                const isDimmed   = hoveredSD !== null && hoveredSD !== i;
+                return (
+                  <div
+                    key={i}
+                    data-reveal="true"
+                    data-idx={key}
+                    onMouseEnter={() => setHoveredSD(i)}
+                    onMouseLeave={() => setHoveredSD(null)}
+                    style={{
+                      background:    '#0F1A2E',
+                      border:        `1px solid ${isHovered ? 'rgba(212,175,55,0.35)' : '#1f2a44'}`,
+                      borderRadius:  '0.75rem',
+                      padding:       '1rem',
+                      opacity:       isRevealed ? (isDimmed ? 0.45 : 1) : 0,
+                      transform:     isRevealed ? (isHovered ? 'translateY(-4px)' : 'none') : 'translateY(24px)',
+                      boxShadow:     isHovered ? '0 16px 36px rgba(0,0,0,0.45)' : 'none',
+                      transition:    `opacity 0.5s ${i * 100}ms, transform 0.5s ${i * 100}ms, box-shadow 0.3s, border-color 0.3s`,
+                      cursor:        'default',
+                    }}
+                  >
+                    <h4 style={{ fontWeight: 700, fontSize: '0.7rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: '#D4AF37', marginBottom: '0.6rem' }}>
+                      {card.title}
+                    </h4>
+                    <ul style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap', marginBottom: '0.75rem' }}>
+                      {card.traits.map((t, ti) => (
+                        <li key={ti} style={{ fontSize: '0.72rem', color: 'rgba(255,255,255,0.5)', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+                          {ti > 0 && <span style={{ color: 'rgba(212,175,55,0.4)' }}>•</span>}
+                          {t}
+                        </li>
+                      ))}
+                    </ul>
+                    {/* Insight — reveals on hover */}
+                    <p style={{
+                      fontSize:   '0.72rem',
+                      fontStyle:  'italic',
+                      color:      '#D4AF37',
+                      opacity:    isHovered ? 1 : 0,
+                      transition: 'opacity 0.3s',
+                      borderTop:  '1px solid rgba(212,175,55,0.12)',
+                      paddingTop: '0.6rem',
+                      minHeight:  '1.4rem',
+                    }}>
+                      ✨ {card.impact}
+                    </p>
+                  </div>
+                );
+              })}
+            </div>
           </div>
 
           {/* ── Transition divider ─────────────────────────────────────────── */}
-          <div className="text-center my-12">
+          <div
+            data-reveal="true"
+            data-idx="divider"
+            style={{
+              opacity:    revealed.has('divider') ? 1 : 0,
+              transform:  revealed.has('divider') ? 'none' : 'translateY(12px)',
+              transition: 'opacity 0.8s, transform 0.8s',
+            }}
+          >
             <div className="flex items-center gap-4 max-w-lg mx-auto">
               <div className="flex-1 h-px bg-primary/20" />
-              <p className="text-sm text-muted-foreground/70 italic whitespace-nowrap">
+              <p className="text-sm text-muted-foreground/60 italic whitespace-nowrap">
                 "Now imagine when the right patterns align…"
               </p>
               <div className="flex-1 h-px bg-primary/20" />
@@ -824,87 +862,99 @@ const LandingPage = () => {
           </div>
 
           {/* ── Part 2: Compatibility Simulator ───────────────────────────── */}
-          <h3 className="font-heading text-xl font-bold text-foreground text-center mb-8">
-            Imagine the Intelligence of Your Future Relationship
-          </h3>
+          <div>
+            <h3 className="font-heading text-xl font-bold text-foreground text-center mb-8">
+              Imagine the Intelligence of Your Future Relationship
+            </h3>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-14">
-            {[
-              {
-                emoji:  '❤️',
-                title:  'Emotional Alignment',
-                points: [
-                  'Conversations feel natural',
-                  'Vulnerability feels safe',
-                  'Silence feels comfortable',
-                ],
-                impact: 'Deep trust and emotional connection',
-              },
-              {
-                emoji:  '🎯',
-                title:  'Life Goals',
-                points: [
-                  'Decisions become easier',
-                  'Careers support each other',
-                  'Future feels shared',
-                ],
-                impact: 'Less friction, more direction',
-              },
-              {
-                emoji:  '⚖️',
-                title:  'Conflict Styles',
-                points: [
-                  'Arguments resolve faster',
-                  'Both partners feel heard',
-                  'Disagreements build understanding',
-                ],
-                impact: 'Conflict becomes growth',
-              },
-            ].map((card, i) => (
-              <div
-                key={i}
-                className="rounded-xl p-6 border flex flex-col gap-5"
-                style={{ background: '#0F1A2E', borderColor: '#1f2a44' }}
-              >
-                <div className="flex items-center gap-3">
-                  <span className="text-2xl leading-none">{card.emoji}</span>
-                  <h4 className="font-heading text-base font-bold text-foreground">
-                    {card.title}
-                  </h4>
-                </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {[
+                { emoji: '❤️', title: 'Emotional Alignment', points: ['Conversations feel natural', 'Vulnerability feels safe'],  impact: 'Deep trust, always'        },
+                { emoji: '🎯', title: 'Life Goals',           points: ['Decisions become easier',  'Future feels shared'],         impact: 'Less friction, more flow'  },
+                { emoji: '⚖️', title: 'Conflict Styles',      points: ['Both partners feel heard', 'Arguments resolve faster'],    impact: 'Conflict becomes growth'   },
+              ].map((card, i) => {
+                const key        = `sim-${i}`;
+                const isRevealed  = revealed.has(key);
+                const isHovered   = hoveredSim === i;
+                const isDimmed    = hoveredSim !== null && hoveredSim !== i;
+                return (
+                  <div
+                    key={i}
+                    data-reveal="true"
+                    data-idx={key}
+                    onMouseEnter={() => setHoveredSim(i)}
+                    onMouseLeave={() => setHoveredSim(null)}
+                    style={{
+                      background:   '#0F1A2E',
+                      border:       `1px solid ${isHovered ? 'rgba(212,175,55,0.35)' : '#1f2a44'}`,
+                      borderRadius: '0.75rem',
+                      padding:      '1.5rem',
+                      display:      'flex',
+                      flexDirection:'column',
+                      gap:          '1rem',
+                      opacity:      isRevealed ? (isDimmed ? 0.45 : 1) : 0,
+                      transform:    isRevealed ? (isHovered ? 'translateY(-4px)' : 'none') : 'translateY(24px)',
+                      boxShadow:    isHovered ? '0 20px 44px rgba(0,0,0,0.5)' : 'none',
+                      transition:   `opacity 0.5s ${i * 120}ms, transform 0.5s ${i * 120}ms, box-shadow 0.3s, border-color 0.3s`,
+                    }}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                      <span style={{ fontSize: '1.4rem', lineHeight: 1 }}>{card.emoji}</span>
+                      <h4 className="font-heading" style={{ fontWeight: 700, fontSize: '0.95rem', color: 'var(--foreground)' }}>
+                        {card.title}
+                      </h4>
+                    </div>
 
-                <ul className="space-y-2.5 flex-1">
-                  {card.points.map((pt, pi) => (
-                    <li key={pi} className="flex items-start gap-2.5 text-sm text-muted-foreground">
-                      <span className="text-primary text-xs mt-1 shrink-0">
-                        {card.emoji}
-                      </span>
-                      {pt}
-                    </li>
-                  ))}
-                </ul>
+                    <ul style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem', flex: 1 }}>
+                      {card.points.map((pt, pi) => (
+                        <li key={pi} style={{ display: 'flex', alignItems: 'flex-start', gap: '0.5rem', fontSize: '0.82rem', color: 'rgba(255,255,255,0.55)' }}>
+                          <span style={{ color: '#D4AF37', fontSize: '0.75rem', marginTop: '0.15rem', flexShrink: 0 }}>{card.emoji}</span>
+                          {pt}
+                        </li>
+                      ))}
+                    </ul>
 
-                <div
-                  className="text-xs font-semibold text-primary px-3 py-2 rounded-lg text-center"
-                  style={{ background: 'rgba(212,175,55,0.08)', border: '1px solid rgba(212,175,55,0.18)' }}
-                >
-                  ✨ {card.impact}
-                </div>
-              </div>
-            ))}
+                    {/* Insight badge */}
+                    <div style={{
+                      fontSize:        '0.72rem',
+                      fontWeight:      600,
+                      color:           '#D4AF37',
+                      background:      'rgba(212,175,55,0.07)',
+                      border:          '1px solid rgba(212,175,55,0.18)',
+                      borderRadius:    '0.5rem',
+                      padding:         '0.45rem 0.75rem',
+                      textAlign:       'center',
+                      opacity:         isHovered ? 1 : 0.7,
+                      transition:      'opacity 0.3s',
+                    }}>
+                      ✨ {card.impact}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
           </div>
 
           {/* CTA */}
-          <div className="text-center">
+          <div className="text-center pt-4">
             <h3 className="font-heading text-2xl font-bold text-foreground mb-4">
               Discover Your Compatibility Intelligence
             </h3>
             <Link to="/register">
-              <Button size="lg" className="px-8">
+              <Button
+                size="lg"
+                className="px-8"
+                style={{ transition: 'transform 0.3s, box-shadow 0.3s' }}
+                onMouseEnter={e => { e.currentTarget.style.transform = 'scale(1.05)'; }}
+                onMouseLeave={e => { e.currentTarget.style.transform = 'scale(1)';    }}
+              >
                 <Sparkles className="w-4 h-4 mr-2" />
                 Start Your Compatibility Profile
               </Button>
             </Link>
+            <p className="text-xs text-muted-foreground/50 mt-3">
+              Takes less than 3 minutes &nbsp;•&nbsp; No commitment required
+            </p>
           </div>
 
         </div>
