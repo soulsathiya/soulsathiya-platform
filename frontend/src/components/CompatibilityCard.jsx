@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Sparkles, ClipboardList, Loader2, ChevronRight, CheckCircle2 } from 'lucide-react';
+import { Sparkles, ClipboardList, Loader2, ChevronRight, CheckCircle2, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import axios from 'axios';
 import RadarChart from './RadarChart';
@@ -263,10 +263,36 @@ const CompatibilityCard = ({ targetUserId, targetName }) => {
               ))}
             </div>
 
+            {/* Deep Exploration teaser strip */}
+            <button
+              onClick={() => navigate(`/profile/${targetUserId}`, { state: { openDeep: true } })}
+              className="mt-4 w-full flex items-center gap-2.5 rounded-xl px-3.5 py-2.5 text-left transition-all duration-200 hover:scale-[1.01] active:scale-[0.99]"
+              style={{
+                background: 'linear-gradient(90deg,rgba(99,60,180,0.16),rgba(139,92,246,0.10))',
+                border: '1px solid rgba(139,92,246,0.28)',
+              }}
+            >
+              <span
+                className="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0"
+                style={{ background: 'rgba(139,92,246,0.18)' }}
+              >
+                <Sparkles className="w-3.5 h-3.5" style={{ color: '#a78bfa' }} />
+              </span>
+              <div className="flex-1 min-w-0">
+                <p className="text-[11px] font-bold leading-tight" style={{ color: '#c4b5fd' }}>
+                  Want deeper insights?
+                </p>
+                <p className="text-[10px] leading-tight mt-0.5" style={{ color: 'rgba(196,181,253,0.65)' }}>
+                  108-question Relationship Intelligence Report
+                </p>
+              </div>
+              <ArrowRight className="w-3.5 h-3.5 flex-shrink-0" style={{ color: '#a78bfa' }} />
+            </button>
+
             {/* View full report CTA */}
             <button
               onClick={() => setShowModal(true)}
-              className="mt-4 w-full flex items-center justify-center gap-1.5 text-xs font-semibold text-primary hover:text-primary/80 transition-colors py-2 rounded-lg border border-primary/20 hover:border-primary/40"
+              className="mt-2.5 w-full flex items-center justify-center gap-1.5 text-xs font-semibold text-primary hover:text-primary/80 transition-colors py-2 rounded-lg border border-primary/20 hover:border-primary/40"
             >
               View Full Compatibility Report
               <ChevronRight className="w-3.5 h-3.5" />
@@ -279,6 +305,7 @@ const CompatibilityCard = ({ targetUserId, targetName }) => {
         <CompatibilityReportModal
           compatibility={compatibility}
           targetName={targetName}
+          targetUserId={targetUserId}
           displayRows={displayRows}
           onClose={() => setShowModal(false)}
         />

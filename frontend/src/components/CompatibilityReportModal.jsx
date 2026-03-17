@@ -1,5 +1,6 @@
 import React from 'react';
-import { X, TrendingUp } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { X, TrendingUp, Sparkles, Brain, MessageCircleHeart, Zap, ArrowRight } from 'lucide-react';
 import RadarChart from './RadarChart';
 
 const getOutlook = (score) => {
@@ -17,9 +18,15 @@ const getOutlook = (score) => {
  *   displayRows    — [{ label, value, insight }] pre-built by CompatibilityCard
  *   onClose        — callback to close
  */
-const CompatibilityReportModal = ({ compatibility, targetName, displayRows = [], onClose }) => {
-  const score   = compatibility?.compatibility_percentage ?? 0;
-  const outlook = getOutlook(score);
+const CompatibilityReportModal = ({ compatibility, targetName, targetUserId, displayRows = [], onClose }) => {
+  const navigate = useNavigate();
+  const score    = compatibility?.compatibility_percentage ?? 0;
+  const outlook  = getOutlook(score);
+
+  const handleDeepExplore = () => {
+    onClose();
+    navigate(targetUserId ? `/profile/${targetUserId}` : '/dashboard', { state: { openDeep: true } });
+  };
 
   const sorted    = [...displayRows].sort((a, b) => b.value - a.value);
   const topTwo    = sorted.slice(0, 2);
@@ -136,9 +143,114 @@ const CompatibilityReportModal = ({ compatibility, targetName, displayRows = [],
               Based on your psychological profiling across {displayRows.length} personality dimensions.
             </p>
           </section>
+
+          {/* ── Deep Exploration Nudge ───────────────────────────── */}
+          <DeepExploreNudge score={score} targetName={targetName} onExplore={handleDeepExplore} />
         </div>
       </div>
     </div>
+  );
+};
+
+// ── Deep Exploration Nudge ────────────────────────────────────────
+
+const DEEP_PILLS = [
+  { icon: Brain,              label: '108 Questions' },
+  { icon: MessageCircleHeart, label: 'Conversation Starters' },
+  { icon: Zap,                label: 'AI Relationship Insights' },
+];
+
+const getNudgeCopy = (score) => {
+  if (score >= 85) return {
+    headline: 'Your connection is exceptional — go deeper.',
+    sub: `This level of compatibility deserves a full Relationship Intelligence Report. Discover exactly how you two click — and where to nurture what you've found.`,
+  };
+  if (score >= 75) return {
+    headline: 'Strong match — see the full picture.',
+    sub: `You're clearly aligned on what matters. The Deeper Exploration report reveals the finer layers — how you handle conflict, what you need in intimacy, and what your future together could look like.`,
+  };
+  if (score >= 65) return {
+    headline: 'Good potential — understanding makes it great.',
+    sub: `Every thriving relationship starts with insight. The 108-question Relationship Intelligence Report turns your differences into your greatest strengths.`,
+  };
+  return {
+    headline: 'Every connection has hidden depth.',
+    sub: `Before you make any decision, let the Relationship Intelligence Report reveal the full story — sometimes the most surprising pairs have the deepest bonds.`,
+  };
+};
+
+const DeepExploreNudge = ({ score, targetName, onExplore }) => {
+  const { headline, sub } = getNudgeCopy(score);
+  return (
+    <section>
+      <div
+        className="rounded-2xl overflow-hidden"
+        style={{
+          background: 'linear-gradient(135deg, rgba(99,60,180,0.18) 0%, rgba(212,175,55,0.10) 100%)',
+          border: '1px solid rgba(139,92,246,0.30)',
+        }}
+      >
+        {/* Top accent line */}
+        <div style={{ height: 2, background: 'linear-gradient(90deg,#8B5CF6,#D4AF37,#8B5CF6)' }} />
+
+        <div className="px-5 py-4">
+          {/* Tag */}
+          <div className="flex items-center gap-1.5 mb-2.5">
+            <Sparkles className="w-3.5 h-3.5" style={{ color: '#8B5CF6' }} />
+            <span
+              className="text-[10px] font-bold tracking-widest uppercase"
+              style={{ color: '#8B5CF6' }}
+            >
+              Relationship Intelligence Report
+            </span>
+          </div>
+
+          {/* Headline */}
+          <h3 className="font-heading font-bold text-base mb-1.5 text-foreground leading-snug">
+            {headline}
+          </h3>
+          <p className="text-[12px] text-muted-foreground leading-relaxed mb-3">
+            {sub}
+          </p>
+
+          {/* Benefit pills */}
+          <div className="flex flex-wrap gap-2 mb-4">
+            {DEEP_PILLS.map(({ icon: Icon, label }) => (
+              <span
+                key={label}
+                className="flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-medium"
+                style={{
+                  background: 'rgba(139,92,246,0.12)',
+                  border: '1px solid rgba(139,92,246,0.22)',
+                  color: '#c4b5fd',
+                }}
+              >
+                <Icon className="w-3 h-3" />
+                {label}
+              </span>
+            ))}
+          </div>
+
+          {/* CTA */}
+          <button
+            onClick={onExplore}
+            className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl font-bold text-sm transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
+            style={{
+              background: 'linear-gradient(90deg,#7C3AED,#8B5CF6)',
+              color: '#fff',
+              boxShadow: '0 4px 20px rgba(139,92,246,0.35)',
+            }}
+          >
+            Unlock Deeper Compatibility with {targetName}
+            <ArrowRight className="w-4 h-4" />
+          </button>
+
+          <p className="text-[10px] text-muted-foreground text-center mt-2">
+            Included in Elite · ₹999 one-time for Premium members
+          </p>
+        </div>
+      </div>
+    </section>
   );
 };
 
