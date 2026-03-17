@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { toast } from 'sonner';
 import axios from 'axios';
+import CompatibilityCard from '@/components/CompatibilityCard';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
@@ -192,6 +193,14 @@ const ProfileViewPage = () => {
             )}
           </div>
         </div>
+
+        {/* Compatibility Card — shown only when viewing another user's profile */}
+        {!isOwnProfile && (
+          <CompatibilityCard
+            targetUserId={targetUserId}
+            targetName={user?.full_name?.split(' ')[0] || 'them'}
+          />
+        )}
 
         {/* Details */}
         {profileData && (
