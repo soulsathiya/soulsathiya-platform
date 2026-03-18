@@ -53,9 +53,9 @@ const FOOTER_COLS = [
   {
     heading: 'Support',
     links: [
-      { label: 'Help Center', internal: false, href: 'mailto:support@soulsathiya.com' },
-      { label: 'Safety Tips', internal: true,  to:   '/terms'                         },
-      { label: 'Contact Us',  internal: false, href: 'mailto:hello@soulsathiya.com'   },
+      { label: 'Help Center',  internal: true, to: '/help'        },
+      { label: 'Safety Tips',  internal: true, to: '/safety-tips' },
+      { label: 'Contact Us',   internal: true, to: '/contact'     },
     ],
   },
   {

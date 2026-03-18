@@ -35,6 +35,9 @@ import { PrivacyPolicyPage, TermsOfServicePage, AboutUsPage } from './pages/Lega
 import HowItWorksPage from './pages/HowItWorksPage';
 import AboutPage from './pages/AboutPage';
 
+// Support pages
+import { HelpCenterPage, SafetyTipsPage, ContactUsPage } from './pages/SupportPages';
+
 // Step 3 (Revenue)
 import SubscriptionPage from './pages/SubscriptionPage';
 
@@ -135,6 +138,11 @@ function AppRouter() {
       {/* Public marketing pages */}
       <Route path="/how-it-works" element={<HowItWorksPage />} />
       <Route path="/about" element={<AboutPage />} />
+
+      {/* Support pages */}
+      <Route path="/help" element={<HelpCenterPage />} />
+      <Route path="/safety-tips" element={<SafetyTipsPage />} />
+      <Route path="/contact" element={<ContactUsPage />} />
 
       {/* Legal — Step 2 */}
       <Route path="/privacy" element={<PrivacyPolicyPage />} />
