@@ -47,7 +47,7 @@ const FOOTER_COLS = [
       { label: 'About Us',         internal: true,  to:   '/about'                             },
       { label: 'How It Works',     internal: true,  to:   '/how-it-works'                      },
       { label: 'Success Stories',  internal: false, href: '#testimonials'                      },
-      { label: 'Pricing / Plans',  internal: true,  to:   '/subscription'                      },
+      { label: 'Pricing / Plans',  internal: false, href: '/#pricing'                          },
     ],
   },
   {
