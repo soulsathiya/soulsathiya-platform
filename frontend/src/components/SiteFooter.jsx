@@ -18,21 +18,25 @@ const SOCIAL_LINKS = [
     icon:  Linkedin,
     href:  'https://linkedin.com/company/soulsathiya',
     label: 'LinkedIn',
+    color: '#0A66C2',
   },
   {
     icon:  Instagram,
     href:  'https://instagram.com/soulsathiya',
     label: 'Instagram',
+    color: '#E1306C',
   },
   {
     icon:  Twitter,
     href:  'https://twitter.com/soulsathiya',
     label: 'Twitter / X',
+    color: '#1DA1F2',
   },
   {
     icon:  Youtube,
     href:  'https://youtube.com/@soulsathiya',
     label: 'YouTube',
+    color: '#FF0000',
   },
 ];
 
@@ -139,23 +143,25 @@ const SiteFooter = () => (
 
           {/* Social Icons */}
           <div className="flex items-center gap-3">
-            {SOCIAL_LINKS.map(({ icon: Icon, href, label }) => (
+            {SOCIAL_LINKS.map(({ icon: Icon, href, label, color }) => (
               <a
                 key={label}
                 href={href}
                 aria-label={label}
                 target="_blank"
                 rel="noopener noreferrer"
+                style={{ '--brand-color': color }}
                 className="
-                  w-9 h-9 rounded-full
-                  border border-border/50
+                  group w-10 h-10 rounded-full
+                  bg-white/8 border border-white/20
                   flex items-center justify-center
-                  text-muted-foreground/60
-                  hover:text-primary hover:border-primary/40 hover:bg-primary/5
+                  text-white/80
+                  hover:bg-white/15 hover:border-white/40 hover:text-white
+                  hover:scale-110
                   transition-all duration-200
                 "
               >
-                <Icon className="w-4 h-4" />
+                <Icon className="w-5 h-5" />
               </a>
             ))}
           </div>

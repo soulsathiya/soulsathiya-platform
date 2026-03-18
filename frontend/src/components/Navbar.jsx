@@ -1,7 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { ArrowRight, Menu, X } from 'lucide-react';
+import { ArrowRight, Menu, X, Linkedin, Instagram, Twitter, Youtube } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+
+// ─── Social Links (shared config) ─────────────────────────────────────────────
+const SOCIAL_LINKS = [
+  { icon: Linkedin, href: 'https://linkedin.com/company/soulsathiya', label: 'LinkedIn'   },
+  { icon: Instagram, href: 'https://instagram.com/soulsathiya',       label: 'Instagram'  },
+  { icon: Twitter,  href: 'https://twitter.com/soulsathiya',          label: 'Twitter/X'  },
+  { icon: Youtube,  href: 'https://youtube.com/@soulsathiya',         label: 'YouTube'    },
+];
 
 // ─── Brand Logo ────────────────────────────────────────────────────────────────
 const SoulSathiyaLogo = ({ className = 'w-9 h-9' }) => (
@@ -85,7 +93,34 @@ const Navbar = () => {
         </nav>
 
         {/* ── Desktop CTA ── */}
-        <div className="hidden md:flex items-center space-x-3">
+        <div className="hidden md:flex items-center gap-2">
+
+          {/* Social Icons */}
+          <div className="flex items-center gap-1.5 mr-1">
+            {SOCIAL_LINKS.map(({ icon: Icon, href, label }) => (
+              <a
+                key={label}
+                href={href}
+                aria-label={label}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="
+                  w-8 h-8 rounded-full
+                  bg-white/8 border border-white/20
+                  flex items-center justify-center
+                  text-white/75
+                  hover:bg-white/15 hover:border-white/40 hover:text-white hover:scale-110
+                  transition-all duration-200
+                "
+              >
+                <Icon className="w-3.5 h-3.5" />
+              </a>
+            ))}
+          </div>
+
+          {/* Divider */}
+          <div className="w-px h-5 bg-border/50 mx-1" />
+
           <Link to="/login">
             <Button
               variant="ghost"
@@ -145,6 +180,29 @@ const Navbar = () => {
                 <ArrowRight className="w-4 h-4 ml-1.5" />
               </Button>
             </Link>
+
+            {/* Mobile Social Icons */}
+            <div className="flex items-center gap-3 pt-2">
+              {SOCIAL_LINKS.map(({ icon: Icon, href, label }) => (
+                <a
+                  key={label}
+                  href={href}
+                  aria-label={label}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="
+                    w-9 h-9 rounded-full
+                    bg-white/10 border border-white/25
+                    flex items-center justify-center
+                    text-white/80
+                    hover:bg-white/20 hover:text-white
+                    transition-all duration-200
+                  "
+                >
+                  <Icon className="w-4 h-4" />
+                </a>
+              ))}
+            </div>
           </div>
         </div>
       )}
