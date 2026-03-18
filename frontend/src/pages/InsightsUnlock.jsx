@@ -53,6 +53,7 @@ export default function InsightsUnlock() {
   const [email,        setEmail]        = useState('');
   const [otp,          setOtp]          = useState('');
   const [loggingIn,    setLoggingIn]    = useState(false);
+  const [resendCooldown, setResendCooldown] = useState(0);      // seconds remaining
 
   // ── Check auth ───────────────────────────────────────────────────────────────
   useEffect(() => {
@@ -79,8 +80,15 @@ export default function InsightsUnlock() {
       .catch(() => {});
   }, [authState]);
 
+  // ── Resend cooldown timer ────────────────────────────────────────────────────
+  useEffect(() => {
+    if (resendCooldown <= 0) return;
+    const t = setTimeout(() => setResendCooldown(c => c - 1), 1000);
+    return () => clearTimeout(t);
+  }, [resendCooldown]);
+
   // ── Handle login (email + OTP via existing auth) ─────────────────────────────
-  const handleSendOtp = useCallback(async () => {
+  const handleSendOtp = useCallback(async (isResend = false) => {
     if (!email.trim()) { toast.error('Please enter your email.'); return; }
     setLoggingIn(true);
     try {
@@ -89,11 +97,13 @@ export default function InsightsUnlock() {
         { email: email.trim().toLowerCase() },
         { withCredentials: true }
       );
-      toast.success('OTP sent to your email.');
+      toast.success(isResend ? 'New OTP sent to your email.' : 'OTP sent to your email.');
       // Dev fallback: backend returns dev_otp when RESEND key is not configured
       if (data?.dev_otp) {
         toast.info(`Dev mode — OTP: ${data.dev_otp}`, { duration: 30000 });
       }
+      setOtp('');
+      setResendCooldown(30);  // 30-second cooldown before next resend
       setLoginStep('otp');
     } catch (err) {
       const msg = err?.response?.data?.detail || 'Failed to send OTP.';
@@ -430,12 +440,29 @@ export default function InsightsUnlock() {
                     >
                       {loggingIn ? <Loader2 size={16} style={{ animation: 'spin 1s linear infinite' }} /> : <>Verify & Continue <ArrowRight size={15} /></>}
                     </button>
-                    <button
-                      onClick={() => { setLoginStep('email'); setOtp(''); }}
-                      style={{ width: '100%', background: 'transparent', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 10, padding: '10px', cursor: 'pointer', color: 'rgba(245,237,216,0.5)', fontSize: 13, fontFamily: 'sans-serif' }}
-                    >
-                      Change email
-                    </button>
+                    <div style={{ display: 'flex', gap: 8 }}>
+                      <button
+                        onClick={() => { setLoginStep('email'); setOtp(''); }}
+                        style={{ flex: 1, background: 'transparent', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 10, padding: '10px', cursor: 'pointer', color: 'rgba(245,237,216,0.5)', fontSize: 13, fontFamily: 'sans-serif' }}
+                      >
+                        Change email
+                      </button>
+                      <button
+                        onClick={() => handleSendOtp(true)}
+                        disabled={loggingIn || resendCooldown > 0}
+                        style={{
+                          flex: 1, background: 'transparent',
+                          border: `1px solid ${resendCooldown > 0 ? 'rgba(255,255,255,0.08)' : 'rgba(212,165,32,0.35)'}`,
+                          borderRadius: 10, padding: '10px',
+                          cursor: (loggingIn || resendCooldown > 0) ? 'not-allowed' : 'pointer',
+                          color: resendCooldown > 0 ? 'rgba(245,237,216,0.3)' : GOLD,
+                          fontSize: 13, fontFamily: 'sans-serif',
+                          transition: 'all 0.2s',
+                        }}
+                      >
+                        {loggingIn ? '…' : resendCooldown > 0 ? `Resend (${resendCooldown}s)` : 'Resend OTP'}
+                      </button>
+                    </div>
                   </div>
                 )}
 
