@@ -107,11 +107,8 @@ const SiteFooter = () => (
               Soul<span className="text-primary">Sathiya</span>
             </span>
           </div>
-          <p className="text-sm text-muted-foreground leading-relaxed mb-2">
+          <p className="text-sm text-muted-foreground leading-relaxed">
             India's First AI-Powered Relationship Intelligence Platform
-          </p>
-          <p className="text-xs text-muted-foreground/45 tracking-[0.25em] uppercase">
-            Compatibility&nbsp;•&nbsp;Connection&nbsp;•&nbsp;Commitment
           </p>
         </div>
 
