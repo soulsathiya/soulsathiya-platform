@@ -7,6 +7,152 @@ logger = logging.getLogger(__name__)
 
 RESEND_API_URL = "https://api.resend.com/emails"
 
+# ── Shared design tokens ───────────────────────────────────────────────────
+_BG       = "#0C1323"   # deep navy outer background
+_CARD     = "#0F1A2E"   # card surface
+_CARD2    = "#131F35"   # slightly lighter card (for note boxes)
+_GOLD     = "#D4A520"   # primary gold
+_GOLD2    = "#B8881A"   # darker gold (gradient end)
+_CREAM    = "#F5EDD8"   # warm cream (headings)
+_MUTED    = "#9B8E78"   # muted text
+_BORDER   = "rgba(212,165,32,0.20)"  # subtle gold border
+
+
+def _base(logo_url: str, header_subtitle: str, body_html: str, footer_extra: str = "") -> str:
+    """
+    Shared email shell — dark navy card with gold logo header.
+    All emails use this wrapper for visual consistency.
+    """
+    return f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <!--[if mso]><noscript><xml><o:OfficeDocumentSettings><o:PixelsPerInch>96</o:PixelsPerInch></o:OfficeDocumentSettings></xml></noscript><![endif]-->
+</head>
+<body style="margin:0;padding:0;background:{_BG};font-family:Arial,Helvetica,sans-serif;-webkit-font-smoothing:antialiased;">
+  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background:{_BG};">
+    <tr>
+      <td align="center" style="padding:40px 16px;">
+
+        <!-- Card -->
+        <table role="presentation" width="100%" style="max-width:580px;" cellspacing="0" cellpadding="0" border="0">
+          <tr>
+            <td style="background:{_CARD};border-radius:16px;border:1px solid {_BORDER};overflow:hidden;box-shadow:0 8px 40px rgba(0,0,0,0.5);">
+
+              <!-- Header -->
+              <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
+                <tr>
+                  <td style="padding:32px 32px 28px;text-align:center;border-bottom:1px solid {_BORDER};">
+                    <!-- Logo row -->
+                    <table role="presentation" cellspacing="0" cellpadding="0" border="0" align="center">
+                      <tr>
+                        <td style="vertical-align:middle;padding-right:10px;">
+                          <img src="{logo_url}" alt="SoulSathiya" width="40" height="40"
+                               style="display:block;width:40px;height:40px;object-fit:contain;border:0;"
+                               onerror="this.style.display='none'">
+                        </td>
+                        <td style="vertical-align:middle;">
+                          <span style="font-family:Georgia,'Times New Roman',serif;font-size:26px;font-weight:700;color:{_CREAM};letter-spacing:-0.3px;">
+                            Soul<span style="color:{_GOLD};">Sathiya</span>
+                          </span>
+                        </td>
+                      </tr>
+                    </table>
+                    <!-- Subtitle -->
+                    <p style="margin:10px 0 0;font-size:13px;color:{_MUTED};letter-spacing:0.8px;text-transform:uppercase;">
+                      {header_subtitle}
+                    </p>
+                  </td>
+                </tr>
+              </table>
+
+              <!-- Body -->
+              <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
+                <tr>
+                  <td style="padding:36px 32px 28px;">
+                    {body_html}
+                  </td>
+                </tr>
+              </table>
+
+              <!-- Footer -->
+              <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
+                <tr>
+                  <td style="padding:20px 32px;text-align:center;border-top:1px solid {_BORDER};">
+                    <p style="margin:0;font-size:12px;color:{_MUTED};">
+                      © 2026 SoulSathiya · India's First AI-Powered Relationship Intelligence Platform
+                    </p>
+                    {footer_extra}
+                    <p style="margin:8px 0 0;font-size:11px;color:rgba(155,142,120,0.55);">
+                      This email was sent from a no-reply address. Contact
+                      <a href="mailto:support@soulsathiya.com"
+                         style="color:{_GOLD};text-decoration:none;">support@soulsathiya.com</a>
+                      for help.
+                    </p>
+                  </td>
+                </tr>
+              </table>
+
+            </td>
+          </tr>
+        </table>
+        <!-- /Card -->
+
+      </td>
+    </tr>
+  </table>
+</body>
+</html>"""
+
+
+def _cta_button(url: str, label: str) -> str:
+    """Gold CTA button — email-safe table-based."""
+    return f"""
+    <table role="presentation" cellspacing="0" cellpadding="0" border="0" align="center" style="margin:32px auto;">
+      <tr>
+        <td style="border-radius:10px;background:linear-gradient(135deg,{_GOLD} 0%,{_GOLD2} 100%);
+                   box-shadow:0 4px 16px rgba(212,165,32,0.35);">
+          <a href="{url}"
+             style="display:inline-block;padding:15px 44px;font-family:Arial,Helvetica,sans-serif;
+                    font-size:15px;font-weight:700;color:#000000;text-decoration:none;
+                    letter-spacing:0.3px;border-radius:10px;">
+            {label}
+          </a>
+        </td>
+      </tr>
+    </table>"""
+
+
+def _note_box(content: str) -> str:
+    """Subtle note / warning box."""
+    return f"""
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0"
+           style="margin:24px 0 0;background:{_CARD2};border:1px solid {_BORDER};border-radius:10px;">
+      <tr>
+        <td style="padding:16px 20px;font-size:13px;color:{_MUTED};line-height:1.7;">
+          {content}
+        </td>
+      </tr>
+    </table>"""
+
+
+def _stat_box(value: str, label: str) -> str:
+    """Stat tile for weekly digest."""
+    return f"""
+    <td width="33%" style="text-align:center;padding:0 6px;">
+      <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0"
+             style="background:{_CARD2};border:1px solid {_BORDER};border-radius:12px;">
+        <tr>
+          <td style="padding:20px 12px;text-align:center;">
+            <div style="font-size:28px;font-weight:700;color:{_GOLD};font-family:Georgia,serif;">{value}</div>
+            <div style="font-size:12px;color:{_MUTED};margin-top:5px;">{label}</div>
+          </td>
+        </tr>
+      </table>
+    </td>"""
+
 
 class EmailService:
     def __init__(self):
@@ -18,9 +164,7 @@ class EmailService:
             "FRONTEND_URL", "http://localhost:3000"
         ).rstrip("/")
 
-    # ------------------------------------------------------------------
-    # Internal send helper
-    # ------------------------------------------------------------------
+    # ── Internal send helper ───────────────────────────────────────────────
     async def _send(self, to: str, subject: str, html: str) -> bool:
         """Send an email via the Resend API."""
         if not self.api_key:
@@ -52,309 +196,248 @@ class EmailService:
             logger.error("Email send exception for %s: %s", to, exc)
             return False
 
-    # ------------------------------------------------------------------
-    # Email verification
-    # ------------------------------------------------------------------
-    async def send_verification_email(
-        self, to: str, name: str, token: str
-    ) -> bool:
+    # ── Email verification ─────────────────────────────────────────────────
+    async def send_verification_email(self, to: str, name: str, token: str) -> bool:
         """Send an email verification link to the user."""
-        verify_url = f"{self.frontend_url}/verify-email?token={token}"
-        first_name = name.split()[0] if name else "there"
-        html = f"""<!DOCTYPE html>
-<html lang="en">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
-<body style="margin:0;padding:0;background:#FDFBF7;font-family:Arial,Helvetica,sans-serif;">
-  <div style="max-width:600px;margin:40px auto;background:#ffffff;border-radius:16px;overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,0.10);">
-    <!-- Header -->
-    <div style="background:linear-gradient(135deg,#D4A520 0%,#B8881A 100%);padding:36px 32px;text-align:center;">
-      <div style="font-size:32px;margin-bottom:8px;">💑</div>
-      <h1 style="color:#ffffff;margin:0;font-size:28px;font-weight:700;letter-spacing:-0.5px;">SoulSathiya</h1>
-      <p style="color:rgba(255,255,255,0.85);margin:6px 0 0;font-size:14px;">Find Your Soulmate</p>
-    </div>
-    <!-- Body -->
-    <div style="padding:40px 32px;">
-      <h2 style="color:#1a1a1a;margin:0 0 12px;font-size:22px;">Hi {first_name}, please verify your email 👋</h2>
-      <p style="color:#555555;line-height:1.7;margin:0 0 28px;font-size:15px;">
-        Welcome to SoulSathiya! You're one step away from starting your journey to find meaningful connections.
-        Click the button below to verify your email address.
-      </p>
-      <div style="text-align:center;margin:32px 0;">
-        <a href="{verify_url}"
-           style="display:inline-block;background:linear-gradient(135deg,#D4A520 0%,#B8881A 100%);
-                  color:#ffffff;padding:15px 40px;border-radius:10px;text-decoration:none;
-                  font-weight:700;font-size:16px;letter-spacing:0.3px;box-shadow:0 4px 12px rgba(212,165,32,0.35);">
-          ✉️ Verify My Email
-        </a>
-      </div>
-      <div style="background:#FBF6E9;border:1px solid #EDD98A;border-radius:8px;padding:16px 20px;margin:24px 0 0;">
-        <p style="color:#888888;font-size:13px;margin:0 0 8px;">⏱ This link expires in <strong>24 hours</strong>.</p>
-        <p style="color:#888888;font-size:13px;margin:0;">
-          If you didn't create a SoulSathiya account, you can safely ignore this email.
-        </p>
-      </div>
-      <p style="color:#bbbbbb;font-size:11px;margin:20px 0 0;word-break:break-all;line-height:1.5;">
-        Or copy and paste this URL into your browser:<br>{verify_url}
-      </p>
-    </div>
-    <!-- Footer -->
-    <div style="background:#f9f9f9;padding:20px 32px;text-align:center;border-top:1px solid #eeeeee;">
-      <p style="color:#aaaaaa;font-size:12px;margin:0;">© 2026 SoulSathiya. All rights reserved.</p>
-    </div>
-  </div>
-</body>
-</html>"""
-        return await self._send(to, "Verify your email — SoulSathiya", html)
+        verify_url  = f"{self.frontend_url}/verify-email?token={token}"
+        logo_url    = f"{self.frontend_url}/logo.png"
+        first_name  = name.split()[0].title() if name else "there"
 
-    # ------------------------------------------------------------------
-    # Password reset
-    # ------------------------------------------------------------------
-    async def send_password_reset_email(
-        self, to: str, name: str, token: str
-    ) -> bool:
+        body = f"""
+          <h2 style="margin:0 0 14px;font-family:Georgia,'Times New Roman',serif;
+                     font-size:24px;font-weight:700;color:{_CREAM};line-height:1.3;">
+            Hi {first_name}, please verify your email
+          </h2>
+          <p style="margin:0 0 6px;font-size:15px;color:{_MUTED};line-height:1.75;">
+            Welcome to <strong style="color:{_CREAM};">SoulSathiya</strong>! You're one step away
+            from beginning your journey toward a meaningful, compatibility-driven relationship.
+          </p>
+          <p style="margin:0 0 4px;font-size:15px;color:{_MUTED};line-height:1.75;">
+            Click the button below to verify your email address and activate your account.
+          </p>
+          {_cta_button(verify_url, "✦ Verify My Email")}
+          {_note_box(f'''
+            <p style="margin:0 0 6px;">
+              ⏱ &nbsp;This link expires in <strong style="color:{_CREAM};">24 hours</strong>.
+            </p>
+            <p style="margin:0;">
+              If you didn't create a SoulSathiya account, you can safely ignore this email —
+              no action is needed.
+            </p>
+          ''')}
+          <p style="margin:20px 0 0;font-size:11px;color:rgba(155,142,120,0.5);
+                    word-break:break-all;line-height:1.6;">
+            Or copy this link into your browser:<br>
+            <span style="color:rgba(212,165,32,0.55);">{verify_url}</span>
+          </p>"""
+
+        html = _base(logo_url, "Email Verification", body)
+        return await self._send(to, "Please verify your email — SoulSathiya", html)
+
+    # ── Password reset ─────────────────────────────────────────────────────
+    async def send_password_reset_email(self, to: str, name: str, token: str) -> bool:
         """Send a password reset link to the user."""
-        reset_url = f"{self.frontend_url}/reset-password?token={token}"
-        first_name = name.split()[0] if name else "there"
-        html = f"""<!DOCTYPE html>
-<html lang="en">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
-<body style="margin:0;padding:0;background:#FDFBF7;font-family:Arial,Helvetica,sans-serif;">
-  <div style="max-width:600px;margin:40px auto;background:#ffffff;border-radius:16px;overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,0.10);">
-    <!-- Header -->
-    <div style="background:linear-gradient(135deg,#D4A520 0%,#B8881A 100%);padding:36px 32px;text-align:center;">
-      <div style="font-size:32px;margin-bottom:8px;">🔐</div>
-      <h1 style="color:#ffffff;margin:0;font-size:28px;font-weight:700;letter-spacing:-0.5px;">SoulSathiya</h1>
-      <p style="color:rgba(255,255,255,0.85);margin:6px 0 0;font-size:14px;">Password Reset</p>
-    </div>
-    <!-- Body -->
-    <div style="padding:40px 32px;">
-      <h2 style="color:#1a1a1a;margin:0 0 12px;font-size:22px;">Hi {first_name}, reset your password</h2>
-      <p style="color:#555555;line-height:1.7;margin:0 0 28px;font-size:15px;">
-        We received a request to reset the password for your SoulSathiya account.
-        Click the button below to create a new password.
-      </p>
-      <div style="text-align:center;margin:32px 0;">
-        <a href="{reset_url}"
-           style="display:inline-block;background:linear-gradient(135deg,#D4A520 0%,#B8881A 100%);
-                  color:#ffffff;padding:15px 40px;border-radius:10px;text-decoration:none;
-                  font-weight:700;font-size:16px;letter-spacing:0.3px;box-shadow:0 4px 12px rgba(212,165,32,0.35);">
-          🔑 Reset My Password
-        </a>
-      </div>
-      <div style="background:#FBF6E9;border:1px solid #EDD98A;border-radius:8px;padding:16px 20px;margin:24px 0 0;">
-        <p style="color:#888888;font-size:13px;margin:0 0 8px;">⏱ This link expires in <strong>1 hour</strong>.</p>
-        <p style="color:#888888;font-size:13px;margin:0;">
-          If you didn't request a password reset, you can safely ignore this email — your password will remain unchanged.
-        </p>
-      </div>
-      <p style="color:#bbbbbb;font-size:11px;margin:20px 0 0;word-break:break-all;line-height:1.5;">
-        Or copy and paste this URL into your browser:<br>{reset_url}
-      </p>
-    </div>
-    <!-- Footer -->
-    <div style="background:#f9f9f9;padding:20px 32px;text-align:center;border-top:1px solid #eeeeee;">
-      <p style="color:#aaaaaa;font-size:12px;margin:0;">© 2026 SoulSathiya. All rights reserved.</p>
-    </div>
-  </div>
-</body>
-</html>"""
+        reset_url  = f"{self.frontend_url}/reset-password?token={token}"
+        logo_url   = f"{self.frontend_url}/logo.png"
+        first_name = name.split()[0].title() if name else "there"
+
+        body = f"""
+          <h2 style="margin:0 0 14px;font-family:Georgia,'Times New Roman',serif;
+                     font-size:24px;font-weight:700;color:{_CREAM};line-height:1.3;">
+            Reset your password, {first_name}
+          </h2>
+          <p style="margin:0 0 6px;font-size:15px;color:{_MUTED};line-height:1.75;">
+            We received a request to reset the password for your SoulSathiya account.
+          </p>
+          <p style="margin:0 0 4px;font-size:15px;color:{_MUTED};line-height:1.75;">
+            Click the button below to create a new password. If you did not request this,
+            your account remains secure — simply ignore this email.
+          </p>
+          {_cta_button(reset_url, "✦ Reset My Password")}
+          {_note_box(f'''
+            <p style="margin:0 0 6px;">
+              ⏱ &nbsp;This link expires in <strong style="color:{_CREAM};">1 hour</strong>.
+            </p>
+            <p style="margin:0;">
+              If you didn't request a password reset, your password will remain unchanged.
+              Contact <a href="mailto:support@soulsathiya.com"
+              style="color:{_GOLD};text-decoration:none;">support@soulsathiya.com</a>
+              if you have concerns.
+            </p>
+          ''')}
+          <p style="margin:20px 0 0;font-size:11px;color:rgba(155,142,120,0.5);
+                    word-break:break-all;line-height:1.6;">
+            Or copy this link into your browser:<br>
+            <span style="color:rgba(212,165,32,0.55);">{reset_url}</span>
+          </p>"""
+
+        html = _base(logo_url, "Password Reset", body)
         return await self._send(to, "Reset your password — SoulSathiya", html)
 
-    # ------------------------------------------------------------------
-    # Interest received notification
-    # ------------------------------------------------------------------
+    # ── Interest received notification ─────────────────────────────────────
     async def send_interest_received_email(
         self, to: str, recipient_name: str, sender_name: str,
         sender_city: str = "", unsubscribe_token: str = ""
     ) -> bool:
         """Notify a user that someone sent them an interest."""
-        first_name = recipient_name.split()[0] if recipient_name else "there"
-        sender_first = sender_name.split()[0] if sender_name else "Someone"
+        first_name   = recipient_name.split()[0].title() if recipient_name else "there"
+        sender_first = sender_name.split()[0].title()    if sender_name    else "Someone"
+        logo_url     = f"{self.frontend_url}/logo.png"
         interests_url = f"{self.frontend_url}/interests"
-        unsub_url = f"{self.frontend_url}/unsubscribe?token={unsubscribe_token}" if unsubscribe_token else ""
-        location_line = f" from {sender_city}" if sender_city else ""
-        html = f"""<!DOCTYPE html>
-<html lang="en">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
-<body style="margin:0;padding:0;background:#FDFBF7;font-family:Arial,Helvetica,sans-serif;">
-  <div style="max-width:600px;margin:40px auto;background:#ffffff;border-radius:16px;overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,0.10);">
-    <div style="background:linear-gradient(135deg,#D4A520 0%,#B8881A 100%);padding:36px 32px;text-align:center;">
-      <div style="font-size:32px;margin-bottom:8px;">💌</div>
-      <h1 style="color:#ffffff;margin:0;font-size:28px;font-weight:700;">SoulSathiya</h1>
-      <p style="color:rgba(255,255,255,0.85);margin:6px 0 0;font-size:14px;">You have a new interest!</p>
-    </div>
-    <div style="padding:40px 32px;">
-      <h2 style="color:#1a1a1a;margin:0 0 12px;font-size:22px;">Hi {first_name} 👋</h2>
-      <p style="color:#555555;line-height:1.7;margin:0 0 24px;font-size:15px;">
-        <strong>{sender_first}</strong>{location_line} has expressed interest in connecting with you on SoulSathiya.
-        View their profile and decide if you'd like to accept.
-      </p>
-      <div style="text-align:center;margin:32px 0;">
-        <a href="{interests_url}"
-           style="display:inline-block;background:linear-gradient(135deg,#D4A520 0%,#B8881A 100%);
-                  color:#ffffff;padding:15px 40px;border-radius:10px;text-decoration:none;
-                  font-weight:700;font-size:16px;box-shadow:0 4px 12px rgba(212,165,32,0.35);">
-          💑 View Interest
-        </a>
-      </div>
-    </div>
-    <div style="background:#f9f9f9;padding:16px 32px;text-align:center;border-top:1px solid #eeeeee;">
-      <p style="color:#aaaaaa;font-size:12px;margin:0;">© 2026 SoulSathiya. All rights reserved.</p>
-      {f'<p style="color:#aaaaaa;font-size:11px;margin:4px 0 0;"><a href="{unsub_url}" style="color:#aaaaaa;">Unsubscribe</a></p>' if unsub_url else ''}
-    </div>
-  </div>
-</body>
-</html>"""
+        unsub_url    = f"{self.frontend_url}/unsubscribe?token={unsubscribe_token}" if unsubscribe_token else ""
+        location_line = f" from <strong style='color:{_CREAM};'>{sender_city}</strong>" if sender_city else ""
+
+        footer_extra = (
+            f'<p style="margin:6px 0 0;font-size:11px;color:rgba(155,142,120,0.45);">'
+            f'<a href="{unsub_url}" style="color:rgba(155,142,120,0.45);text-decoration:underline;">Unsubscribe</a>'
+            f'</p>'
+        ) if unsub_url else ""
+
+        body = f"""
+          <h2 style="margin:0 0 14px;font-family:Georgia,'Times New Roman',serif;
+                     font-size:24px;font-weight:700;color:{_CREAM};line-height:1.3;">
+            You have a new interest, {first_name}
+          </h2>
+          <p style="margin:0 0 6px;font-size:15px;color:{_MUTED};line-height:1.75;">
+            <strong style="color:{_CREAM};">{sender_first}</strong>{location_line} has expressed
+            interest in connecting with you on SoulSathiya.
+          </p>
+          <p style="margin:0 0 4px;font-size:15px;color:{_MUTED};line-height:1.75;">
+            View their profile and decide if you'd like to accept. Compatibility-matched
+            connections are waiting.
+          </p>
+          {_cta_button(interests_url, "✦ View Interest")}
+          {_note_box(f'<p style="margin:0;">Respond promptly — engaged profiles get more quality matches on SoulSathiya.</p>')}"""
+
+        html = _base(logo_url, "New Interest Received", body, footer_extra)
         return await self._send(to, f"{sender_first} is interested in you — SoulSathiya", html)
 
-    # ------------------------------------------------------------------
-    # New message notification
-    # ------------------------------------------------------------------
+    # ── New message notification ───────────────────────────────────────────
     async def send_message_notification_email(
         self, to: str, recipient_name: str, sender_name: str,
         preview: str = "", unsubscribe_token: str = ""
     ) -> bool:
         """Notify a user they received a new message."""
-        first_name = recipient_name.split()[0] if recipient_name else "there"
-        sender_first = sender_name.split()[0] if sender_name else "Someone"
+        first_name   = recipient_name.split()[0].title() if recipient_name else "there"
+        sender_first = sender_name.split()[0].title()    if sender_name    else "Someone"
+        logo_url     = f"{self.frontend_url}/logo.png"
         messages_url = f"{self.frontend_url}/messages"
-        unsub_url = f"{self.frontend_url}/unsubscribe?token={unsubscribe_token}" if unsubscribe_token else ""
-        # Truncate preview for safety
+        unsub_url    = f"{self.frontend_url}/unsubscribe?token={unsubscribe_token}" if unsubscribe_token else ""
         safe_preview = (preview[:80] + "…") if len(preview) > 80 else preview
-        html = f"""<!DOCTYPE html>
-<html lang="en">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
-<body style="margin:0;padding:0;background:#FDFBF7;font-family:Arial,Helvetica,sans-serif;">
-  <div style="max-width:600px;margin:40px auto;background:#ffffff;border-radius:16px;overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,0.10);">
-    <div style="background:linear-gradient(135deg,#D4A520 0%,#B8881A 100%);padding:36px 32px;text-align:center;">
-      <div style="font-size:32px;margin-bottom:8px;">💬</div>
-      <h1 style="color:#ffffff;margin:0;font-size:28px;font-weight:700;">SoulSathiya</h1>
-      <p style="color:rgba(255,255,255,0.85);margin:6px 0 0;font-size:14px;">New message from {sender_first}</p>
-    </div>
-    <div style="padding:40px 32px;">
-      <h2 style="color:#1a1a1a;margin:0 0 12px;font-size:22px;">Hi {first_name} 👋</h2>
-      <p style="color:#555555;line-height:1.7;margin:0 0 16px;font-size:15px;">
-        <strong>{sender_first}</strong> sent you a message on SoulSathiya.
-      </p>
-      {f'<div style="background:#FFF8F7;border-left:4px solid #D4A520;padding:12px 16px;border-radius:4px;margin:0 0 24px;color:#444;font-size:14px;font-style:italic;">{safe_preview}</div>' if safe_preview else ''}
-      <div style="text-align:center;margin:24px 0;">
-        <a href="{messages_url}"
-           style="display:inline-block;background:linear-gradient(135deg,#D4A520 0%,#B8881A 100%);
-                  color:#ffffff;padding:15px 40px;border-radius:10px;text-decoration:none;
-                  font-weight:700;font-size:16px;box-shadow:0 4px 12px rgba(212,165,32,0.35);">
-          💬 Reply Now
-        </a>
-      </div>
-    </div>
-    <div style="background:#f9f9f9;padding:16px 32px;text-align:center;border-top:1px solid #eeeeee;">
-      <p style="color:#aaaaaa;font-size:12px;margin:0;">© 2026 SoulSathiya. All rights reserved.</p>
-      {f'<p style="color:#aaaaaa;font-size:11px;margin:4px 0 0;"><a href="{unsub_url}" style="color:#aaaaaa;">Unsubscribe</a></p>' if unsub_url else ''}
-    </div>
-  </div>
-</body>
-</html>"""
+
+        footer_extra = (
+            f'<p style="margin:6px 0 0;font-size:11px;color:rgba(155,142,120,0.45);">'
+            f'<a href="{unsub_url}" style="color:rgba(155,142,120,0.45);text-decoration:underline;">Unsubscribe</a>'
+            f'</p>'
+        ) if unsub_url else ""
+
+        preview_block = f"""
+          <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0"
+                 style="margin:16px 0 24px;background:{_CARD2};
+                        border-left:3px solid {_GOLD};border-radius:0 8px 8px 0;">
+            <tr>
+              <td style="padding:14px 18px;font-size:14px;color:{_MUTED};
+                         font-style:italic;line-height:1.65;">
+                "{safe_preview}"
+              </td>
+            </tr>
+          </table>""" if safe_preview else ""
+
+        body = f"""
+          <h2 style="margin:0 0 14px;font-family:Georgia,'Times New Roman',serif;
+                     font-size:24px;font-weight:700;color:{_CREAM};line-height:1.3;">
+            New message from {sender_first}
+          </h2>
+          <p style="margin:0 0 6px;font-size:15px;color:{_MUTED};line-height:1.75;">
+            <strong style="color:{_CREAM};">{sender_first}</strong> sent you a message on SoulSathiya.
+          </p>
+          {preview_block}
+          {_cta_button(messages_url, "✦ Reply Now")}
+          {_note_box(f'<p style="margin:0;">Keep conversations active — responsive members build stronger compatibility signals.</p>')}"""
+
+        html = _base(logo_url, f"New Message from {sender_first}", body, footer_extra)
         return await self._send(to, f"New message from {sender_first} — SoulSathiya", html)
 
-    # ------------------------------------------------------------------
-    # Weekly digest
-    # ------------------------------------------------------------------
+    # ── Weekly digest ──────────────────────────────────────────────────────
     async def send_weekly_digest_email(
         self, to: str, name: str,
         new_matches: int = 0, unread_messages: int = 0, pending_interests: int = 0,
         unsubscribe_token: str = ""
     ) -> bool:
         """Send a weekly activity digest."""
-        first_name = name.split()[0] if name else "there"
+        first_name    = name.split()[0].title() if name else "there"
+        logo_url      = f"{self.frontend_url}/logo.png"
         dashboard_url = f"{self.frontend_url}/dashboard"
-        unsub_url = f"{self.frontend_url}/unsubscribe?token={unsubscribe_token}" if unsubscribe_token else ""
-        html = f"""<!DOCTYPE html>
-<html lang="en">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
-<body style="margin:0;padding:0;background:#FDFBF7;font-family:Arial,Helvetica,sans-serif;">
-  <div style="max-width:600px;margin:40px auto;background:#ffffff;border-radius:16px;overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,0.10);">
-    <div style="background:linear-gradient(135deg,#D4A520 0%,#B8881A 100%);padding:36px 32px;text-align:center;">
-      <div style="font-size:32px;margin-bottom:8px;">📊</div>
-      <h1 style="color:#ffffff;margin:0;font-size:28px;font-weight:700;">SoulSathiya</h1>
-      <p style="color:rgba(255,255,255,0.85);margin:6px 0 0;font-size:14px;">Your Weekly Summary</p>
-    </div>
-    <div style="padding:40px 32px;">
-      <h2 style="color:#1a1a1a;margin:0 0 12px;font-size:22px;">Hi {first_name}, here's your week 👋</h2>
-      <p style="color:#555555;line-height:1.7;margin:0 0 28px;font-size:15px;">
-        Here's a summary of your activity on SoulSathiya this week.
-      </p>
-      <div style="display:flex;gap:16px;justify-content:center;margin:0 0 32px;flex-wrap:wrap;">
-        <div style="background:#FBF6E9;border:1px solid #EDD98A;border-radius:12px;padding:20px 24px;text-align:center;min-width:120px;">
-          <div style="font-size:28px;font-weight:700;color:#D4A520;">{new_matches}</div>
-          <div style="color:#888;font-size:13px;margin-top:4px;">New Matches</div>
-        </div>
-        <div style="background:#FBF6E9;border:1px solid #EDD98A;border-radius:12px;padding:20px 24px;text-align:center;min-width:120px;">
-          <div style="font-size:28px;font-weight:700;color:#D4A520;">{unread_messages}</div>
-          <div style="color:#888;font-size:13px;margin-top:4px;">Unread Messages</div>
-        </div>
-        <div style="background:#FBF6E9;border:1px solid #EDD98A;border-radius:12px;padding:20px 24px;text-align:center;min-width:120px;">
-          <div style="font-size:28px;font-weight:700;color:#D4A520;">{pending_interests}</div>
-          <div style="color:#888;font-size:13px;margin-top:4px;">Pending Interests</div>
-        </div>
-      </div>
-      <div style="text-align:center;">
-        <a href="{dashboard_url}"
-           style="display:inline-block;background:linear-gradient(135deg,#D4A520 0%,#B8881A 100%);
-                  color:#ffffff;padding:15px 40px;border-radius:10px;text-decoration:none;
-                  font-weight:700;font-size:16px;box-shadow:0 4px 12px rgba(212,165,32,0.35);">
-          🏠 Go to Dashboard
-        </a>
-      </div>
-    </div>
-    <div style="background:#f9f9f9;padding:16px 32px;text-align:center;border-top:1px solid #eeeeee;">
-      <p style="color:#aaaaaa;font-size:12px;margin:0;">© 2026 SoulSathiya. All rights reserved.</p>
-      {f'<p style="color:#aaaaaa;font-size:11px;margin:4px 0 0;"><a href="{unsub_url}" style="color:#aaaaaa;">Unsubscribe from digest</a></p>' if unsub_url else ''}
-    </div>
-  </div>
-</body>
-</html>"""
+        unsub_url     = f"{self.frontend_url}/unsubscribe?token={unsubscribe_token}" if unsubscribe_token else ""
+
+        footer_extra = (
+            f'<p style="margin:6px 0 0;font-size:11px;color:rgba(155,142,120,0.45);">'
+            f'<a href="{unsub_url}" style="color:rgba(155,142,120,0.45);text-decoration:underline;">Unsubscribe from digest</a>'
+            f'</p>'
+        ) if unsub_url else ""
+
+        body = f"""
+          <h2 style="margin:0 0 6px;font-family:Georgia,'Times New Roman',serif;
+                     font-size:24px;font-weight:700;color:{_CREAM};line-height:1.3;">
+            Your weekly summary, {first_name}
+          </h2>
+          <p style="margin:0 0 28px;font-size:15px;color:{_MUTED};line-height:1.75;">
+            Here's what happened on your SoulSathiya journey this week.
+          </p>
+
+          <!-- Stats row -->
+          <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0"
+                 style="margin:0 0 28px;">
+            <tr>
+              {_stat_box(str(new_matches),       "New Matches")}
+              {_stat_box(str(unread_messages),   "Unread Messages")}
+              {_stat_box(str(pending_interests), "Pending Interests")}
+            </tr>
+          </table>
+
+          {_cta_button(dashboard_url, "✦ Go to Dashboard")}
+          {_note_box(f'''
+            <p style="margin:0;">
+              Complete your compatibility profile to attract more high-intent matches.
+              <a href="{dashboard_url}" style="color:{_GOLD};text-decoration:none;">
+                Continue your journey →
+              </a>
+            </p>
+          ''')}"""
+
+        html = _base(logo_url, "Your Weekly Summary", body, footer_extra)
         return await self._send(to, "Your weekly SoulSathiya summary", html)
 
-    # ------------------------------------------------------------------
-    # Account deletion confirmation
-    # ------------------------------------------------------------------
+    # ── Account deletion confirmation ──────────────────────────────────────
     async def send_account_deletion_email(self, to: str, name: str) -> bool:
         """Send a confirmation email when a user deletes their account."""
-        first_name = name.split()[0] if name else "there"
-        html = f"""<!DOCTYPE html>
-<html lang="en">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
-<body style="margin:0;padding:0;background:#FDFBF7;font-family:Arial,Helvetica,sans-serif;">
-  <div style="max-width:600px;margin:40px auto;background:#ffffff;border-radius:16px;overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,0.10);">
-    <!-- Header -->
-    <div style="background:linear-gradient(135deg,#D4A520 0%,#B8881A 100%);padding:36px 32px;text-align:center;">
-      <div style="font-size:32px;margin-bottom:8px;">💑</div>
-      <h1 style="color:#ffffff;margin:0;font-size:28px;font-weight:700;letter-spacing:-0.5px;">SoulSathiya</h1>
-      <p style="color:rgba(255,255,255,0.85);margin:6px 0 0;font-size:14px;">Account Deleted</p>
-    </div>
-    <!-- Body -->
-    <div style="padding:40px 32px;">
-      <h2 style="color:#1a1a1a;margin:0 0 12px;font-size:22px;">Goodbye, {first_name} 👋</h2>
-      <p style="color:#555555;line-height:1.7;margin:0 0 16px;font-size:15px;">
-        Your SoulSathiya account has been successfully deleted. Your profile is no longer visible to other members and your login has been disabled.
-      </p>
-      <p style="color:#555555;line-height:1.7;margin:0 0 28px;font-size:15px;">
-        We're sorry to see you go. If this was a mistake or you'd like to return, please contact our support team and we'll be happy to help restore your account.
-      </p>
-      <div style="background:#FBF6E9;border:1px solid #EDD98A;border-radius:8px;padding:16px 20px;margin:0 0 24px;">
-        <p style="color:#888888;font-size:13px;margin:0;">
-          📧 Need help? Contact us at
-          <a href="mailto:support@soulsathiya.com" style="color:#D4A520;text-decoration:none;">support@soulsathiya.com</a>
-        </p>
-      </div>
-      <p style="color:#aaaaaa;font-size:13px;margin:0;line-height:1.6;">
-        Thank you for being part of the SoulSathiya community. We wish you all the best in your journey.
-      </p>
-    </div>
-    <!-- Footer -->
-    <div style="background:#f9f9f9;padding:20px 32px;text-align:center;border-top:1px solid #eeeeee;">
-      <p style="color:#aaaaaa;font-size:12px;margin:0;">© 2026 SoulSathiya. All rights reserved.</p>
-    </div>
-  </div>
-</body>
-</html>"""
+        first_name = name.split()[0].title() if name else "there"
+        logo_url   = f"{self.frontend_url}/logo.png"
+
+        body = f"""
+          <h2 style="margin:0 0 14px;font-family:Georgia,'Times New Roman',serif;
+                     font-size:24px;font-weight:700;color:{_CREAM};line-height:1.3;">
+            Goodbye, {first_name}
+          </h2>
+          <p style="margin:0 0 14px;font-size:15px;color:{_MUTED};line-height:1.75;">
+            Your SoulSathiya account has been successfully deleted. Your profile is no longer
+            visible to other members and your login has been disabled.
+          </p>
+          <p style="margin:0 0 24px;font-size:15px;color:{_MUTED};line-height:1.75;">
+            We're sorry to see you go. If this was a mistake or you'd like to return, please
+            reach out to our support team — we'll be glad to help restore your account.
+          </p>
+          {_note_box(f'''
+            <p style="margin:0;">
+              📧 &nbsp;Need help? Contact us at
+              <a href="mailto:support@soulsathiya.com"
+                 style="color:{_GOLD};text-decoration:none;">support@soulsathiya.com</a>
+            </p>
+          ''')}
+          <p style="margin:24px 0 0;font-size:14px;color:rgba(155,142,120,0.6);line-height:1.7;">
+            Thank you for being part of the SoulSathiya community. We wish you all the best
+            in your journey toward a meaningful relationship.
+          </p>"""
+
+        html = _base(logo_url, "Account Deleted", body)
         return await self._send(to, "Your SoulSathiya account has been deleted", html)
