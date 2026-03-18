@@ -6,9 +6,12 @@ from pydantic import BaseModel, EmailStr
 from typing import Optional
 import logging
 import os
+import random
+import string
+from datetime import datetime, timezone, timedelta
 
 from models.user import UserCreate, UserLogin, DELETED_ACCOUNT_ERROR
-from dependencies import auth_service, email_service, get_current_user
+from dependencies import db, auth_service, email_service, get_current_user
 
 logger = logging.getLogger(__name__)
 limiter = Limiter(key_func=get_remote_address)
@@ -36,6 +39,15 @@ class ResetPasswordRequest(BaseModel):
 class ResendVerificationRequest(BaseModel):
     """Optional body — if omitted the endpoint uses the authenticated user's email."""
     pass
+
+
+class SendOtpRequest(BaseModel):
+    email: EmailStr
+
+
+class VerifyOtpRequest(BaseModel):
+    email: EmailStr
+    otp: str
 
 
 # ---------------------------------------------------------------------------
@@ -216,6 +228,128 @@ async def logout(
         await auth_service.delete_session(session_token)
     response.delete_cookie(key="session_token", path="/")
     return {"message": "Logged out successfully"}
+
+
+# ---------------------------------------------------------------------------
+# OTP-based passwordless login  (used by Insights unlock flow)
+# ---------------------------------------------------------------------------
+
+def _generate_otp(length: int = 6) -> str:
+    return "".join(random.choices(string.digits, k=length))
+
+
+@router.post("/send-otp")
+@limiter.limit("5/minute")
+async def send_otp(request: Request, body: SendOtpRequest):
+    """Generate a 6-digit OTP, store it in DB with 10-min TTL, and email it.
+
+    Works for both existing users and brand-new email addresses — the account
+    is created (if missing) only after the OTP is successfully verified.
+    """
+    otp_code = _generate_otp()
+    expires_at = datetime.now(timezone.utc) + timedelta(minutes=10)
+
+    # Upsert OTP record (one active OTP per email at a time)
+    await db.otp_tokens.update_one(
+        {"email": body.email},
+        {
+            "$set": {
+                "email": body.email,
+                "otp": otp_code,
+                "expires_at": expires_at,
+                "used": False,
+            }
+        },
+        upsert=True,
+    )
+
+    sent = await email_service.send_otp_email(to=body.email, otp=otp_code)
+
+    if not sent:
+        # In dev (no RESEND key) log the OTP so it can be tested without email
+        logger.warning("OTP email not sent (no RESEND key). OTP for %s: %s", body.email, otp_code)
+
+    return {"message": "OTP sent to your email.", "dev_otp": otp_code if not sent else None}
+
+
+@router.post("/verify-otp")
+@limiter.limit("10/minute")
+async def verify_otp(request: Request, body: VerifyOtpRequest):
+    """Verify an OTP and log the user in (creating an account if needed)."""
+    record = await db.otp_tokens.find_one({"email": body.email})
+
+    if not record:
+        raise HTTPException(status_code=400, detail="No OTP found for this email. Please request a new one.")
+
+    if record.get("used"):
+        raise HTTPException(status_code=400, detail="This OTP has already been used. Please request a new one.")
+
+    expires_at = record.get("expires_at")
+    if expires_at:
+        if expires_at.tzinfo is None:
+            expires_at = expires_at.replace(tzinfo=timezone.utc)
+        if datetime.now(timezone.utc) > expires_at:
+            raise HTTPException(status_code=400, detail="OTP has expired. Please request a new one.")
+
+    if record.get("otp") != body.otp.strip():
+        raise HTTPException(status_code=400, detail="Invalid OTP. Please try again.")
+
+    # Mark OTP as used
+    await db.otp_tokens.update_one({"email": body.email}, {"$set": {"used": True}})
+
+    # Get or create user (email-only account, no password)
+    user = await auth_service.get_user_by_email(body.email)
+    if not user:
+        # New user — derive a placeholder name from email prefix
+        name_part = body.email.split("@")[0].replace(".", " ").replace("_", " ").title()
+        user = await auth_service.create_user(
+            email=body.email,
+            full_name=name_part or "SoulSathiya User",
+            password=None,
+            is_google_auth=False,
+        )
+        # Mark email as verified (OTP proves ownership)
+        await db.users.update_one(
+            {"email": body.email},
+            {"$set": {"is_email_verified": True}},
+        )
+        user["is_email_verified"] = True
+    else:
+        if not user.get("is_active", True) or user.get("status") == "deleted":
+            raise HTTPException(status_code=403, detail="Account has been deleted. Contact support.")
+        # Ensure email is marked verified
+        if not user.get("is_email_verified"):
+            await db.users.update_one(
+                {"email": body.email},
+                {"$set": {"is_email_verified": True}},
+            )
+            user["is_email_verified"] = True
+
+    session_token = await auth_service.create_session(user["user_id"])
+
+    response = JSONResponse(content={
+        "message": "Login successful",
+        "user": {
+            "user_id": user["user_id"],
+            "email": user["email"],
+            "full_name": user["full_name"],
+            "picture": user.get("picture"),
+            "is_email_verified": user.get("is_email_verified", True),
+            "is_profile_complete": user.get("is_profile_complete", False),
+            "is_verified": user.get("is_verified", False),
+            "subscription_status": user.get("subscription_status", "free"),
+        },
+    })
+    response.set_cookie(
+        key="session_token",
+        value=session_token,
+        httponly=True,
+        secure=COOKIE_SECURE,
+        samesite=COOKIE_SAMESITE,
+        max_age=7 * 24 * 60 * 60,
+        path="/",
+    )
+    return response
 
 
 # ---------------------------------------------------------------------------

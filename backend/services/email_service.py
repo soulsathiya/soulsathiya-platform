@@ -408,6 +408,50 @@ class EmailService:
         html = _base(logo_url, "Your Weekly Summary", body, footer_extra)
         return await self._send(to, "Your weekly SoulSathiya summary", html)
 
+    # ── OTP login ──────────────────────────────────────────────────────────
+    async def send_otp_email(self, to: str, otp: str) -> bool:
+        """Send a 6-digit OTP for passwordless login (Insights unlock flow)."""
+        logo_url = f"{self.frontend_url}/logo.png"
+
+        body = f"""
+          <h2 style="margin:0 0 14px;font-family:Georgia,'Times New Roman',serif;
+                     font-size:24px;font-weight:700;color:{_CREAM};line-height:1.3;">
+            Your one-time login code
+          </h2>
+          <p style="margin:0 0 24px;font-size:15px;color:{_MUTED};line-height:1.75;">
+            Use the code below to sign in to SoulSathiya and unlock your
+            <strong style="color:{_CREAM};">Relationship Intelligence Report</strong>.
+          </p>
+
+          <!-- OTP display box -->
+          <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0"
+                 style="margin:0 0 28px;">
+            <tr>
+              <td align="center"
+                  style="background:{_CARD2};border:2px solid {_GOLD};border-radius:14px;
+                         padding:28px 32px;">
+                <span style="font-family:Georgia,'Times New Roman',serif;
+                             font-size:48px;font-weight:700;color:{_GOLD};
+                             letter-spacing:0.25em;line-height:1;">
+                  {otp}
+                </span>
+              </td>
+            </tr>
+          </table>
+
+          {_note_box(f'''
+            <p style="margin:0 0 6px;">
+              ⏱ &nbsp;This code expires in <strong style="color:{_CREAM};">10 minutes</strong>.
+            </p>
+            <p style="margin:0;">
+              If you didn't request this code, you can safely ignore this email —
+              no account has been created.
+            </p>
+          ''')}"""
+
+        html = _base(logo_url, "Your Login Code", body)
+        return await self._send(to, "Your SoulSathiya login code", html)
+
     # ── Account deletion confirmation ──────────────────────────────────────
     async def send_account_deletion_email(self, to: str, name: str) -> bool:
         """Send a confirmation email when a user deletes their account."""

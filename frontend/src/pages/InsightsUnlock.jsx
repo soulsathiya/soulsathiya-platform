@@ -84,8 +84,16 @@ export default function InsightsUnlock() {
     if (!email.trim()) { toast.error('Please enter your email.'); return; }
     setLoggingIn(true);
     try {
-      await axios.post(`${BACKEND_URL}/api/auth/login`, { email: email.trim().toLowerCase() }, { withCredentials: true });
+      const { data } = await axios.post(
+        `${BACKEND_URL}/api/auth/send-otp`,
+        { email: email.trim().toLowerCase() },
+        { withCredentials: true }
+      );
       toast.success('OTP sent to your email.');
+      // Dev fallback: backend returns dev_otp when RESEND key is not configured
+      if (data?.dev_otp) {
+        toast.info(`Dev mode — OTP: ${data.dev_otp}`, { duration: 30000 });
+      }
       setLoginStep('otp');
     } catch (err) {
       const msg = err?.response?.data?.detail || 'Failed to send OTP.';
