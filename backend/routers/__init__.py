@@ -9,6 +9,7 @@ from .boosts import router as boosts_router
 from .admin import admin_router
 from .account import router as account_router
 from .kyc import router as kyc_router
+from .reports import router as reports_router
 
 __all__ = [
     "auth_router",
@@ -22,4 +23,5 @@ __all__ = [
     "admin_router",
     "account_router",
     "kyc_router",
+    "reports_router",
 ]
