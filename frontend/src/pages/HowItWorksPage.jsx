@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import {
-  Heart, ArrowRight, Shield, CheckCircle2, Users, Brain,
+  ArrowRight, Shield, CheckCircle2, Users, Brain,
   Sparkles, Zap, Target, Eye, Search, MessageCircle,
   UserCheck, TrendingUp, Lock, Star, ChevronRight,
 } from 'lucide-react';
@@ -66,46 +66,122 @@ const HeroSection = () => (
           </div>
         </div>
 
-        {/* Right: Illustration placeholder */}
+        {/* Right: Compatibility Card Illustration */}
         <div className="flex justify-center lg:justify-end">
-          <div
-            className="relative w-80 h-80 lg:w-96 lg:h-96 rounded-3xl flex items-center justify-center"
-            style={{
-              background: 'linear-gradient(135deg, hsl(225,35%,16%) 0%, hsl(225,38%,10%) 100%)',
-              border: '1px solid hsla(43,82%,52%,0.2)',
-              boxShadow: '0 0 60px hsla(43,82%,52%,0.1)',
-            }}
-          >
-            {/* Decorative concentric rings */}
-            {[180, 230, 280].map((size, i) => (
-              <div
-                key={i}
-                className="absolute rounded-full border border-primary/10"
-                style={{ width: size, height: size }}
-              />
-            ))}
-            {/* Center icon cluster */}
-            <div className="relative z-10 flex flex-col items-center gap-4">
-              <div
-                className="w-20 h-20 rounded-2xl flex items-center justify-center"
-                style={{ background: 'linear-gradient(135deg, hsl(43,82%,52%) 0%, hsl(38,70%,42%) 100%)' }}
-              >
-                <Heart className="w-10 h-10 text-black fill-black" />
-              </div>
-              <div className="flex gap-3">
-                {[Brain, Sparkles, Shield].map((Icon, i) => (
-                  <div
-                    key={i}
-                    className="w-12 h-12 rounded-xl flex items-center justify-center"
-                    style={{ background: 'hsla(43,82%,52%,0.12)', border: '1px solid hsla(43,82%,52%,0.2)' }}
+          <div className="relative w-full max-w-sm">
+
+            {/* Floating badge — top left */}
+            <div
+              className="absolute -top-4 -left-4 z-20 flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold shadow-lg"
+              style={{ background: 'hsl(225,35%,16%)', border: '1px solid hsla(43,82%,52%,0.35)', color: '#D4A520' }}
+            >
+              <Sparkles className="w-3.5 h-3.5" /> AI Matched
+            </div>
+
+            {/* Floating badge — bottom right */}
+            <div
+              className="absolute -bottom-4 -right-4 z-20 flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold shadow-lg"
+              style={{ background: 'hsl(225,35%,16%)', border: '1px solid hsla(43,82%,52%,0.35)', color: '#D4A520' }}
+            >
+              <Shield className="w-3.5 h-3.5" /> KYC Verified
+            </div>
+
+            {/* Main card */}
+            <div
+              className="relative rounded-3xl overflow-hidden p-6 flex flex-col gap-5"
+              style={{
+                background: 'linear-gradient(160deg, hsl(225,35%,14%) 0%, hsl(225,38%,9%) 100%)',
+                border: '1px solid hsla(43,82%,52%,0.2)',
+                boxShadow: '0 24px 64px hsla(43,82%,52%,0.12), 0 0 0 1px hsla(43,82%,52%,0.06)',
+              }}
+            >
+              {/* Header: logo + brand */}
+              <div className="flex items-center gap-3">
+                <img src="/logo.png" alt="SoulSathiya" className="w-10 h-10 object-contain" draggable={false} />
+                <div>
+                  <p className="text-sm font-bold text-foreground">SoulSathiya</p>
+                  <p className="text-xs text-muted-foreground">Compatibility Report</p>
+                </div>
+                <div className="ml-auto">
+                  <span
+                    className="text-xs px-2.5 py-1 rounded-full font-semibold"
+                    style={{ background: 'hsla(43,82%,52%,0.15)', color: '#D4A520' }}
                   >
-                    <Icon className="w-5 h-5 text-primary" />
+                    Premium
+                  </span>
+                </div>
+              </div>
+
+              {/* Score ring area */}
+              <div className="flex items-center justify-between gap-4">
+                {/* Big score */}
+                <div className="flex flex-col items-center gap-1">
+                  <div
+                    className="w-20 h-20 rounded-full flex flex-col items-center justify-center"
+                    style={{
+                      background: 'conic-gradient(hsl(43,82%,52%) 0% 87%, hsla(43,82%,52%,0.12) 87% 100%)',
+                      padding: 3,
+                    }}
+                  >
+                    <div
+                      className="w-full h-full rounded-full flex flex-col items-center justify-center"
+                      style={{ background: 'hsl(225,38%,9%)' }}
+                    >
+                      <span className="text-xl font-bold text-primary leading-none">87%</span>
+                      <span className="text-[9px] text-muted-foreground">match</span>
+                    </div>
+                  </div>
+                  <p className="text-xs text-muted-foreground">Compatibility</p>
+                </div>
+
+                {/* Dimension bars */}
+                <div className="flex-1 flex flex-col gap-2.5">
+                  {[
+                    { label: 'Values', pct: 92 },
+                    { label: 'Personality', pct: 84 },
+                    { label: 'Communication', pct: 79 },
+                    { label: 'Life Goals', pct: 88 },
+                  ].map(({ label, pct }) => (
+                    <div key={label}>
+                      <div className="flex justify-between text-[11px] mb-1">
+                        <span className="text-muted-foreground">{label}</span>
+                        <span className="text-primary font-semibold">{pct}%</span>
+                      </div>
+                      <div className="h-1.5 rounded-full" style={{ background: 'hsla(43,82%,52%,0.12)' }}>
+                        <div
+                          className="h-1.5 rounded-full"
+                          style={{
+                            width: `${pct}%`,
+                            background: 'linear-gradient(90deg, hsl(43,82%,52%), hsl(38,70%,42%))',
+                          }}
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Footer row: 3 pillars */}
+              <div
+                className="flex items-center justify-around pt-4 mt-1"
+                style={{ borderTop: '1px solid hsla(43,82%,52%,0.12)' }}
+              >
+                {[
+                  { Icon: Brain, label: 'Psychology' },
+                  { Icon: Sparkles, label: 'AI' },
+                  { Icon: UserCheck, label: 'Verified' },
+                ].map(({ Icon, label }) => (
+                  <div key={label} className="flex flex-col items-center gap-1.5">
+                    <div
+                      className="w-9 h-9 rounded-xl flex items-center justify-center"
+                      style={{ background: 'hsla(43,82%,52%,0.12)', border: '1px solid hsla(43,82%,52%,0.2)' }}
+                    >
+                      <Icon className="w-4 h-4 text-primary" />
+                    </div>
+                    <span className="text-[11px] text-muted-foreground">{label}</span>
                   </div>
                 ))}
               </div>
-              <p className="text-xs text-muted-foreground font-medium tracking-wide uppercase">
-                Psychology · AI · Connection
-              </p>
             </div>
           </div>
         </div>
@@ -564,11 +640,8 @@ const CTASection = () => (
           }}
         />
         <div className="relative z-10 space-y-7 max-w-2xl mx-auto">
-          <div
-            className="w-16 h-16 rounded-2xl mx-auto flex items-center justify-center"
-            style={{ background: 'linear-gradient(135deg, hsl(43,82%,52%) 0%, hsl(38,70%,42%) 100%)' }}
-          >
-            <Heart className="w-8 h-8 text-black fill-black" />
+          <div className="w-16 h-16 mx-auto flex items-center justify-center">
+            <img src="/logo.png" alt="SoulSathiya" className="w-16 h-16 object-contain" draggable={false} />
           </div>
           <h2 className="font-heading text-4xl lg:text-5xl font-bold text-foreground">
             Your Ideal Partner Is Looking for You Too
