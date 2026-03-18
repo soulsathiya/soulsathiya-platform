@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Heart, ArrowLeft, Shield, CheckCircle, Mail, ChevronRight } from 'lucide-react';
+import { ArrowLeft, Shield, CheckCircle, Mail, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 /* ─────────────────────────────────────────
@@ -40,8 +40,13 @@ const LegalLayout = ({ title, subtitle, children }) => {
             justifyContent: 'space-between',
           }}
         >
-          <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: 8, textDecoration: 'none' }}>
-            <Heart style={{ width: 26, height: 26, color: '#D4A520', fill: '#D4A520' }} />
+          <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: 10, textDecoration: 'none' }}>
+            <img
+              src="/logo.png"
+              alt="SoulSathiya"
+              style={{ width: 36, height: 36, objectFit: 'contain' }}
+              draggable={false}
+            />
             <span
               style={{
                 fontFamily: "'Cormorant Garamond', serif",
