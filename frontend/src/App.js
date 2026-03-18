@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { Toaster } from 'sonner';
 import './App.css';
@@ -48,6 +48,36 @@ import KYCVerificationPage from './pages/KYCVerificationPage';
 // Admin Pages
 import { AdminLogin, AdminLayout, AdminDashboard, AdminUsers, AdminProfiles, AdminSubscriptions, AdminDeep, AdminReports, AdminAnalytics, AdminKYC } from './pages/admin';
 
+/**
+ * On every route change:
+ *  - If the URL has a hash (e.g. /landing#how-it-works), scroll that section into view.
+ *  - If there is no hash, scroll the page back to the very top.
+ */
+function ScrollToTop() {
+  const { pathname, hash } = useLocation();
+
+  useEffect(() => {
+    if (hash) {
+      // Give React one tick to finish rendering the target page before querying the DOM.
+      const id = hash.replace('#', '');
+      const attempt = (tries = 0) => {
+        const el = document.getElementById(id);
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        } else if (tries < 10) {
+          // Retry up to 10 × 50 ms = 500 ms while the page is still painting.
+          setTimeout(() => attempt(tries + 1), 50);
+        }
+      };
+      attempt();
+    } else {
+      window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+    }
+  }, [pathname, hash]);
+
+  return null;
+}
+
 function AppRouter() {
   const location = useLocation();
 
@@ -58,7 +88,9 @@ function AppRouter() {
   }
 
   return (
-    <Routes>
+    <>
+      <ScrollToTop />
+      <Routes>
       {/* Public */}
       <Route path="/" element={<LandingPage />} />
       <Route path="/login" element={<LoginPage />} />
@@ -125,6 +157,7 @@ function AppRouter() {
       {/* Fallback */}
       <Route path="*" element={<LandingPage />} />
     </Routes>
+    </>
   );
 }
 
