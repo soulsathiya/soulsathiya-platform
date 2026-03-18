@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
   Shield, Users, Sparkles, Check, ArrowRight, ArrowDown, Brain,
-  CheckCircle2, Heart, Lock, Star,
+  CheckCircle2, Heart, Lock, Star, Zap,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import RadarChart from '../components/RadarChart';
@@ -264,42 +264,46 @@ function PricingSection() {
             </Link>
           </div>
 
-          {/* ── Couple Report ────────────────────────────────────────── */}
-          <div className="flex flex-col rounded-2xl border border-teal-500/30 bg-[#0F1A2E] p-6 gap-5 hover:-translate-y-1 hover:shadow-xl transition-all duration-300"
-            style={{ boxShadow: '0 0 24px rgba(20,184,166,0.07)' }}>
-            <div className="flex items-center gap-2">
-              <PlanBadge variant="new">✨ NEW</PlanBadge>
+          {/* ── Relationship Intelligence ─────────────────────────── */}
+          <div className="flex flex-col rounded-2xl bg-[#0F1A2E] p-6 gap-5 hover:-translate-y-1 hover:shadow-xl transition-all duration-300"
+            style={{ border: '1.5px solid rgba(212,165,32,0.4)', boxShadow: '0 0 30px rgba(212,165,32,0.08)' }}>
+            <div className="flex items-center gap-2 flex-wrap">
+              <PlanBadge variant="gold">🧠 Self-Assessment</PlanBadge>
+              <PlanBadge variant="new">No Login Needed</PlanBadge>
             </div>
             <div className="space-y-1">
-              <p className="text-xs font-bold text-teal-400/60 uppercase tracking-widest">Couple Report</p>
-              <h3 className="font-heading text-xl font-bold text-white">Relationship Deep-Dive</h3>
-              <p className="text-xs text-white/50 leading-snug">Understand your relationship at a deeper level</p>
+              <p className="text-xs font-bold text-yellow-400/60 uppercase tracking-widest">Relationship Intelligence</p>
+              <h3 className="font-heading text-xl font-bold text-white">Know Yourself First</h3>
+              <p className="text-xs text-white/50 leading-snug">108 questions · 6 dimensions · private report</p>
             </div>
 
             <div>
-              <p className="text-xs text-white/35 mb-0.5">One-time per couple</p>
+              <p className="text-xs text-white/35 mb-0.5">Start free · Full report one-time</p>
               <div className="flex items-baseline gap-1.5">
-                <span className="text-4xl font-extrabold text-teal-400">₹999</span>
+                <span className="text-4xl font-extrabold text-yellow-400">₹999</span>
               </div>
-              <span className="inline-block mt-1 text-[10px] font-bold text-teal-400 bg-teal-500/10 border border-teal-500/25 px-2 py-0.5 rounded-full">
-                No subscription needed
+              <span className="inline-block mt-1 text-[10px] font-bold text-yellow-400 bg-yellow-500/10 border border-yellow-500/25 px-2 py-0.5 rounded-full">
+                Assessment is completely free
               </span>
             </div>
 
             <ul className="space-y-2.5 flex-1">
               {[
-                'Psychological compatibility analysis',
-                'Relationship strengths & blind spots',
-                'Communication style insights',
-                'Conflict resolution patterns',
-                'Long-term relationship potential score',
-                'Personalised guidance & next steps',
+                'No login required to start',
+                'Personalised insight after each level',
+                'Emotional & communication profile',
+                'Relationship pattern analysis',
+                'Ideal partner compatibility profile',
+                '6 personalised recommendations',
               ].map(f => <FeatureRow key={f} text={f} />)}
             </ul>
 
-            <Link to="/register" className="block">
-              <button className="w-full py-2.5 rounded-xl bg-teal-600 hover:bg-teal-500 text-white text-sm font-bold transition-all duration-200 hover:shadow-lg hover:shadow-teal-500/25">
-                Get Your Relationship Report →
+            <Link to="/insights" className="block">
+              <button
+                className="w-full py-3 rounded-xl text-sm font-bold transition-all duration-200 hover:scale-[1.02] hover:shadow-lg active:scale-[0.98]"
+                style={{ background: 'linear-gradient(90deg,#D4AF37,#F0CC5A)', color: '#000' }}
+              >
+                Start Free Assessment →
               </button>
             </Link>
           </div>
@@ -502,6 +506,18 @@ const LandingPage = () => {
                 </Link>
               </div>
 
+              {/* Insights secondary CTA */}
+              <Link to="/insights" className="inline-flex items-center gap-2 group">
+                <span
+                  className="inline-flex items-center gap-2 text-sm font-medium text-primary/80 hover:text-primary transition-colors"
+                  data-testid="hero-insights-link"
+                >
+                  <Zap className="w-3.5 h-3.5" />
+                  Or discover yourself first — take the free Relationship Intelligence Assessment
+                  <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
+                </span>
+              </Link>
+
               {/* Trust signals row */}
               <div className="flex flex-wrap gap-6 pt-2">
                 {[
@@ -581,6 +597,149 @@ const LandingPage = () => {
           </p>
         </div>
       </div>
+
+      {/* ── Relationship Intelligence Banner ─────────────────────────────── */}
+      <section className="py-20 px-6 bg-background relative overflow-hidden" id="relationship-intelligence">
+
+        {/* Ambient glow */}
+        <div className="pointer-events-none absolute inset-0"
+          style={{ background: 'radial-gradient(ellipse 70% 55% at 50% 50%, rgba(212,165,32,0.06) 0%, transparent 70%)' }} />
+
+        <div className="container mx-auto max-w-6xl relative">
+
+          {/* Header */}
+          <div className="text-center mb-14">
+            <div className="inline-flex items-center gap-2 bg-primary/10 border border-primary/20 text-primary px-4 py-1.5 rounded-full text-sm font-medium mb-5">
+              <Zap className="w-4 h-4" />
+              New Feature  ·  No Login Required
+            </div>
+            <h2 className="font-heading text-4xl md:text-5xl font-bold text-foreground mb-5 leading-tight">
+              Discover Your{' '}
+              <span className="text-primary">Relationship Intelligence</span>
+            </h2>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+              108 psychometric questions across 6 dimensions of love — completely private,
+              no login needed. Get your personalised mini-insight after each level.
+            </p>
+          </div>
+
+          {/* Two-column layout: levels grid + insight preview card */}
+          <div className="grid md:grid-cols-2 gap-10 items-center mb-14">
+
+            {/* Left: 6 level pills */}
+            <div className="space-y-3">
+              {[
+                { level: 1, icon: '❤️', title: 'Emotional Foundation',       q: '18 questions', color: 'rgba(212,165,32,0.15)', border: 'rgba(212,165,32,0.35)' },
+                { level: 2, icon: '🌟', title: 'Values & Life Vision',        q: '18 questions', color: 'rgba(184,134,11,0.12)', border: 'rgba(184,134,11,0.3)' },
+                { level: 3, icon: '💬', title: 'Communication & Connection',  q: '18 questions', color: 'rgba(201,152,42,0.12)', border: 'rgba(201,152,42,0.3)' },
+                { level: 4, icon: '🔄', title: 'Relationship Patterns',       q: '18 questions', color: 'rgba(160,120,10,0.12)', border: 'rgba(160,120,10,0.3)' },
+                { level: 5, icon: '☀️', title: 'Daily Life & Lifestyle',      q: '18 questions', color: 'rgba(212,165,32,0.12)', border: 'rgba(212,165,32,0.28)' },
+                { level: 6, icon: '🚀', title: 'Growth & Future',             q: '18 questions', color: 'rgba(184,134,11,0.12)', border: 'rgba(184,134,11,0.28)' },
+              ].map((s) => (
+                <div
+                  key={s.level}
+                  className="flex items-center gap-4 rounded-xl px-5 py-3.5 transition-all duration-200 cursor-default hover:-translate-x-1"
+                  style={{ background: s.color, border: `1px solid ${s.border}` }}
+                >
+                  <span className="text-2xl flex-shrink-0">{s.icon}</span>
+                  <div className="flex-1">
+                    <div className="text-sm font-semibold text-foreground leading-tight">{s.title}</div>
+                  </div>
+                  <div className="text-xs text-muted-foreground font-mono flex-shrink-0">{s.q}</div>
+                  <div
+                    className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0"
+                    style={{ background: 'rgba(212,165,32,0.15)', color: 'var(--primary)', border: '1px solid rgba(212,165,32,0.3)' }}
+                  >
+                    {s.level}
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Right: Sample insight card */}
+            <div
+              className="rounded-2xl overflow-hidden relative"
+              style={{ background: '#0F1A2E', border: '1px solid rgba(212,165,32,0.25)', boxShadow: '0 20px 60px rgba(0,0,0,0.4), 0 0 40px rgba(212,165,32,0.06)' }}
+            >
+              {/* Gold top stripe */}
+              <div style={{ height: 3, background: 'linear-gradient(90deg, transparent, #D4A520, transparent)' }} />
+
+              <div className="p-7">
+                {/* Level complete badge */}
+                <div className="flex items-center gap-3 mb-5">
+                  <span className="text-3xl">💛</span>
+                  <div>
+                    <div className="text-xs font-bold text-primary/70 uppercase tracking-widest mb-0.5">Level 1 Complete ✅</div>
+                    <div className="text-xs text-muted-foreground">Emotional Foundation</div>
+                  </div>
+                  <div className="ml-auto">
+                    <span className="text-2xl font-bold text-primary font-heading">78</span>
+                    <span className="text-xs text-muted-foreground">/100</span>
+                  </div>
+                </div>
+
+                {/* Profile type */}
+                <h3 className="font-heading text-2xl font-bold text-foreground mb-4">
+                  Emotionally Secure
+                </h3>
+
+                <p className="text-sm text-muted-foreground leading-relaxed mb-5 italic">
+                  "You demonstrate strong emotional self-awareness. Your ability to identify
+                  and hold your emotions means you bring a rich inner presence to relationships.
+                  Partners naturally feel seen and safe with you."
+                </p>
+
+                {/* Strength + Growth */}
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="rounded-lg p-3" style={{ background: 'rgba(34,197,94,0.07)', border: '1px solid rgba(34,197,94,0.2)' }}>
+                    <div className="text-xs font-bold text-emerald-400 mb-1.5">✦ STRENGTH</div>
+                    <div className="text-xs text-muted-foreground leading-relaxed">Emotionally available without losing yourself</div>
+                  </div>
+                  <div className="rounded-lg p-3" style={{ background: 'rgba(212,165,32,0.06)', border: '1px solid rgba(212,165,32,0.18)' }}>
+                    <div className="text-xs font-bold text-primary mb-1.5">✦ GROWTH</div>
+                    <div className="text-xs text-muted-foreground leading-relaxed">Holding space for different emotional worlds</div>
+                  </div>
+                </div>
+
+                {/* XP badge */}
+                <div className="mt-4 text-center">
+                  <span className="inline-flex items-center gap-1.5 text-xs text-primary font-semibold px-3 py-1.5 rounded-full"
+                    style={{ background: 'rgba(212,165,32,0.08)', border: '1px solid rgba(212,165,32,0.18)' }}>
+                    <Zap className="w-3 h-3" fill="currentColor" />
+                    +180 XP earned · Level 2 unlocked
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* CTA row */}
+          <div className="text-center space-y-4">
+            <Link to="/insights">
+              <Button
+                size="lg"
+                className="px-10 shadow-xl shadow-primary/25 font-bold text-base hover:scale-[1.02] transition-transform"
+                data-testid="insights-cta-btn"
+              >
+                <Sparkles className="w-5 h-5 mr-2" />
+                Start Your Relationship Intelligence — Free
+                <ArrowRight className="w-5 h-5 ml-2" />
+              </Button>
+            </Link>
+
+            {/* Microcopy */}
+            <div className="flex items-center justify-center gap-6 flex-wrap">
+              {[
+                '✓ No login required to start',
+                '✓ Takes ~25 minutes',
+                '✓ Full report ₹999 (optional)',
+              ].map(t => (
+                <span key={t} className="text-xs text-muted-foreground">{t}</span>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* ── How It Works — Relationship Intelligence ───────────────────── */}
       <section className="py-20 px-6 bg-background" id="how-it-works">
