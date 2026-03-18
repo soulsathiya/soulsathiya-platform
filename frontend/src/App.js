@@ -31,6 +31,10 @@ import ResetPasswordPage from './pages/ResetPasswordPage';
 // Step 2 (Trust & Conversion)
 import { PrivacyPolicyPage, TermsOfServicePage, AboutUsPage } from './pages/LegalPages';
 
+// New public pages
+import HowItWorksPage from './pages/HowItWorksPage';
+import AboutPage from './pages/AboutPage';
+
 // Step 3 (Revenue)
 import SubscriptionPage from './pages/SubscriptionPage';
 
@@ -96,10 +100,14 @@ function AppRouter() {
       <Route path="/notification-preferences" element={<NotificationPreferencesPage />} />
       <Route path="/unsubscribe" element={<UnsubscribePage />} />
 
+      {/* Public marketing pages */}
+      <Route path="/how-it-works" element={<HowItWorksPage />} />
+      <Route path="/about" element={<AboutPage />} />
+
       {/* Legal — Step 2 */}
       <Route path="/privacy" element={<PrivacyPolicyPage />} />
       <Route path="/terms" element={<TermsOfServicePage />} />
-      <Route path="/about" element={<AboutUsPage />} />
+      <Route path="/about-legal" element={<AboutUsPage />} />
 
       {/* Admin */}
       <Route path="/admin/login" element={<AdminLogin />} />
