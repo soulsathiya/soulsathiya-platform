@@ -10,6 +10,7 @@ from .admin import admin_router
 from .account import router as account_router
 from .kyc import router as kyc_router
 from .reports import router as reports_router
+from .insights import router as insights_router
 
 __all__ = [
     "auth_router",
@@ -24,4 +25,5 @@ __all__ = [
     "account_router",
     "kyc_router",
     "reports_router",
+    "insights_router",
 ]

@@ -48,6 +48,12 @@ import UnsubscribePage from './pages/UnsubscribePage';
 // KYC
 import KYCVerificationPage from './pages/KYCVerificationPage';
 
+// Insights — Guest-first Relationship Intelligence
+import InsightsLandingPage  from './pages/InsightsLandingPage';
+import InsightsAssessment   from './pages/InsightsAssessment';
+import InsightsUnlock       from './pages/InsightsUnlock';
+import InsightsReportPage   from './pages/InsightsReportPage';
+
 // Admin Pages
 import { AdminLogin, AdminLayout, AdminDashboard, AdminUsers, AdminProfiles, AdminSubscriptions, AdminDeep, AdminReports, AdminAnalytics, AdminKYC } from './pages/admin';
 
@@ -130,6 +136,12 @@ function AppRouter() {
       <Route path="/deep/report/:pairId" element={<DeepReportView />} />
       <Route path="/deep/questionnaire" element={<DeepQuestionnaireFlow />} />
       <Route path="/deep/demo-report" element={<DemoDeepReport />} />
+
+      {/* Relationship Insights — guest-first 108Q flow */}
+      <Route path="/insights"            element={<InsightsLandingPage />} />
+      <Route path="/insights/assessment" element={<InsightsAssessment />} />
+      <Route path="/insights/unlock"     element={<InsightsUnlock />} />
+      <Route path="/insights/report"     element={<InsightsReportPage />} />
 
       {/* Notification settings & unsubscribe */}
       <Route path="/notification-preferences" element={<NotificationPreferencesPage />} />
