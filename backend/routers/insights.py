@@ -397,12 +397,29 @@ SECTION_INSIGHTS = {
 # ═══════════════════════════════════════════════════════════════════════════════
 
 def _score_answer(value: Any) -> float:
-    """Normalise any answer type to 0.0–1.0."""
+    """Normalise any answer type to 0.0–1.0.
+
+    Handles:
+      - int/float  : scale questions (1–7)
+      - str        : single choice letter (A/B/C/D), binary text, or "none"
+      - list[str]  : multi-select choice (average of selected letter scores)
+    """
+    choice_map = {"A": 1.0, "B": 0.67, "C": 0.33, "D": 0.0}
+
     if isinstance(value, (int, float)):
         v = float(value)
         return max(0.0, min(1.0, (v - 1) / 6.0))   # scale 1–7 → 0–1
+
+    if isinstance(value, list):
+        # Multi-select: "none" alone = 0.15, else average the chosen letters
+        if not value or value == ["none"]:
+            return 0.15
+        scores = [choice_map[v] for v in value if v in choice_map]
+        return sum(scores) / len(scores) if scores else 0.5
+
     if isinstance(value, str):
-        choice_map = {"A": 1.0, "B": 0.67, "C": 0.33, "D": 0.0}
+        if value == "none":
+            return 0.15
         if value in choice_map:
             return choice_map[value]
         binary_map = {

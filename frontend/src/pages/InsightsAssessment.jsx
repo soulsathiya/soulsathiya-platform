@@ -64,7 +64,7 @@ function ProgressBar({ sectionIdx, questionIdx, totalSections = 6, questionsPerS
               </div>
             ))}
           </div>
-          <div style={{ textAlign: 'right', fontSize: 12, color: 'rgba(245,237,216,0.5)', fontFamily: 'sans-serif' }}>
+          <div style={{ textAlign: 'right', fontSize: 13, color: 'rgba(245,237,216,0.65)', fontFamily: 'sans-serif' }}>
             Q {questionIdx + 1}/18 · Level {sectionIdx + 1}/6
           </div>
         </div>
@@ -94,9 +94,9 @@ function ScaleQuestion({ question, onAnswer, currentAnswer }) {
 
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 14, fontSize: 12, color: 'rgba(245,237,216,0.5)', fontFamily: 'sans-serif' }}>
-        <span>{question.scale_labels?.[0] || '1'}</span>
-        <span>{question.scale_labels?.[1] || '7'}</span>
+      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 14, fontSize: 13, color: 'rgba(245,237,216,0.65)', fontFamily: 'sans-serif' }}>
+        <span>{question.scale_labels?.[0] || '1 – Not at all'}</span>
+        <span>{question.scale_labels?.[1] || '7 – Very much'}</span>
       </div>
       <div style={{ display: 'flex', gap: 8, justifyContent: 'center' }}>
         {[1, 2, 3, 4, 5, 6, 7].map(v => {
@@ -134,46 +134,102 @@ function ScaleQuestion({ question, onAnswer, currentAnswer }) {
 }
 
 
-function ChoiceQuestion({ question, onAnswer, currentAnswer }) {
+function ChoiceQuestion({ question, selectedChoices, onToggle, onNone, onConfirm }) {
   const letters = ['A', 'B', 'C', 'D'];
+  const noneSelected = selectedChoices.includes('none');
+  const hasSelection = selectedChoices.length > 0;
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-      {(question.options || []).map((opt, i) => {
-        const letter = letters[i];
-        const isSelected = currentAnswer === letter;
-        return (
-          <button
-            key={i}
-            onClick={() => onAnswer(letter)}
-            style={{
-              display: 'flex', alignItems: 'center', gap: 14,
-              padding: '14px 18px',
-              background: isSelected ? 'rgba(212,165,32,0.12)' : 'rgba(255,255,255,0.03)',
-              border: `1px solid ${isSelected ? GOLD + '60' : 'rgba(255,255,255,0.08)'}`,
-              borderRadius: 12, cursor: 'pointer',
-              color: isSelected ? '#F5EDD8' : 'rgba(245,237,216,0.7)',
-              textAlign: 'left', fontSize: 15, lineHeight: 1.5,
-              transition: 'all 0.15s',
-              fontFamily: 'Georgia, serif',
-            }}
-            onMouseEnter={e => { if (!isSelected) { e.currentTarget.style.background = 'rgba(212,165,32,0.07)'; e.currentTarget.style.borderColor = 'rgba(212,165,32,0.3)'; }}}
-            onMouseLeave={e => { if (!isSelected) { e.currentTarget.style.background = 'rgba(255,255,255,0.03)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)'; }}}
-          >
-            <div style={{
-              flexShrink: 0, width: 30, height: 30, borderRadius: '50%',
-              background: isSelected ? `linear-gradient(135deg, ${GOLD}, #B8860B)` : 'rgba(255,255,255,0.06)',
-              border: isSelected ? 'none' : '1px solid rgba(255,255,255,0.1)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              fontSize: 12, fontWeight: 700, color: isSelected ? '#0C1323' : 'rgba(245,237,216,0.5)',
-              fontFamily: 'sans-serif',
-            }}>
-              {letter}
-            </div>
-            {opt}
-          </button>
-        );
-      })}
+    <div>
+      {/* Select-many hint */}
+      <div style={{ fontSize: 12, color: 'rgba(245,237,216,0.45)', fontFamily: 'sans-serif', marginBottom: 14, textAlign: 'center', letterSpacing: '0.03em' }}>
+        Select all that apply
+      </div>
+
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+        {(question.options || []).map((opt, i) => {
+          const letter = letters[i];
+          const isSelected = selectedChoices.includes(letter);
+          return (
+            <button
+              key={i}
+              onClick={() => onToggle(letter)}
+              disabled={noneSelected}
+              style={{
+                display: 'flex', alignItems: 'center', gap: 14,
+                padding: '14px 18px',
+                background: isSelected ? 'rgba(212,165,32,0.13)' : 'rgba(255,255,255,0.03)',
+                border: `1px solid ${isSelected ? GOLD + '70' : 'rgba(255,255,255,0.09)'}`,
+                borderRadius: 12,
+                cursor: noneSelected ? 'not-allowed' : 'pointer',
+                color: noneSelected && !isSelected ? 'rgba(245,237,216,0.35)' : (isSelected ? '#F5EDD8' : 'rgba(245,237,216,0.82)'),
+                textAlign: 'left', fontSize: 15, lineHeight: 1.6,
+                transition: 'all 0.15s',
+                fontFamily: 'Georgia, serif',
+                opacity: noneSelected && !isSelected ? 0.5 : 1,
+                boxShadow: isSelected ? `0 0 0 1px ${GOLD}35` : 'none',
+              }}
+            >
+              <div style={{
+                flexShrink: 0, width: 30, height: 30, borderRadius: 8,
+                background: isSelected ? `linear-gradient(135deg, ${GOLD}, #B8860B)` : 'rgba(255,255,255,0.06)',
+                border: isSelected ? 'none' : '1px solid rgba(255,255,255,0.12)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                fontSize: isSelected ? 14 : 12, fontWeight: 700,
+                color: isSelected ? '#0C1323' : 'rgba(245,237,216,0.55)',
+                fontFamily: 'sans-serif', transition: 'all 0.15s',
+              }}>
+                {isSelected ? '✓' : letter}
+              </div>
+              {opt}
+            </button>
+          );
+        })}
+
+        {/* None of the above */}
+        <button
+          onClick={onNone}
+          style={{
+            display: 'flex', alignItems: 'center', gap: 12,
+            padding: '12px 18px', marginTop: 4,
+            background: noneSelected ? 'rgba(255,255,255,0.05)' : 'transparent',
+            border: `1px dashed ${noneSelected ? 'rgba(255,255,255,0.28)' : 'rgba(255,255,255,0.13)'}`,
+            borderRadius: 12, cursor: 'pointer',
+            color: noneSelected ? 'rgba(245,237,216,0.82)' : 'rgba(245,237,216,0.42)',
+            textAlign: 'left', fontSize: 14,
+            fontFamily: 'sans-serif', transition: 'all 0.15s',
+          }}
+        >
+          <div style={{
+            flexShrink: 0, width: 28, height: 28, borderRadius: 6,
+            background: noneSelected ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.04)',
+            border: '1px solid rgba(255,255,255,0.15)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            fontSize: 13, color: noneSelected ? 'rgba(245,237,216,0.7)' : 'rgba(245,237,216,0.3)',
+          }}>
+            {noneSelected ? '✓' : '—'}
+          </div>
+          None of the above
+        </button>
+      </div>
+
+      {/* Confirm button — appears once at least one option is selected */}
+      {hasSelection && (
+        <button
+          onClick={onConfirm}
+          style={{
+            marginTop: 22, width: '100%',
+            background: `linear-gradient(135deg, ${GOLD}, #B8860B)`,
+            color: '#0C1323', fontWeight: 700, fontSize: 15,
+            padding: '14px', borderRadius: 12, border: 'none',
+            cursor: 'pointer', display: 'flex', alignItems: 'center',
+            justifyContent: 'center', gap: 8,
+            boxShadow: `0 4px 18px rgba(212,165,32,0.3)`,
+          }}
+        >
+          Continue <ChevronRight size={15} />
+        </button>
+      )}
     </div>
   );
 }
@@ -258,10 +314,10 @@ function SectionInsightOverlay({ insight, section, onContinue, isLast }) {
           <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 24 }}>
             <div style={{ fontSize: 36 }}>{section?.icon}</div>
             <div>
-              <div style={{ fontSize: 11, color: GOLD, fontFamily: 'sans-serif', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 2 }}>
+              <div style={{ fontSize: 13, color: GOLD, fontFamily: 'sans-serif', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 2 }}>
                 Level {section?.level} Complete  ✅
               </div>
-              <div style={{ fontSize: 13, color: 'rgba(245,237,216,0.5)', fontFamily: 'sans-serif' }}>
+              <div style={{ fontSize: 14, color: 'rgba(245,237,216,0.68)', fontFamily: 'sans-serif' }}>
                 {section?.title}
               </div>
             </div>
@@ -280,19 +336,19 @@ function SectionInsightOverlay({ insight, section, onContinue, isLast }) {
             </h2>
           </div>
 
-          <p style={{ fontSize: 14, lineHeight: 1.8, color: 'rgba(245,237,216,0.75)', marginBottom: 24, fontStyle: 'italic' }}>
+          <p style={{ fontSize: 15, lineHeight: 1.85, color: 'rgba(245,237,216,0.88)', marginBottom: 24, fontStyle: 'italic' }}>
             "{insight?.summary}"
           </p>
 
           {/* Strength + Growth */}
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 28 }}>
-            <div style={{ background: 'rgba(34,197,94,0.07)', border: '1px solid rgba(34,197,94,0.2)', borderRadius: 10, padding: '12px 14px' }}>
-              <div style={{ fontSize: 10, color: '#4ade80', fontFamily: 'sans-serif', letterSpacing: '0.08em', marginBottom: 6 }}>✦ YOUR STRENGTH</div>
-              <div style={{ fontSize: 12, lineHeight: 1.6, color: 'rgba(245,237,216,0.75)' }}>{insight?.strength}</div>
+            <div style={{ background: 'rgba(34,197,94,0.07)', border: '1px solid rgba(34,197,94,0.2)', borderRadius: 10, padding: '14px 14px' }}>
+              <div style={{ fontSize: 12, color: '#4ade80', fontFamily: 'sans-serif', letterSpacing: '0.08em', marginBottom: 8 }}>✦ YOUR STRENGTH</div>
+              <div style={{ fontSize: 13, lineHeight: 1.65, color: 'rgba(245,237,216,0.85)' }}>{insight?.strength}</div>
             </div>
-            <div style={{ background: 'rgba(212,165,32,0.06)', border: '1px solid rgba(212,165,32,0.15)', borderRadius: 10, padding: '12px 14px' }}>
-              <div style={{ fontSize: 10, color: GOLD, fontFamily: 'sans-serif', letterSpacing: '0.08em', marginBottom: 6 }}>✦ GROWTH EDGE</div>
-              <div style={{ fontSize: 12, lineHeight: 1.6, color: 'rgba(245,237,216,0.75)' }}>{insight?.growth}</div>
+            <div style={{ background: 'rgba(212,165,32,0.06)', border: '1px solid rgba(212,165,32,0.15)', borderRadius: 10, padding: '14px 14px' }}>
+              <div style={{ fontSize: 12, color: GOLD, fontFamily: 'sans-serif', letterSpacing: '0.08em', marginBottom: 8 }}>✦ GROWTH EDGE</div>
+              <div style={{ fontSize: 13, lineHeight: 1.65, color: 'rgba(245,237,216,0.85)' }}>{insight?.growth}</div>
             </div>
           </div>
 
@@ -344,6 +400,7 @@ export default function InsightsAssessment() {
   const [saving,      setSaving]      = useState(false);
   const [xp,          setXp]          = useState(0);
   const [animating,   setAnimating]   = useState(false);
+  const [multiChoiceSelected, setMultiChoiceSelected] = useState([]);   // for choice questions
 
   const cardRef = useRef(null);
 
@@ -392,6 +449,41 @@ export default function InsightsAssessment() {
   const currentQuestion = currentSection?.questions?.[questionIdx];
   const sectionAnswers  = answers[currentSection?.id] || {};
   const currentAnswer   = currentQuestion ? sectionAnswers[currentQuestion.id] : undefined;
+
+  // ── Sync multiChoiceSelected when question changes ───────────────────────────
+  useEffect(() => {
+    if (currentQuestion?.type === 'choice') {
+      const existing = sectionAnswers[currentQuestion.id];
+      if (Array.isArray(existing)) setMultiChoiceSelected(existing);
+      else if (typeof existing === 'string' && existing !== '') setMultiChoiceSelected([existing]);
+      else setMultiChoiceSelected([]);
+    } else {
+      setMultiChoiceSelected([]);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [questionIdx, sectionIdx]);
+
+  // ── Multi-select handlers ────────────────────────────────────────────────────
+  const handleChoiceToggle = useCallback((letter) => {
+    setMultiChoiceSelected(prev => {
+      if (prev.includes(letter)) return prev.filter(l => l !== letter);
+      return [...prev.filter(l => l !== 'none'), letter];
+    });
+  }, []);
+
+  const handleChoiceNone = useCallback(() => {
+    setMultiChoiceSelected(prev => prev.includes('none') ? [] : ['none']);
+  }, []);
+
+  const handleChoiceConfirm = useCallback(() => {
+    if (multiChoiceSelected.length === 0) return;
+    // Send "none" string, single letter string, or multi-letter array
+    let value;
+    if (multiChoiceSelected.includes('none')) value = 'none';
+    else if (multiChoiceSelected.length === 1) value = multiChoiceSelected[0];
+    else value = multiChoiceSelected;
+    handleAnswer(value);
+  }, [multiChoiceSelected, handleAnswer]);
 
   // ── Handle an answer ────────────────────────────────────────────────────────
   const handleAnswer = useCallback(async (value) => {
@@ -541,10 +633,10 @@ export default function InsightsAssessment() {
       {/* Section header */}
       <div style={{ textAlign: 'center', padding: '48px 24px 32px', maxWidth: 700, margin: '0 auto' }}>
         <div style={{ fontSize: 36, marginBottom: 10 }}>{currentSection.icon}</div>
-        <div style={{ fontSize: 11, color: GOLD, fontFamily: 'sans-serif', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 8 }}>
+        <div style={{ fontSize: 13, color: GOLD, fontFamily: 'sans-serif', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 8 }}>
           Level {currentSection.level} · {currentSection.title}
         </div>
-        <div style={{ fontSize: 14, color: 'rgba(245,237,216,0.45)', fontFamily: 'sans-serif' }}>
+        <div style={{ fontSize: 15, color: 'rgba(245,237,216,0.65)', fontFamily: 'sans-serif' }}>
           {currentSection.subtitle}
         </div>
       </div>
@@ -568,7 +660,7 @@ export default function InsightsAssessment() {
           <div style={{ position: 'absolute', top: 0, left: '15%', right: '15%', height: 1, background: `linear-gradient(90deg, transparent, ${GOLD}60, transparent)` }} />
 
           {/* Question number */}
-          <div style={{ fontSize: 11, color: 'rgba(212,165,32,0.5)', fontFamily: 'sans-serif', letterSpacing: '0.08em', marginBottom: 18 }}>
+          <div style={{ fontSize: 12, color: 'rgba(212,165,32,0.75)', fontFamily: 'sans-serif', letterSpacing: '0.08em', marginBottom: 18 }}>
             QUESTION {questionIdx + 1} OF 18
           </div>
 
@@ -588,7 +680,13 @@ export default function InsightsAssessment() {
             <ScaleQuestion question={currentQuestion} onAnswer={handleAnswer} currentAnswer={currentAnswer} />
           )}
           {currentQuestion.type === 'choice' && (
-            <ChoiceQuestion question={currentQuestion} onAnswer={handleAnswer} currentAnswer={currentAnswer} />
+            <ChoiceQuestion
+              question={currentQuestion}
+              selectedChoices={multiChoiceSelected}
+              onToggle={handleChoiceToggle}
+              onNone={handleChoiceNone}
+              onConfirm={handleChoiceConfirm}
+            />
           )}
           {currentQuestion.type === 'binary' && (
             <BinaryQuestion question={currentQuestion} onAnswer={handleAnswer} currentAnswer={currentAnswer} />
@@ -613,9 +711,14 @@ export default function InsightsAssessment() {
           </button>
 
           {/* Answered indicator */}
-          {currentAnswer !== undefined && (
-            <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: '#4ade80', fontFamily: 'sans-serif' }}>
-              <CheckCircle2 size={13} /> Answered
+          {(currentQuestion?.type === 'choice'
+            ? multiChoiceSelected.length > 0
+            : currentAnswer !== undefined) && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, color: '#4ade80', fontFamily: 'sans-serif' }}>
+              <CheckCircle2 size={13} />
+              {currentQuestion?.type === 'choice' && multiChoiceSelected.length > 1
+                ? `${multiChoiceSelected.filter(v => v !== 'none').length} selected`
+                : 'Answered'}
             </div>
           )}
 
@@ -631,7 +734,7 @@ export default function InsightsAssessment() {
         </div>
 
         {/* Progress microcopy */}
-        <div style={{ textAlign: 'center', marginTop: 28, fontSize: 12, color: 'rgba(245,237,216,0.3)', fontFamily: 'sans-serif' }}>
+        <div style={{ textAlign: 'center', marginTop: 28, fontSize: 13, color: 'rgba(245,237,216,0.5)', fontFamily: 'sans-serif' }}>
           {completed.length} of 6 levels complete · {Math.round((sectionIdx * 18 + questionIdx + 1) / 108 * 100)}% of your journey
         </div>
       </div>
