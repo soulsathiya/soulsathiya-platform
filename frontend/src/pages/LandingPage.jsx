@@ -8,6 +8,8 @@ import { Button } from '@/components/ui/button';
 import RadarChart from '../components/RadarChart';
 import RotatingTagline from '../components/RotatingTagline';
 import { getDimensionInsight, getOverallInsight } from '../utils/compatibilityInsights';
+import Navbar from '../components/Navbar';
+import SiteFooter from '../components/SiteFooter';
 
 // ─── Brand logo ───────────────────────────────────────────────────────────────
 const SoulSathiyaLogo = ({ className = 'w-9 h-9' }) => (
@@ -448,32 +450,11 @@ const LandingPage = () => {
   return (
     <div className="min-h-screen bg-background">
 
-      {/* ── Fixed Header ─────────────────────────────────────────────────── */}
-      <header className="fixed top-0 left-0 right-0 z-50 glass-card border-b border-primary/10">
-        <div className="container mx-auto px-6 py-4 flex items-center justify-between">
-          <div className="flex items-center space-x-2.5 text-primary">
-            <SoulSathiyaLogo className="w-9 h-9" />
-            <span className="text-2xl font-heading font-bold text-foreground">
-              Soul<span className="text-primary">Sathiya</span>
-            </span>
-          </div>
-          <div className="flex items-center space-x-2 sm:space-x-4">
-            <Link to="/login">
-              <Button variant="ghost" className="hidden sm:inline-flex text-muted-foreground hover:text-foreground" data-testid="header-login-btn">
-                Login
-              </Button>
-            </Link>
-            <Link to="/register">
-              <Button className="bg-primary text-primary-foreground hover:bg-primary/90 font-semibold shadow-lg shadow-primary/20 text-sm sm:text-base px-3 sm:px-4" data-testid="header-register-btn">
-                Get Started
-              </Button>
-            </Link>
-          </div>
-        </div>
-      </header>
+      {/* ── Navigation ───────────────────────────────────────────────────── */}
+      <Navbar />
 
       {/* ── Hero Section ─────────────────────────────────────────────────── */}
-      <section className="mandala-bg pt-32 pb-20 px-6 bg-gradient-to-b from-background via-background to-card overflow-hidden">
+      <section className="mandala-bg pt-16 pb-20 px-6 bg-gradient-to-b from-background via-background to-card overflow-hidden">
         <div className="container mx-auto max-w-6xl">
           <div className="grid md:grid-cols-2 gap-12 items-center">
 
@@ -1334,53 +1315,7 @@ const LandingPage = () => {
       </div>
 
       {/* ── Footer ────────────────────────────────────────────────────────── */}
-      <footer className="bg-background text-foreground py-12 px-6 border-t border-primary/10">
-        <div className="container mx-auto max-w-6xl">
-          <div className="grid md:grid-cols-4 gap-8 mb-8">
-            <div>
-              <div className="flex items-center space-x-2.5 mb-4 text-primary">
-                <SoulSathiyaLogo className="w-7 h-7" />
-                <span className="text-xl font-heading font-bold text-foreground">
-                  Soul<span className="text-primary">Sathiya</span>
-                </span>
-              </div>
-              <p className="text-muted-foreground text-sm leading-relaxed">
-                India's First Relationship Intelligence Platform
-              </p>
-              <p className="text-muted-foreground/60 text-xs mt-2 tracking-widest uppercase">
-                Compatibility · Connection · Commitment
-              </p>
-            </div>
-            <div>
-              <h4 className="font-heading text-lg mb-4 text-foreground">Company</h4>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li><Link to="/about" className="hover:text-primary transition-colors">About Us</Link></li>
-                <li><a href="mailto:careers@soulsathiya.com" className="hover:text-primary transition-colors">Careers</a></li>
-                <li><a href="#testimonials" className="hover:text-primary transition-colors">Success Stories</a></li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-heading text-lg mb-4 text-foreground">Support</h4>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li><a href="mailto:support@soulsathiya.com" className="hover:text-primary transition-colors">Help Center</a></li>
-                <li><Link to="/terms" className="hover:text-primary transition-colors">Safety Tips</Link></li>
-                <li><a href="mailto:hello@soulsathiya.com" className="hover:text-primary transition-colors">Contact Us</a></li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-heading text-lg mb-4 text-foreground">Legal</h4>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li><Link to="/privacy" className="hover:text-primary transition-colors">Privacy Policy</Link></li>
-                <li><Link to="/terms" className="hover:text-primary transition-colors">Terms of Service</Link></li>
-                <li><Link to="/privacy" className="hover:text-primary transition-colors">Cookie Policy</Link></li>
-              </ul>
-            </div>
-          </div>
-          <div className="border-t border-primary/10 pt-8 text-center text-sm text-muted-foreground">
-            <p>© 2026 SoulSathiya. All rights reserved. &nbsp;|&nbsp; India's First Relationship Intelligence Platform</p>
-          </div>
-        </div>
-      </footer>
+      <SiteFooter />
     </div>
   );
 };

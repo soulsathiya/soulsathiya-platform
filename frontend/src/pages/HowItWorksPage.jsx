@@ -6,58 +6,8 @@ import {
   UserCheck, TrendingUp, Lock, Star, ChevronRight,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-
-// ─── Shared ──────────────────────────────────────────────────────────────────
-
-const SoulSathiyaLogo = ({ className = 'w-8 h-8' }) => (
-  <img src="/logo.png" alt="SoulSathiya" className={`${className} object-contain`} draggable={false} />
-);
-
-const NavBar = () => (
-  <header className="glass-card border-b border-border/50 sticky top-0 z-50 backdrop-blur-md">
-    <div className="container mx-auto px-6 py-4 flex items-center justify-between">
-      <Link to="/" className="flex items-center space-x-2">
-        <SoulSathiyaLogo />
-        <span className="text-xl font-heading font-bold text-foreground">SoulSathiya</span>
-      </Link>
-      <nav className="hidden md:flex items-center space-x-8 text-sm font-medium">
-        <Link to="/how-it-works" className="text-primary font-semibold">How It Works</Link>
-        <Link to="/about" className="text-muted-foreground hover:text-foreground transition-colors">About</Link>
-        <Link to="/subscription" className="text-muted-foreground hover:text-foreground transition-colors">Pricing</Link>
-      </nav>
-      <div className="flex items-center space-x-3">
-        <Link to="/login">
-          <Button variant="ghost" size="sm" className="hidden md:flex text-muted-foreground hover:text-foreground">
-            Sign In
-          </Button>
-        </Link>
-        <Link to="/register">
-          <Button size="sm" className="btn-primary px-5">
-            Get Started <ArrowRight className="w-4 h-4 ml-1.5" />
-          </Button>
-        </Link>
-      </div>
-    </div>
-  </header>
-);
-
-const Footer = () => (
-  <footer className="border-t border-border/40 py-10">
-    <div className="container mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-muted-foreground">
-      <div className="flex items-center space-x-2">
-        <SoulSathiyaLogo className="w-6 h-6" />
-        <span className="font-heading font-semibold text-foreground">SoulSathiya</span>
-      </div>
-      <div className="flex items-center space-x-6">
-        <Link to="/how-it-works" className="hover:text-primary transition-colors">How It Works</Link>
-        <Link to="/about" className="hover:text-primary transition-colors">About</Link>
-        <Link to="/privacy" className="hover:text-primary transition-colors">Privacy</Link>
-        <Link to="/terms" className="hover:text-primary transition-colors">Terms</Link>
-      </div>
-      <p>© 2026 SoulSathiya. All rights reserved.</p>
-    </div>
-  </footer>
-);
+import Navbar from '../components/Navbar';
+import SiteFooter from '../components/SiteFooter';
 
 // ─── Section 1: Hero ─────────────────────────────────────────────────────────
 
@@ -658,14 +608,14 @@ const CTASection = () => (
 export default function HowItWorksPage() {
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <NavBar />
+      <Navbar />
       <HeroSection />
       <StepsSection />
       <JourneySection />
       <CompatibilitySection />
       <TrustSection />
       <CTASection />
-      <Footer />
+      <SiteFooter />
     </div>
   );
 }
