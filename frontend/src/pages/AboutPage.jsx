@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import {
-  Heart, ArrowRight, Shield, CheckCircle2, Brain,
+  HeartHandshake, ArrowRight, Shield, CheckCircle2, Brain,
   Sparkles, Users, Star, Globe, Target, Zap,
   MessageCircle, TrendingUp, BookOpen, Award, User,
 } from 'lucide-react';
@@ -24,7 +24,7 @@ const HeroSection = () => (
     />
     <div className="container mx-auto px-6 relative z-10 space-y-7 max-w-3xl mx-auto">
       <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-primary/30 bg-primary/5 text-sm font-medium text-primary mx-auto">
-        <Heart className="w-4 h-4 fill-primary" />
+        <img src="/logo.png" alt="SoulSathiya" className="w-4 h-4 object-contain" draggable={false} />
         Our Story & Mission
       </div>
       <h1 className="font-heading text-5xl lg:text-7xl font-bold text-foreground leading-tight">
@@ -149,7 +149,7 @@ const APPROACH_PILLARS = [
     points: ['10-dimension scoring', 'Adaptive matching', 'Deep compatibility analysis', 'Bias-free evaluation'],
   },
   {
-    icon: Heart,
+    icon: HeartHandshake,
     title: 'Human Intent',
     color: 'hsl(330,80%,60%)',
     colorBg: 'hsla(330,80%,60%,0.1)',
@@ -243,24 +243,31 @@ const FounderSection = () => (
         }}
       >
         <div className="grid lg:grid-cols-5 gap-10 items-start">
-          {/* Left: Avatar */}
+          {/* Left: Founder Photo */}
           <div className="lg:col-span-2 flex flex-col items-center lg:items-start gap-4">
             <div
-              className="w-32 h-32 rounded-3xl flex items-center justify-center overflow-hidden"
+              className="rounded-3xl overflow-hidden"
               style={{
-                background: 'linear-gradient(135deg, hsl(43,60%,20%) 0%, hsl(43,50%,14%) 100%)',
-                border: '2px solid hsla(43,82%,52%,0.3)',
-                boxShadow: '0 0 40px hsla(43,82%,52%,0.12)',
+                width: 200,
+                height: 240,
+                border: '2px solid hsla(43,82%,52%,0.35)',
+                boxShadow: '0 0 48px hsla(43,82%,52%,0.15)',
+                flexShrink: 0,
               }}
             >
-              <User className="w-16 h-16 text-primary/60" />
+              <img
+                src="/founder.jpg"
+                alt="Rakesh Kumar Dogra — Founder, SoulSathiya"
+                style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top center' }}
+                draggable={false}
+              />
             </div>
             <div className="text-center lg:text-left">
               <p className="font-heading text-xl font-bold text-foreground">Rakesh Kumar Dogra</p>
               <p className="text-sm text-primary font-medium mt-1">Founder, SoulSathiya</p>
             </div>
             <div className="flex items-center gap-2">
-              {[Brain, Heart, Shield].map((Icon, i) => (
+              {[Brain, HeartHandshake, Shield].map((Icon, i) => (
                 <div
                   key={i}
                   className="w-9 h-9 rounded-xl flex items-center justify-center"
@@ -429,10 +436,9 @@ const CTASection = () => (
         />
         <div className="relative z-10 space-y-7 max-w-2xl mx-auto">
           <div
-            className="w-16 h-16 rounded-2xl mx-auto flex items-center justify-center"
-            style={{ background: 'linear-gradient(135deg, hsl(43,82%,52%) 0%, hsl(38,70%,42%) 100%)' }}
+            className="w-16 h-16 mx-auto flex items-center justify-center"
           >
-            <Heart className="w-8 h-8 text-black fill-black" />
+            <img src="/logo.png" alt="SoulSathiya" className="w-16 h-16 object-contain" draggable={false} />
           </div>
           <h2 className="font-heading text-4xl lg:text-5xl font-bold text-foreground">
             Join a Community That Takes Relationships Seriously
