@@ -447,6 +447,24 @@ def _get_mini_insight(section_id: str, score: float) -> dict:
     return {**SECTION_INSIGHTS[section_id][tier], "score": round(score * 100), "tier": tier}
 
 
+_XP_PER_Q = 10
+_XP_MAX   = 108 * _XP_PER_Q   # 1,080
+
+_COMMITMENT_TIERS = [
+    (0.93, "Deep Seeker",        "🔥", "You answered with rare depth and honesty. This level of self-reflection is the foundation of extraordinary relationships."),
+    (0.80, "Committed Explorer", "⭐", "Your dedication to this journey speaks to how seriously you take relationship growth. That seriousness is a gift to your future partner."),
+    (0.65, "Growing Seeker",     "🌱", "You brought real effort to this assessment. Every question you answered honestly is a step toward clearer self-knowledge."),
+    (0.00, "Beginning Explorer", "🌅", "You've started the journey. Even a partial exploration creates valuable insight — consider revisiting and going deeper when you're ready."),
+]
+
+def _commitment_tier(xp: int) -> dict:
+    pct = xp / _XP_MAX
+    for threshold, label, badge, message in _COMMITMENT_TIERS:
+        if pct >= threshold:
+            return {"label": label, "badge": badge, "message": message, "pct": round(pct * 100)}
+    return {"label": "Beginning Explorer", "badge": "🌅", "message": _COMMITMENT_TIERS[-1][3], "pct": round(pct * 100)}
+
+
 def _generate_full_report(all_answers: dict, user_name: str = "") -> dict:
     """Generate the complete ₹999 Relationship Intelligence Report."""
     section_scores = {}
@@ -493,6 +511,11 @@ def _generate_full_report(all_answers: dict, user_name: str = "") -> dict:
     else:
         partner_profile = "Someone patient and consistent — who creates safety and gives you the space to grow into the relationship at your natural pace. Stability and gentleness will matter most."
 
+    # ── Commitment Score (XP) ──────────────────────────────────────────────
+    total_answered = sum(len(v) for v in all_answers.values() if isinstance(v, dict))
+    xp_earned      = min(total_answered * _XP_PER_Q, _XP_MAX)
+    commitment     = _commitment_tier(xp_earned)
+
     name_str = f" {user_name.split()[0]}" if user_name else ""
 
     return {
@@ -508,6 +531,12 @@ def _generate_full_report(all_answers: dict, user_name: str = "") -> dict:
         "section_profiles": section_profiles,
         "top_strengths": top_strengths,
         "growth_areas": growth_areas,
+        "xp_earned": xp_earned,
+        "xp_max": _XP_MAX,
+        "commitment_tier": commitment["label"],
+        "commitment_badge": commitment["badge"],
+        "commitment_pct": commitment["pct"],
+        "commitment_message": commitment["message"],
         "partner_compatibility_profile": partner_profile,
         "recommendations": [
             "Begin a daily emotional check-in practice: 3 minutes of journaling about what you're feeling and why.",

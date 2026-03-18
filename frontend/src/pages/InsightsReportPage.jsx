@@ -7,7 +7,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { Loader2, Download, ArrowRight, Star } from 'lucide-react';
+import { Loader2, Download, ArrowRight, Star, Zap } from 'lucide-react';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8000';
 const GOLD  = '#D4A520';
@@ -88,6 +88,113 @@ function SectionCard({ profile }) {
     </div>
   );
 }
+
+function CommitmentScore({ xpEarned, xpMax, tier, badge, pct, message }) {
+  const barWidth = Math.min(pct, 100);
+  const tierColors = {
+    'Deep Seeker':        { bar: '#D4A520', glow: 'rgba(212,165,32,0.35)' },
+    'Committed Explorer': { bar: '#C9982A', glow: 'rgba(201,152,42,0.30)' },
+    'Growing Seeker':     { bar: '#4ade80', glow: 'rgba(74,222,128,0.25)' },
+    'Beginning Explorer': { bar: '#60a5fa', glow: 'rgba(96,165,250,0.20)' },
+  };
+  const colors = tierColors[tier] || tierColors['Deep Seeker'];
+
+  return (
+    <div style={{
+      background: '#0F1A2E',
+      border: '1px solid rgba(212,165,32,0.15)',
+      borderRadius: 16, padding: '28px 28px', marginBottom: 56,
+    }}>
+      {/* Section heading */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 22 }}>
+        <Zap size={18} color={GOLD} fill={GOLD} />
+        <h2 style={{ fontFamily: 'Cormorant Garamond, Georgia, serif', fontSize: 22, fontWeight: 700, margin: 0 }}>
+          Your Commitment Score
+        </h2>
+      </div>
+
+      <div style={{ display: 'flex', gap: 24, alignItems: 'flex-start', flexWrap: 'wrap' }}>
+
+        {/* XP bar column */}
+        <div style={{ flex: '1 1 280px' }}>
+          {/* Tier badge row */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 14 }}>
+            <span style={{ fontSize: 26 }}>{badge}</span>
+            <div>
+              <div style={{ fontFamily: 'Cormorant Garamond, Georgia, serif', fontSize: 20, fontWeight: 700, color: '#F5EDD8', lineHeight: 1.2 }}>
+                {tier}
+              </div>
+              <div style={{ fontSize: 12, color: 'rgba(245,237,216,0.45)', fontFamily: 'sans-serif' }}>
+                Dedication level
+              </div>
+            </div>
+          </div>
+
+          {/* XP bar */}
+          <div style={{ marginBottom: 8 }}>
+            <div style={{ height: 10, background: 'rgba(255,255,255,0.06)', borderRadius: 10, overflow: 'hidden' }}>
+              <div style={{
+                height: '100%',
+                width: `${barWidth}%`,
+                background: `linear-gradient(90deg, ${colors.bar}, ${colors.bar}bb)`,
+                borderRadius: 10,
+                boxShadow: `0 0 12px ${colors.glow}`,
+                transition: 'width 1.2s ease',
+              }} />
+            </div>
+          </div>
+
+          {/* XP label */}
+          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, fontFamily: 'sans-serif', color: 'rgba(245,237,216,0.45)' }}>
+            <span>
+              <span style={{ color: GOLD, fontWeight: 700, fontSize: 15 }}>{xpEarned.toLocaleString()}</span>
+              {' '}/ {xpMax.toLocaleString()} XP
+            </span>
+            <span>{pct}% complete</span>
+          </div>
+        </div>
+
+        {/* Tier ticks */}
+        <div style={{ flex: '1 1 220px', display: 'flex', flexDirection: 'column', gap: 8 }}>
+          {[
+            { label: 'Deep Seeker',        badge: '🔥', threshold: '1,004+ XP' },
+            { label: 'Committed Explorer', badge: '⭐', threshold: '864+ XP' },
+            { label: 'Growing Seeker',     badge: '🌱', threshold: '702+ XP' },
+            { label: 'Beginning Explorer', badge: '🌅', threshold: 'Below 702' },
+          ].map(t => {
+            const isActive = t.label === tier;
+            return (
+              <div key={t.label} style={{
+                display: 'flex', alignItems: 'center', gap: 8,
+                padding: '7px 12px',
+                background: isActive ? 'rgba(212,165,32,0.08)' : 'transparent',
+                border: `1px solid ${isActive ? 'rgba(212,165,32,0.25)' : 'rgba(255,255,255,0.05)'}`,
+                borderRadius: 8,
+              }}>
+                <span style={{ fontSize: 15 }}>{t.badge}</span>
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontSize: 13, color: isActive ? '#F5EDD8' : 'rgba(245,237,216,0.4)', fontFamily: 'sans-serif', fontWeight: isActive ? 600 : 400 }}>
+                    {t.label}
+                  </div>
+                </div>
+                <div style={{ fontSize: 11, color: 'rgba(245,237,216,0.3)', fontFamily: 'sans-serif' }}>
+                  {t.threshold}
+                </div>
+                {isActive && <span style={{ fontSize: 10, color: GOLD, fontFamily: 'sans-serif' }}>← you</span>}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Message */}
+      <p style={{ marginTop: 20, marginBottom: 0, fontSize: 14, lineHeight: 1.8, color: 'rgba(245,237,216,0.68)', fontStyle: 'italic', borderTop: '1px solid rgba(212,165,32,0.08)', paddingTop: 18 }}>
+        "{message}"
+      </p>
+    </div>
+  );
+}
+
 
 export default function InsightsReportPage() {
   const navigate = useNavigate();
@@ -219,6 +326,18 @@ export default function InsightsReportPage() {
             ))}
           </div>
         </div>
+
+        {/* ── Commitment Score ── */}
+        {report.xp_earned !== undefined && (
+          <CommitmentScore
+            xpEarned={report.xp_earned}
+            xpMax={report.xp_max}
+            tier={report.commitment_tier}
+            badge={report.commitment_badge}
+            pct={report.commitment_pct}
+            message={report.commitment_message}
+          />
+        )}
 
         {/* ── Partner Compatibility ── */}
         <section style={{ background: CARD, border: `1px solid ${GOLD}20`, borderRadius: 16, padding: '32px 28px', marginBottom: 56 }}>
