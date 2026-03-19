@@ -22,8 +22,6 @@ const SoulSathiyaLogo = ({ className = 'w-9 h-9' }) => (
 );
 
 // ─── Mandala particle data ────────────────────────────────────────────────────
-// Each particle: position within image bounds, size, animation duration + delay,
-// horizontal drift direction. Kept to 10 items to stay lightweight.
 const MANDALA_PARTICLES = [
   { top: '76%', left: '18%', size: '5px', dur: '5s',   delay: '0s',   drift: '10px'  },
   { top: '80%', left: '45%', size: '4px', dur: '7s',   delay: '1.2s', drift: '-7px'  },
@@ -117,7 +115,7 @@ function PricingSection() {
             Transparent Pricing
           </div>
           <h2 className="font-heading text-4xl font-bold text-foreground mb-3">
-            Choose Your <span className="text-primary">Journey</span>
+            Upgrade Your <span className="text-primary">Experience</span>
           </h2>
           <div className="inline-flex items-center gap-2 bg-yellow-500/10 border border-yellow-500/25 text-yellow-400 px-4 py-1.5 rounded-full text-xs font-bold tracking-wide mb-4">
             ⚡ Founding Member Pricing — Limited Time
@@ -148,7 +146,7 @@ function PricingSection() {
             </ul>
             <Link to="/register" className="block">
               <button className="w-full py-2.5 rounded-xl border border-white/15 text-white/70 hover:bg-white/5 hover:text-white text-sm font-semibold transition-all duration-200">
-                Start Your Compatibility Profile
+                Start Finding Matches
               </button>
             </Link>
           </div>
@@ -162,7 +160,6 @@ function PricingSection() {
               boxShadow:   '0 0 40px rgba(212,175,55,0.12), 0 8px 32px rgba(0,0,0,0.5)',
             }}
           >
-            {/* Badges */}
             <div className="flex items-center gap-2 flex-wrap">
               <PlanBadge variant="gold">⭐ Most Popular</PlanBadge>
             </div>
@@ -170,13 +167,11 @@ function PricingSection() {
             <div className="space-y-1">
               <p className="text-xs font-bold text-yellow-400/60 uppercase tracking-widest">Premium</p>
               <h3 className="font-heading text-xl font-bold text-white">Find Your Match</h3>
-              <p className="text-xs text-white/50 leading-snug">Unlock deeper compatibility & real connections</p>
+              <p className="text-xs text-white/50 leading-snug">Unlock deeper compatibility &amp; real connections</p>
             </div>
 
-            {/* Period toggle */}
             <PeriodToggle tiers={PREMIUM_TIERS} selected={premiumKey} onChange={setPremiumKey} />
 
-            {/* Price */}
             <div>
               {premiumTier.strike && (
                 <p className="text-xs text-white/35 line-through mb-0.5">
@@ -269,12 +264,12 @@ function PricingSection() {
             style={{ border: '1.5px solid rgba(212,165,32,0.4)', boxShadow: '0 0 30px rgba(212,165,32,0.08)' }}>
             <div className="flex items-center gap-2 flex-wrap">
               <PlanBadge variant="gold">🧠 Self-Assessment</PlanBadge>
-              <PlanBadge variant="new">No Login Needed</PlanBadge>
+              <PlanBadge variant="new">Start Instantly</PlanBadge>
             </div>
             <div className="space-y-1">
               <p className="text-xs font-bold text-yellow-400/60 uppercase tracking-widest">Relationship Intelligence</p>
               <h3 className="font-heading text-xl font-bold text-white">Know Yourself First</h3>
-              <p className="text-xs text-white/50 leading-snug">108 questions · 6 dimensions · private report</p>
+              <p className="text-xs text-white/50 leading-snug">A guided experience · 6 dimensions · private</p>
             </div>
 
             <div>
@@ -289,7 +284,7 @@ function PricingSection() {
 
             <ul className="space-y-2.5 flex-1">
               {[
-                'No login required to start',
+                'Start instantly — no signup needed',
                 'Personalised insight after each level',
                 'Emotional & communication profile',
                 'Relationship pattern analysis',
@@ -314,6 +309,152 @@ function PricingSection() {
           Start free. Upgrade when you're ready to take your journey seriously.
         </p>
 
+      </div>
+    </section>
+  );
+}
+
+// ─── Guided Journey Section (NEW) ────────────────────────────────────────────
+// Two-step visual flow: self-discovery → matchmaking
+// Placed immediately after hero so users always know what to do next.
+function GuidedJourneySection() {
+  return (
+    <section className="py-16 px-6 bg-card/30 border-b border-primary/10" id="get-started">
+      <div className="container mx-auto max-w-5xl">
+
+        {/* Header */}
+        <div className="text-center mb-10">
+          <h2 className="font-heading text-3xl md:text-4xl font-bold text-foreground leading-tight">
+            Start With Yourself.{' '}
+            <span className="text-primary">Then Find the Right Match.</span>
+          </h2>
+          <p className="text-muted-foreground mt-3 max-w-xl mx-auto">
+            Two clear steps. One meaningful journey.
+          </p>
+        </div>
+
+        {/* 2-step flow — same layout pattern as How It Works */}
+        <div className="flex flex-col md:flex-row md:items-stretch gap-6 md:gap-0">
+
+          {/* ── Step 1 ────────────────────────────────────────────────── */}
+          <div className="flex-1 rounded-2xl p-8 flex flex-col gap-5 relative overflow-hidden"
+            style={{
+              background: 'linear-gradient(135deg, rgba(212,165,32,0.06) 0%, #0F1A2E 100%)',
+              border: '1px solid rgba(212,165,32,0.28)',
+            }}>
+            <div className="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-primary to-secondary rounded-l-2xl" />
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-primary/15 border border-primary/30 flex items-center justify-center text-primary font-heading font-bold text-lg">
+                1
+              </div>
+              <span className="text-xs font-semibold text-primary/70 uppercase tracking-widest">First Step</span>
+            </div>
+            <div>
+              <h3 className="font-heading text-2xl text-foreground mb-2">
+                Discover Your Relationship Style
+              </h3>
+              <p className="text-muted-foreground leading-relaxed text-sm">
+                A guided experience across 6 emotional dimensions. Understand your patterns,
+                needs, and what truly makes you compatible — before looking at anyone else.
+              </p>
+            </div>
+            <ul className="space-y-2 flex-1">
+              {[
+                'Emotional & communication profile',
+                'Values & relationship patterns',
+                'Personal insight after every level',
+              ].map(item => (
+                <li key={item} className="flex items-center gap-2 text-sm text-foreground">
+                  <Check className="w-4 h-4 text-primary flex-shrink-0" />
+                  {item}
+                </li>
+              ))}
+            </ul>
+            <div className="space-y-2">
+              <Link to="/insights">
+                <Button className="w-full font-semibold" data-testid="guided-assessment-btn">
+                  <Sparkles className="w-4 h-4 mr-2" />
+                  Start Free Assessment
+                </Button>
+              </Link>
+              <p className="text-[11px] text-muted-foreground/50 text-center">
+                Start instantly — no signup needed
+              </p>
+            </div>
+          </div>
+
+          {/* ── Flow connector ────────────────────────────────────────── */}
+          <div
+            aria-hidden="true"
+            className="flex-none flex flex-col md:flex-row items-center justify-center
+                       py-2 md:py-0 px-0 md:px-5 gap-0"
+          >
+            <div className="w-px h-6 md:h-px md:w-8
+                            bg-gradient-to-b   md:bg-gradient-to-r
+                            from-primary/10 to-primary/40" />
+            <div className="flex flex-col md:flex-row items-center gap-1 mx-0 my-1 md:my-0 md:mx-1">
+              <div className="w-9 h-9 rounded-full
+                              bg-card border border-primary/40
+                              flex items-center justify-center
+                              stage-connector-node">
+                <ArrowDown  className="w-4 h-4 text-primary md:hidden" />
+                <ArrowRight className="w-4 h-4 text-primary hidden md:flex" />
+              </div>
+              <span className="text-[10px] font-semibold text-primary/50
+                               uppercase tracking-widest
+                               md:hidden">
+                then
+              </span>
+            </div>
+            <div className="w-px h-6 md:h-px md:w-8
+                            bg-gradient-to-b   md:bg-gradient-to-r
+                            from-primary/40 to-primary/10" />
+          </div>
+
+          {/* ── Step 2 ────────────────────────────────────────────────── */}
+          <div className="flex-1 rounded-2xl p-8 flex flex-col gap-5 relative overflow-hidden"
+            style={{ background: '#0F1A2E', border: '1px solid rgba(31,42,68,0.9)' }}>
+            <div className="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-secondary to-primary/50 rounded-l-2xl" />
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-primary/15 border border-primary/30 flex items-center justify-center text-primary font-heading font-bold text-lg">
+                2
+              </div>
+              <span className="text-xs font-semibold text-primary/70 uppercase tracking-widest">Then</span>
+            </div>
+            <div>
+              <h3 className="font-heading text-2xl text-foreground mb-2">
+                Get Matched Based on Compatibility
+              </h3>
+              <p className="text-muted-foreground leading-relaxed text-sm">
+                Once you know yourself, find people who are psychologically aligned —
+                not just superficially similar. Real compatibility, not chance.
+              </p>
+            </div>
+            <ul className="space-y-2 flex-1">
+              {[
+                'AI-powered psychological matching',
+                'Verified, serious profiles only',
+                'Deep compatibility reports available',
+              ].map(item => (
+                <li key={item} className="flex items-center gap-2 text-sm text-foreground">
+                  <Check className="w-4 h-4 text-primary flex-shrink-0" />
+                  {item}
+                </li>
+              ))}
+            </ul>
+            <div className="space-y-2">
+              <Link to="/register">
+                <button className="w-full py-2.5 rounded-xl border border-white/15 text-white/70 hover:bg-white/5 hover:text-white text-sm font-semibold transition-all duration-200">
+                  Explore Matches →
+                </button>
+              </Link>
+              <p className="text-[11px] text-muted-foreground/50 text-center">
+                Create your free profile in minutes
+              </p>
+            </div>
+          </div>
+
+        </div>
       </div>
     </section>
   );
@@ -368,47 +509,6 @@ const LandingPage = () => {
     },
   ];
 
-  const subscriptionPlans = [
-    {
-      tier: 'Free',
-      price: '₹0',
-      features: [
-        'Create compatibility profile',
-        'View up to 10 matches',
-        'Send 3 interests per month',
-        'Basic compatibility filters',
-      ],
-    },
-    {
-      tier: 'Premium',
-      price: '₹1,999',
-      period: '/ month',
-      popular: true,
-      features: [
-        'Unlimited profile views',
-        'Unlimited interests',
-        'Advanced compatibility filters',
-        'See who viewed your profile',
-        'Priority customer support',
-        'Deep Compatibility Report (₹999/pair add-on)',
-      ],
-    },
-    {
-      tier: 'Elite',
-      price: '₹4,999',
-      period: '/ month',
-      features: [
-        'All Premium features',
-        'Profile boost',
-        'Dedicated relationship manager',
-        'Verified badge priority',
-        'Exclusive events access',
-        'Unlimited Deep Compatibility Reports',
-      ],
-      badge: 'Most Comprehensive',
-    },
-  ];
-
   const trustItems = [
     {
       icon:  <CheckCircle2 className="w-5 h-5" />,
@@ -457,7 +557,12 @@ const LandingPage = () => {
       {/* ── Navigation ───────────────────────────────────────────────────── */}
       <Navbar />
 
-      {/* ── Hero Section ─────────────────────────────────────────────────── */}
+      {/* ══════════════════════════════════════════════════════════════════
+          SECTION 1 — HERO
+          ONE primary CTA: "Start Finding Your Life Partner"
+          ONE secondary text-link: "Understand Yourself First →"
+          No competing equal-weight buttons.
+      ════════════════════════════════════════════════════════════════════ */}
       <section className="mandala-bg pt-16 pb-20 px-6 bg-gradient-to-b from-background via-background to-card overflow-hidden">
         <div className="container mx-auto max-w-6xl">
           <div className="grid md:grid-cols-2 gap-12 items-center">
@@ -483,37 +588,27 @@ const LandingPage = () => {
                 people based on deep psychological compatibility.
               </p>
 
-              <div className="flex flex-col sm:flex-row gap-4">
+              {/* Primary CTA — single, unambiguous */}
+              <div>
                 <Link to="/register">
                   <Button
                     size="lg"
                     className="w-full sm:w-auto bg-primary text-primary-foreground hover:bg-primary/90 shadow-xl shadow-primary/25 font-semibold"
                     data-testid="hero-get-started-btn"
                   >
-                    Build Your Compatibility Profile
+                    Start Finding Your Life Partner
                     <ArrowRight className="ml-2 w-5 h-5" />
-                  </Button>
-                </Link>
-                <Link to="/login">
-                  <Button
-                    size="lg"
-                    variant="outline"
-                    className="w-full sm:w-auto border-primary/40 text-foreground hover:bg-primary/10 hover:border-primary"
-                    data-testid="hero-login-btn"
-                  >
-                    Browse Verified Profiles
                   </Button>
                 </Link>
               </div>
 
-              {/* Insights secondary CTA */}
+              {/* Secondary text-link — visually subordinate */}
               <Link to="/insights" className="inline-flex items-center gap-2 group">
                 <span
-                  className="inline-flex items-center gap-2 text-sm font-medium text-primary/80 hover:text-primary transition-colors"
+                  className="inline-flex items-center gap-1.5 text-sm font-medium text-primary/70 hover:text-primary transition-colors"
                   data-testid="hero-insights-link"
                 >
-                  <Zap className="w-3.5 h-3.5" />
-                  Or discover yourself first — take the free Relationship Intelligence Assessment
+                  Understand Yourself First
                   <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
                 </span>
               </Link>
@@ -536,39 +631,31 @@ const LandingPage = () => {
               </div>
             </div>
 
-            {/* Right: Hero image — animated mandala effect */}
+            {/* Right: Hero image */}
             <div className="relative" style={{ minHeight: '320px', aspectRatio: '4 / 3' }}>
-
-              {/* Animated golden glow backdrop (slow breathing pulse) */}
               <div className="absolute inset-0 bg-gradient-to-br from-primary/25 to-secondary/15 rounded-3xl blur-2xl mandala-glow-pulse" />
-
-              {/* Main image */}
               <img
                 src="/hero-mandala.jpg"
                 alt="Couple before golden mandala — SoulSathiya"
                 className="relative rounded-3xl shadow-2xl shadow-primary/20 w-full h-full object-cover border border-primary/15"
                 loading="eager"
               />
-
-              {/* Pulsing golden ring overlay — sits on top of image, non-blocking */}
               <div
                 className="absolute inset-0 rounded-3xl pointer-events-none mandala-ring-pulse"
                 style={{ border: '1px solid rgba(212,165,32,0.18)' }}
               />
-
-              {/* Floating particle orbs rising from the mandala */}
               {MANDALA_PARTICLES.map((p, i) => (
                 <span
                   key={i}
                   className="mandala-particle"
                   style={{
-                    width:        p.size,
-                    height:       p.size,
-                    top:          p.top,
-                    left:         p.left,
-                    '--p-dur':    p.dur,
-                    '--p-delay':  p.delay,
-                    '--p-drift':  p.drift,
+                    width:       p.size,
+                    height:      p.size,
+                    top:         p.top,
+                    left:        p.left,
+                    '--p-dur':   p.dur,
+                    '--p-delay': p.delay,
+                    '--p-drift': p.drift,
                   }}
                 />
               ))}
@@ -580,14 +667,6 @@ const LandingPage = () => {
       {/* ── Brand Motif Bar ───────────────────────────────────────────────── */}
       <div className="py-5 px-6 border-y border-primary/15 bg-card/60">
         <div className="container mx-auto max-w-3xl">
-          {/*
-           * Each word uses the shared .brand-word keyframe (3.6 s cycle).
-           * Negative delays kick every word into its correct phase at page load
-           * so the sequence starts immediately with no blank pause.
-           *   Word 1:  delay  0s   → lit  0.0–1.2 s
-           *   Word 2:  delay -2.4s → lit  1.2–2.4 s
-           *   Word 3:  delay -1.2s → lit  2.4–3.6 s
-           */}
           <p className="text-center font-heading text-sm sm:text-base tracking-[0.35em] uppercase select-none">
             <span className="brand-word" style={{ animationDelay: '0s'   }}>Compatibility</span>
             <span className="text-primary/25">&nbsp;•&nbsp;</span>
@@ -598,7 +677,17 @@ const LandingPage = () => {
         </div>
       </div>
 
-      {/* ── Relationship Intelligence Banner ─────────────────────────────── */}
+      {/* ══════════════════════════════════════════════════════════════════
+          SECTION 2 — GUIDED JOURNEY
+          Bridges self-discovery and matchmaking so users always know
+          what their next action is.
+      ════════════════════════════════════════════════════════════════════ */}
+      <GuidedJourneySection />
+
+      {/* ══════════════════════════════════════════════════════════════════
+          SECTION 3 — RELATIONSHIP INTELLIGENCE DEEP-DIVE
+          Moved high up — the core product differentiator.
+      ════════════════════════════════════════════════════════════════════ */}
       <section className="py-20 px-6 bg-background relative overflow-hidden" id="relationship-intelligence">
 
         {/* Ambient glow */}
@@ -611,19 +700,19 @@ const LandingPage = () => {
           <div className="text-center mb-14">
             <div className="inline-flex items-center gap-2 bg-primary/10 border border-primary/20 text-primary px-4 py-1.5 rounded-full text-sm font-medium mb-5">
               <Zap className="w-4 h-4" />
-              New Feature  ·  No Login Required
+              New Feature &nbsp;·&nbsp; Start instantly — no signup needed
             </div>
             <h2 className="font-heading text-4xl md:text-5xl font-bold text-foreground mb-5 leading-tight">
               Discover Your{' '}
               <span className="text-primary">Relationship Intelligence</span>
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-              108 psychometric questions across 6 dimensions of love — completely private,
-              no login needed. Get your personalised mini-insight after each level.
+              A guided experience across 6 dimensions of love — completely private,
+              start instantly. Get your personalised mini-insight after each level.
             </p>
           </div>
 
-          {/* Two-column layout: levels grid + insight preview card */}
+          {/* Two-column: level pills + insight preview card */}
           <div className="grid md:grid-cols-2 gap-10 items-center mb-14">
 
             {/* Left: 6 level pills */}
@@ -661,11 +750,9 @@ const LandingPage = () => {
               className="rounded-2xl overflow-hidden relative"
               style={{ background: '#0F1A2E', border: '1px solid rgba(212,165,32,0.25)', boxShadow: '0 20px 60px rgba(0,0,0,0.4), 0 0 40px rgba(212,165,32,0.06)' }}
             >
-              {/* Gold top stripe */}
               <div style={{ height: 3, background: 'linear-gradient(90deg, transparent, #D4A520, transparent)' }} />
 
               <div className="p-7">
-                {/* Level complete badge */}
                 <div className="flex items-center gap-3 mb-5">
                   <span className="text-3xl">💛</span>
                   <div>
@@ -678,7 +765,6 @@ const LandingPage = () => {
                   </div>
                 </div>
 
-                {/* Profile type */}
                 <h3 className="font-heading text-2xl font-bold text-foreground mb-4">
                   Emotionally Secure
                 </h3>
@@ -689,7 +775,6 @@ const LandingPage = () => {
                   Partners naturally feel seen and safe with you."
                 </p>
 
-                {/* Strength + Growth */}
                 <div className="grid grid-cols-2 gap-3">
                   <div className="rounded-lg p-3" style={{ background: 'rgba(34,197,94,0.07)', border: '1px solid rgba(34,197,94,0.2)' }}>
                     <div className="text-xs font-bold text-emerald-400 mb-1.5">✦ STRENGTH</div>
@@ -701,7 +786,6 @@ const LandingPage = () => {
                   </div>
                 </div>
 
-                {/* XP badge */}
                 <div className="mt-4 text-center">
                   <span className="inline-flex items-center gap-1.5 text-xs text-primary font-semibold px-3 py-1.5 rounded-full"
                     style={{ background: 'rgba(212,165,32,0.08)', border: '1px solid rgba(212,165,32,0.18)' }}>
@@ -727,10 +811,9 @@ const LandingPage = () => {
               </Button>
             </Link>
 
-            {/* Microcopy */}
             <div className="flex items-center justify-center gap-6 flex-wrap">
               {[
-                '✓ No login required to start',
+                '✓ Start instantly — no signup needed',
                 '✓ Takes ~25 minutes',
                 '✓ Full report ₹999 (optional)',
               ].map(t => (
@@ -741,7 +824,133 @@ const LandingPage = () => {
         </div>
       </section>
 
-      {/* ── How It Works — Relationship Intelligence ───────────────────── */}
+      {/* ══════════════════════════════════════════════════════════════════
+          SECTION 4 — SAMPLE INSIGHTS (show, don't tell)
+          Show compelling output BEFORE explaining the process.
+          Moved above "How It Works" for higher emotional impact.
+      ════════════════════════════════════════════════════════════════════ */}
+      <section className="py-20 px-6 bg-card/40" id="compatibility-preview">
+        <div className="container mx-auto max-w-6xl">
+          <div className="text-center mb-16">
+            <div className="inline-flex items-center gap-2 bg-primary/10 border border-primary/20 text-primary px-4 py-1.5 rounded-full text-sm font-medium mb-6">
+              <Sparkles className="w-4 h-4" />
+              Deep Compatibility Intelligence
+            </div>
+            <h2 className="font-heading text-4xl mb-4 text-foreground">
+              What Your <span className="text-primary">Compatibility Report</span> Reveals
+            </h2>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              A sample of the depth and clarity our compatibility intelligence delivers
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-12 items-stretch">
+
+            {/* ── Left: Radar chart card ─────────────────────────────── */}
+            <div className="card-surface rounded-2xl overflow-hidden w-full flex flex-col">
+              <div className="relative px-8 pt-8 pb-6 text-center"
+                style={{
+                  background: 'linear-gradient(160deg, rgba(212,165,32,0.12) 0%, rgba(20,31,53,0) 60%)',
+                  borderBottom: '1px solid rgba(212,165,32,0.10)',
+                }}>
+                <p className="text-xs font-semibold text-primary/60 uppercase tracking-[0.25em] mb-4">
+                  Sample Compatibility
+                </p>
+                <div
+                  className="text-8xl font-heading font-bold text-primary leading-none mb-2"
+                  style={{ textShadow: '0 0 48px rgba(212,165,32,0.45), 0 0 16px rgba(212,165,32,0.25)' }}
+                >
+                  89%
+                </div>
+                <p className="text-base font-semibold text-primary/90 tracking-wide mb-3">
+                  Strong Match &nbsp;✦
+                </p>
+                <p className="text-sm text-muted-foreground/80 italic leading-relaxed max-w-xs mx-auto">
+                  {getOverallInsight(89)}
+                </p>
+              </div>
+
+              <div className="flex-1 flex items-center justify-center px-4 py-8"
+                style={{ background: 'radial-gradient(ellipse at center, rgba(212,165,32,0.05) 0%, transparent 70%)' }}>
+                <RadarChart dimensions={radarDimensions} size={400} showLabels={true} />
+              </div>
+            </div>
+
+            {/* ── Right: Structured insights ────────────────────────────── */}
+            <div className="flex flex-col">
+              <div className="card-surface p-6 rounded-2xl flex-1">
+                <h3 className="font-heading text-2xl text-foreground mb-4">
+                  Sample Compatibility Insights
+                </h3>
+
+                <div className="space-y-1">
+                  {[
+                    { label: 'Emotional Alignment',  value: 92, status: 'strong', insight: 'You both naturally express emotions openly, creating strong emotional safety.' },
+                    { label: 'Life Goals',            value: 88, status: 'strong', insight: 'Your long-term visions for life, career, and family closely align.' },
+                    { label: 'Communication',         value: 78, status: 'strong', insight: 'Your communication styles complement each other naturally and intuitively.' },
+                    { label: 'Conflict Resolution',   value: 72, status: 'growth', insight: 'Both of you tend toward calm resolution, rarely letting tension escalate.' },
+                    { label: 'Family Values',         value: 85, status: 'strong', insight: 'Shared vision for family life makes long-term planning feel effortless.' },
+                    { label: 'Intimacy',              value: 79, status: 'strong', insight: 'Compatible rhythms and lifestyle choices build natural closeness over time.' },
+                  ].map((item, i) => (
+                    <div key={i} className="border-b border-primary/8 last:border-0 py-2.5">
+                      <div className="flex items-center justify-between mb-1.5">
+                        <div className="flex items-center gap-2">
+                          {item.status === 'strong'
+                            ? <Check className="w-3.5 h-3.5 text-primary flex-shrink-0" />
+                            : <span className="text-amber-400/80 text-xs flex-shrink-0">▲</span>
+                          }
+                          <span className="text-sm text-foreground font-semibold">{item.label}</span>
+                        </div>
+                        <span className={`text-sm font-bold ${item.status === 'strong' ? 'text-primary' : 'text-amber-400/80'}`}>
+                          {item.value}%
+                        </span>
+                      </div>
+                      <div className="w-full h-2 bg-muted rounded-full overflow-hidden mb-1.5">
+                        <div
+                          className="h-full rounded-full"
+                          style={{
+                            width: `${item.value}%`,
+                            background: item.status === 'strong'
+                              ? 'linear-gradient(90deg, #b8860b 0%, #D4AF37 60%, #f5d060 100%)'
+                              : 'linear-gradient(90deg, #7c4f1a 0%, #b87333 100%)',
+                          }}
+                        />
+                      </div>
+                      <p className="text-xs text-muted-foreground leading-snug">{item.insight}</p>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="mt-4 grid grid-cols-2 gap-3 border-t border-primary/10 pt-4">
+                  <div className="bg-primary/8 border border-primary/15 rounded-lg p-3">
+                    <p className="text-xs font-semibold text-primary mb-1">✦ Strong Alignment</p>
+                    <p className="text-xs text-muted-foreground">Emotional · Life Goals · Values</p>
+                  </div>
+                  <div className="bg-amber-500/5 border border-amber-500/15 rounded-lg p-3">
+                    <p className="text-xs font-semibold text-amber-400/80 mb-1">▲ Growth Area</p>
+                    <p className="text-xs text-muted-foreground">Conflict Style — explore together</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="text-center">
+                <Link to="/deep/demo-report">
+                  <Button variant="outline" className="border-primary/40 hover:bg-primary/10 hover:border-primary" data-testid="view-sample-report-btn">
+                    <Sparkles className="w-4 h-4 mr-2" />
+                    View Full Sample Report
+                  </Button>
+                </Link>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════════════════════════════════
+          SECTION 5 — HOW IT WORKS (moved below sample insights)
+          Now users understand WHY they should care before learning HOW.
+      ════════════════════════════════════════════════════════════════════ */}
       <section className="py-20 px-6 bg-background" id="how-it-works">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center mb-16">
@@ -758,10 +967,6 @@ const LandingPage = () => {
             </p>
           </div>
 
-          {/*
-           * Layout: flex-col on mobile (cards stacked), flex-row on desktop.
-           * The middle slot holds the Stage 1 → Stage 2 flow connector.
-           */}
           <div className="flex flex-col md:flex-row md:items-stretch gap-6 md:gap-0">
 
             {/* ── Stage 1 ───────────────────────────────────────────────── */}
@@ -796,42 +1001,28 @@ const LandingPage = () => {
             </div>
 
             {/* ── Flow connector ────────────────────────────────────────── */}
-            {/*
-             * Mobile  (flex-col parent): renders as a vertical connector
-             *   — line top → pulsing node → arrow down → line bottom
-             * Desktop (flex-row parent): renders as a horizontal connector
-             *   — line left → pulsing node → arrow right → line right
-             * The connector is purely presentational (aria-hidden).
-             */}
             <div
               aria-hidden="true"
               className="flex-none flex flex-col md:flex-row items-center justify-center
                          py-2 md:py-0 px-0 md:px-5 gap-0"
             >
-              {/* Top line (mobile) / Left line (desktop) */}
               <div className="w-px h-6 md:h-px md:w-8
                               bg-gradient-to-b   md:bg-gradient-to-r
                               from-primary/10 to-primary/40" />
-
-              {/* Central node — glowing gold circle */}
               <div className="flex flex-col md:flex-row items-center gap-1 mx-0 my-1 md:my-0 md:mx-1">
                 <div className="w-9 h-9 rounded-full
                                 bg-card border border-primary/40
                                 flex items-center justify-center
                                 stage-connector-node">
-                  {/* Arrow icon: down on mobile, right on desktop */}
                   <ArrowDown  className="w-4 h-4 text-primary md:hidden" />
                   <ArrowRight className="w-4 h-4 text-primary hidden md:flex" />
                 </div>
-                {/* Label */}
                 <span className="text-[10px] font-semibold text-primary/50
                                  uppercase tracking-widest
                                  md:hidden">
                   then
                 </span>
               </div>
-
-              {/* Bottom line (mobile) / Right line (desktop) */}
               <div className="w-px h-6 md:h-px md:w-8
                               bg-gradient-to-b   md:bg-gradient-to-r
                               from-primary/40 to-primary/10" />
@@ -872,145 +1063,9 @@ const LandingPage = () => {
         </div>
       </section>
 
-      {/* ── Compatibility Insights Preview ─────────────────────────────── */}
-      <section className="py-20 px-6 bg-card/40" id="compatibility-preview">
-        <div className="container mx-auto max-w-6xl">
-          <div className="text-center mb-16">
-            <div className="inline-flex items-center gap-2 bg-primary/10 border border-primary/20 text-primary px-4 py-1.5 rounded-full text-sm font-medium mb-6">
-              <Sparkles className="w-4 h-4" />
-              Deep Compatibility Intelligence
-            </div>
-            <h2 className="font-heading text-4xl mb-4 text-foreground">
-              What Your <span className="text-primary">Compatibility Report</span> Reveals
-            </h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              A sample of the depth and clarity our compatibility intelligence delivers
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-2 gap-12 items-stretch">
-
-            {/* ── Left: Radar chart card ─────────────────────────────── */}
-            <div className="card-surface rounded-2xl overflow-hidden w-full flex flex-col">
-
-              {/* ── Score hero header ──────────────────────────────────── */}
-              <div className="relative px-8 pt-8 pb-6 text-center"
-                style={{
-                  background: 'linear-gradient(160deg, rgba(212,165,32,0.12) 0%, rgba(20,31,53,0) 60%)',
-                  borderBottom: '1px solid rgba(212,165,32,0.10)',
-                }}>
-                <p className="text-xs font-semibold text-primary/60 uppercase tracking-[0.25em] mb-4">
-                  Sample Compatibility
-                </p>
-
-                {/* Big score */}
-                <div
-                  className="text-8xl font-heading font-bold text-primary leading-none mb-2"
-                  style={{ textShadow: '0 0 48px rgba(212,165,32,0.45), 0 0 16px rgba(212,165,32,0.25)' }}
-                >
-                  89%
-                </div>
-                <p className="text-base font-semibold text-primary/90 tracking-wide mb-3">
-                  Strong Match &nbsp;✦
-                </p>
-                <p className="text-sm text-muted-foreground/80 italic leading-relaxed max-w-xs mx-auto">
-                  {getOverallInsight(89)}
-                </p>
-              </div>
-
-              {/* ── Radar chart — vertex labels enabled ────────────────── */}
-              <div className="flex-1 flex items-center justify-center px-4 py-8"
-                style={{ background: 'radial-gradient(ellipse at center, rgba(212,165,32,0.05) 0%, transparent 70%)' }}>
-                <RadarChart dimensions={radarDimensions} size={400} showLabels={true} />
-              </div>
-
-            </div>
-
-            {/* ── Right: Structured insights ────────────────────────────── */}
-            <div className="flex flex-col">
-              <div className="card-surface p-6 rounded-2xl flex-1">
-                <h3 className="font-heading text-2xl text-foreground mb-4">
-                  Sample Compatibility Insights
-                </h3>
-
-                {/*
-                 * Each row: score bar + 3 human-readable lines
-                 *   Insight    — what the score reveals
-                 *   Means      — practical day-to-day implication
-                 *   Why        — why this dimension matters in a marriage
-                 */}
-                <div className="space-y-1">
-                  {[
-                    { label: 'Emotional Alignment',  value: 92, status: 'strong', insight: 'You both naturally express emotions openly, creating strong emotional safety.' },
-                    { label: 'Life Goals',            value: 88, status: 'strong', insight: 'Your long-term visions for life, career, and family closely align.' },
-                    { label: 'Communication',         value: 78, status: 'strong', insight: 'Your communication styles complement each other naturally and intuitively.' },
-                    { label: 'Conflict Resolution',   value: 72, status: 'growth', insight: 'Both of you tend toward calm resolution, rarely letting tension escalate.' },
-                    { label: 'Family Values',         value: 85, status: 'strong', insight: 'Shared vision for family life makes long-term planning feel effortless.' },
-                    { label: 'Intimacy',              value: 79, status: 'strong', insight: 'Compatible rhythms and lifestyle choices build natural closeness over time.' },
-                  ].map((item, i) => (
-                    <div key={i} className="border-b border-primary/8 last:border-0 py-2.5">
-
-                      {/* Label + score row */}
-                      <div className="flex items-center justify-between mb-1.5">
-                        <div className="flex items-center gap-2">
-                          {item.status === 'strong'
-                            ? <Check className="w-3.5 h-3.5 text-primary flex-shrink-0" />
-                            : <span className="text-amber-400/80 text-xs flex-shrink-0">▲</span>
-                          }
-                          <span className="text-sm text-foreground font-semibold">{item.label}</span>
-                        </div>
-                        <span className={`text-sm font-bold ${item.status === 'strong' ? 'text-primary' : 'text-amber-400/80'}`}>
-                          {item.value}%
-                        </span>
-                      </div>
-
-                      {/* h-2 gold gradient progress bar */}
-                      <div className="w-full h-2 bg-muted rounded-full overflow-hidden mb-1.5">
-                        <div
-                          className="h-full rounded-full"
-                          style={{
-                            width: `${item.value}%`,
-                            background: item.status === 'strong'
-                              ? 'linear-gradient(90deg, #b8860b 0%, #D4AF37 60%, #f5d060 100%)'
-                              : 'linear-gradient(90deg, #7c4f1a 0%, #b87333 100%)',
-                          }}
-                        />
-                      </div>
-
-                      {/* Single-line insight */}
-                      <p className="text-xs text-muted-foreground leading-snug">{item.insight}</p>
-                    </div>
-                  ))}
-                </div>
-
-                {/* Summary footer */}
-                <div className="mt-4 grid grid-cols-2 gap-3 border-t border-primary/10 pt-4">
-                  <div className="bg-primary/8 border border-primary/15 rounded-lg p-3">
-                    <p className="text-xs font-semibold text-primary mb-1">✦ Strong Alignment</p>
-                    <p className="text-xs text-muted-foreground">Emotional · Life Goals · Values</p>
-                  </div>
-                  <div className="bg-amber-500/5 border border-amber-500/15 rounded-lg p-3">
-                    <p className="text-xs font-semibold text-amber-400/80 mb-1">▲ Growth Area</p>
-                    <p className="text-xs text-muted-foreground">Conflict Style — explore together</p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="text-center">
-                <Link to="/deep/demo-report">
-                  <Button variant="outline" className="border-primary/40 hover:bg-primary/10 hover:border-primary" data-testid="view-sample-report-btn">
-                    <Sparkles className="w-4 h-4 mr-2" />
-                    View Full Sample Report
-                  </Button>
-                </Link>
-              </div>
-            </div>
-
-          </div>
-        </div>
-      </section>
-
-      {/* ── Features Section ──────────────────────────────────────────────── */}
+      {/* ══════════════════════════════════════════════════════════════════
+          SECTION 6 — PLATFORM FEATURES
+      ════════════════════════════════════════════════════════════════════ */}
       <section className="py-20 px-6 bg-background">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center mb-16">
@@ -1032,7 +1087,6 @@ const LandingPage = () => {
                 className="card-surface feature-card p-6 space-y-4 text-center"
                 data-testid={`feature-card-${index}`}
               >
-                {/* Icon wrapper — glows on parent card hover via .feature-card:hover .feature-icon */}
                 <div className="feature-icon w-12 h-12 mx-auto bg-primary/10 border border-primary/20 rounded-xl flex items-center justify-center text-primary">
                   {feature.icon}
                 </div>
@@ -1044,16 +1098,18 @@ const LandingPage = () => {
         </div>
       </section>
 
-      {/* ── Trust & Safety Section ────────────────────────────────────────── */}
+      {/* ══════════════════════════════════════════════════════════════════
+          SECTION 7 — TRUST & SAFETY
+      ════════════════════════════════════════════════════════════════════ */}
       <section className="py-20 px-6 bg-card/40" id="trust-safety">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center mb-16">
             <div className="inline-flex items-center gap-2 bg-primary/10 border border-primary/20 text-primary px-4 py-1.5 rounded-full text-sm font-medium mb-6">
               <Lock className="w-4 h-4" />
-              Verified & Secure
+              Verified &amp; Secure
             </div>
             <h2 className="font-heading text-4xl mb-4 text-foreground">
-              Built on <span className="text-primary">Trust & Safety</span>
+              Built on <span className="text-primary">Trust &amp; Safety</span>
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
               A secure, serious platform for people who are ready for a meaningful commitment
@@ -1061,16 +1117,10 @@ const LandingPage = () => {
           </div>
           <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6">
             {trustItems.map((item, i) => (
-              <div
-                key={i}
-                className="card-surface feature-card p-6 flex items-start gap-4"
-              >
-                {/* Icon — circular, left-aligned for scan-friendly layout */}
+              <div key={i} className="card-surface feature-card p-6 flex items-start gap-4">
                 <div className="feature-icon w-11 h-11 shrink-0 bg-primary/10 border border-primary/20 rounded-full flex items-center justify-center text-primary mt-0.5">
                   {item.icon}
                 </div>
-
-                {/* Text block */}
                 <div>
                   <h4 className="font-heading text-base text-foreground leading-snug mb-1">
                     {item.label}
@@ -1085,11 +1135,13 @@ const LandingPage = () => {
         </div>
       </section>
 
-      {/* ── Love Story / Aspirational Feature Section ─────────────────────── */}
+      {/* ══════════════════════════════════════════════════════════════════
+          SECTION 8 — LOVE STORY / MATCHMAKING VALUE
+          Aspiration — show what the end goal looks like.
+      ════════════════════════════════════════════════════════════════════ */}
       <section className="py-20 px-6 bg-background" id="testimonials">
         <div className="container mx-auto max-w-6xl">
 
-          {/* Section header */}
           <div className="text-center mb-14">
             <div className="inline-flex items-center gap-2 bg-primary/10 border border-primary/20 text-primary px-4 py-1.5 rounded-full text-sm font-medium mb-6">
               <Sparkles className="w-4 h-4" />
@@ -1106,7 +1158,6 @@ const LandingPage = () => {
             </p>
           </div>
 
-          {/* 3 feature cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {[
               {
@@ -1130,7 +1181,6 @@ const LandingPage = () => {
                 className="card-surface feature-card rounded-2xl overflow-hidden group"
                 data-testid={`story-card-${i}`}
               >
-                {/* Photo with overlay */}
                 <div className="relative overflow-hidden" style={{ aspectRatio: '4 / 3' }}>
                   <img
                     src={card.photo}
@@ -1138,14 +1188,10 @@ const LandingPage = () => {
                     className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
                     loading="lazy"
                   />
-
-                  {/* Dark gradient over full image */}
                   <div
                     className="absolute inset-0"
                     style={{ background: 'linear-gradient(to top, rgba(12,19,35,0.80) 0%, rgba(12,19,35,0.35) 55%, rgba(12,19,35,0.15) 100%)' }}
                   />
-
-                  {/* "Your Story Could Begin Here" overlay — bottom of image */}
                   <div className="absolute bottom-0 left-0 right-0 px-4 pb-4">
                     <span
                       className="inline-block text-xs font-semibold text-white/90 px-3 py-1.5 rounded-lg backdrop-blur-sm"
@@ -1155,8 +1201,6 @@ const LandingPage = () => {
                     </span>
                   </div>
                 </div>
-
-                {/* Card body */}
                 <div className="p-6">
                   <h4 className="font-heading text-base font-bold text-foreground mb-2">
                     {card.title}
@@ -1169,7 +1213,6 @@ const LandingPage = () => {
             ))}
           </div>
 
-          {/* CTA below */}
           <div className="text-center mt-16">
             <h3 className="font-heading text-2xl font-bold text-foreground mb-4">
               Begin Your Compatibility Journey
@@ -1177,7 +1220,7 @@ const LandingPage = () => {
             <Link to="/register">
               <Button size="lg" className="px-8">
                 <Sparkles className="w-4 h-4 mr-2" />
-                Start Your Compatibility Profile
+                Start Finding Matches
               </Button>
             </Link>
           </div>
@@ -1189,7 +1232,6 @@ const LandingPage = () => {
       <section className="py-20 px-6 bg-card/30" id="self-discovery">
         <div className="container mx-auto max-w-6xl space-y-12">
 
-          {/* Section header */}
           <div className="text-center">
             <div className="inline-flex items-center gap-2 bg-primary/10 border border-primary/20 text-primary px-4 py-1.5 rounded-full text-sm font-medium mb-6">
               <Brain className="w-4 h-4" />
@@ -1245,7 +1287,6 @@ const LandingPage = () => {
                       cursor:        'default',
                     }}
                   >
-                    {/* Title */}
                     <h4 style={{
                       fontWeight:    700,
                       fontSize:      '1rem',
@@ -1255,8 +1296,6 @@ const LandingPage = () => {
                     }}>
                       {card.title}
                     </h4>
-
-                    {/* Traits — pill row */}
                     <ul style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '1rem' }}>
                       {card.traits.map((t, ti) => (
                         <li key={ti} style={{
@@ -1271,8 +1310,6 @@ const LandingPage = () => {
                         </li>
                       ))}
                     </ul>
-
-                    {/* Insight — reveals on hover */}
                     <p style={{
                       fontSize:   '0.875rem',
                       fontStyle:  'italic',
@@ -1349,7 +1386,6 @@ const LandingPage = () => {
                       transition:    `opacity 0.5s ${i * 120}ms, transform 0.5s ${i * 120}ms, box-shadow 0.3s, border-color 0.3s, background 0.3s`,
                     }}
                   >
-                    {/* Header: emoji + title */}
                     <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
                       <span style={{
                         fontSize:   '2rem',
@@ -1368,8 +1404,6 @@ const LandingPage = () => {
                         {card.title}
                       </h4>
                     </div>
-
-                    {/* Points */}
                     <ul style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', flex: 1 }}>
                       {card.points.map((pt, pi) => (
                         <li key={pi} style={{
@@ -1391,8 +1425,6 @@ const LandingPage = () => {
                         </li>
                       ))}
                     </ul>
-
-                    {/* Insight badge */}
                     <div style={{
                       fontSize:     '0.875rem',
                       fontWeight:   600,
@@ -1425,7 +1457,7 @@ const LandingPage = () => {
                 className="px-8 hover:scale-105 transition-all duration-300"
               >
                 <Sparkles className="w-4 h-4 mr-2" />
-                Start Your Compatibility Profile
+                Start Finding Matches
               </Button>
             </Link>
             <p className="text-xs text-muted-foreground/50 mt-3">
@@ -1436,7 +1468,11 @@ const LandingPage = () => {
         </div>
       </section>
 
-      {/* ── Pricing Section ───────────────────────────────────────────────── */}
+      {/* ══════════════════════════════════════════════════════════════════
+          SECTION 10 — PRICING (last)
+          Users now understand the product fully before seeing pricing.
+          Header renamed from "Choose Your Journey" → "Upgrade Your Experience"
+      ════════════════════════════════════════════════════════════════════ */}
       <PricingSection />
 
       {/* ── CTA Section ───────────────────────────────────────────────────── */}
@@ -1459,7 +1495,7 @@ const LandingPage = () => {
               className="bg-primary text-primary-foreground hover:bg-primary/90 shadow-xl shadow-primary/25 font-semibold mt-2"
               data-testid="cta-register-btn"
             >
-              Build Your Compatibility Profile
+              Start Finding Matches
               <ArrowRight className="ml-2 w-5 h-5" />
             </Button>
           </Link>
