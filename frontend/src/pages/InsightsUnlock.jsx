@@ -148,8 +148,13 @@ export default function InsightsUnlock() {
       }
       setAuthState('logged_in');
     } catch (err) {
-      const msg = err?.response?.data?.detail || 'Invalid OTP.';
-      toast.error(typeof msg === 'string' ? msg : 'Invalid OTP.');
+      const detail = err?.response?.data?.detail;
+      const msg = typeof detail === 'string'
+        ? detail
+        : Array.isArray(detail)
+          ? detail.map(e => e.msg || e.message || JSON.stringify(e)).join(' · ')
+          : 'Invalid OTP. Please try again.';
+      toast.error(msg);
     } finally {
       setLoggingIn(false);
     }
@@ -412,6 +417,9 @@ export default function InsightsUnlock() {
                       </label>
                       <input
                         type="text"
+                        inputMode="numeric"
+                        autoComplete="one-time-code"
+                        pattern="\d*"
                         value={otp}
                         onChange={e => setOtp(e.target.value.replace(/\D/g, ''))}
                         onKeyDown={e => e.key === 'Enter' && handleVerifyOtp()}

@@ -249,12 +249,15 @@ async def send_otp(request: Request, body: SendOtpRequest):
     otp_code = _generate_otp()
     expires_at = datetime.now(timezone.utc) + timedelta(minutes=10)
 
-    # Upsert OTP record (one active OTP per email at a time)
+    # Upsert OTP record (one active OTP per email at a time).
+    # Use a case-insensitive regex filter so that any previously stored variant
+    # of the email (e.g. mixed case from an older client) is found and updated
+    # rather than a second document being inserted.
     await db.otp_tokens.update_one(
-        {"email": body.email},
+        {"email": {"$regex": f"^{body.email}$", "$options": "i"}},
         {
             "$set": {
-                "email": body.email,
+                "email": body.email,   # normalise to lowercase on every write
                 "otp": otp_code,
                 "expires_at": expires_at,
                 "used": False,
@@ -276,7 +279,11 @@ async def send_otp(request: Request, body: SendOtpRequest):
 @limiter.limit("10/minute")
 async def verify_otp(request: Request, body: VerifyOtpRequest):
     """Verify an OTP and log the user in (creating an account if needed)."""
-    record = await db.otp_tokens.find_one({"email": body.email})
+    # Always fetch the most recently issued OTP for this email
+    record = await db.otp_tokens.find_one(
+        {"email": {"$regex": f"^{body.email}$", "$options": "i"}},
+        sort=[("_id", -1)],
+    )
 
     if not record:
         raise HTTPException(status_code=400, detail="No OTP found for this email. Please request a new one.")
@@ -291,7 +298,13 @@ async def verify_otp(request: Request, body: VerifyOtpRequest):
         if datetime.now(timezone.utc) > expires_at:
             raise HTTPException(status_code=400, detail="OTP has expired. Please request a new one.")
 
-    if record.get("otp") != body.otp.strip():
+    # Explicit str() cast on stored value guards against int/str type mismatch
+    # Strip all non-digits from the submitted OTP as extra defence
+    import re as _re
+    stored_otp    = str(record.get("otp", "")).strip()
+    submitted_otp = _re.sub(r"\D", "", body.otp.strip())
+
+    if stored_otp != submitted_otp:
         raise HTTPException(status_code=400, detail="Invalid OTP. Please try again.")
 
     # Mark OTP as used
