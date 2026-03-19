@@ -283,7 +283,7 @@ const CompatibilityCard = ({ targetUserId, targetName }) => {
                   Want deeper insights?
                 </p>
                 <p className="text-[10px] leading-tight mt-0.5" style={{ color: 'rgba(196,181,253,0.65)' }}>
-                  108-question Relationship Intelligence Report
+                  SoulSathiya Compatibility Intelligence Report
                 </p>
               </div>
               <ArrowRight className="w-3.5 h-3.5 flex-shrink-0" style={{ color: '#a78bfa' }} />
@@ -294,7 +294,7 @@ const CompatibilityCard = ({ targetUserId, targetName }) => {
               onClick={() => setShowModal(true)}
               className="mt-2.5 w-full flex items-center justify-center gap-1.5 text-xs font-semibold text-primary hover:text-primary/80 transition-colors py-2 rounded-lg border border-primary/20 hover:border-primary/40"
             >
-              View Full Compatibility Report
+              View SoulSathiya Compatibility Intelligence Report
               <ChevronRight className="w-3.5 h-3.5" />
             </button>
           </div>

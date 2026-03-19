@@ -49,7 +49,7 @@ const CompatibilityReportModal = ({ compatibility, targetName, targetUserId, dis
           style={{ background: 'rgba(212,175,55,0.07)', borderBottom: '1px solid rgba(212,175,55,0.12)' }}
         >
           <div>
-            <h2 className="font-heading text-base font-bold">Full Compatibility Report</h2>
+            <h2 className="font-heading text-base font-bold">SoulSathiya Compatibility Intelligence Report</h2>
             <p className="text-[11px] text-muted-foreground">with {targetName}</p>
           </div>
           <button
@@ -163,19 +163,19 @@ const DEEP_PILLS = [
 const getNudgeCopy = (score) => {
   if (score >= 85) return {
     headline: 'Your connection is exceptional — go deeper.',
-    sub: `This level of compatibility deserves a full Relationship Intelligence Report. Discover exactly how you two click — and where to nurture what you've found.`,
+    sub: `This level of compatibility deserves a full SoulSathiya Compatibility Intelligence Report. Discover exactly how you two click — and where to nurture what you've found.`,
   };
   if (score >= 75) return {
     headline: 'Strong match — see the full picture.',
-    sub: `You're clearly aligned on what matters. The Deeper Exploration report reveals the finer layers — how you handle conflict, what you need in intimacy, and what your future together could look like.`,
+    sub: `You're clearly aligned on what matters. The SoulSathiya Compatibility Intelligence Report reveals the finer layers — how you handle conflict, what you need in intimacy, and what your future together could look like.`,
   };
   if (score >= 65) return {
     headline: 'Good potential — understanding makes it great.',
-    sub: `Every thriving relationship starts with insight. The 108-question Relationship Intelligence Report turns your differences into your greatest strengths.`,
+    sub: `Every thriving relationship starts with insight. The SoulSathiya Compatibility Intelligence Report turns your differences into your greatest strengths.`,
   };
   return {
     headline: 'Every connection has hidden depth.',
-    sub: `Before you make any decision, let the Relationship Intelligence Report reveal the full story — sometimes the most surprising pairs have the deepest bonds.`,
+    sub: `Before you make any decision, let the SoulSathiya Compatibility Intelligence Report reveal the full story — sometimes the most surprising pairs have the deepest bonds.`,
   };
 };
 
@@ -201,7 +201,7 @@ const DeepExploreNudge = ({ score, targetName, onExplore }) => {
               className="text-[10px] font-bold tracking-widest uppercase"
               style={{ color: '#8B5CF6' }}
             >
-              Relationship Intelligence Report
+              SoulSathiya Compatibility Intelligence Report
             </span>
           </div>
 

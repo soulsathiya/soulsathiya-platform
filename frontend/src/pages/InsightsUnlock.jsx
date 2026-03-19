@@ -511,7 +511,7 @@ export default function InsightsUnlock() {
                     <span style={{ fontFamily: 'Cormorant Garamond, Georgia, serif', fontSize: 56, fontWeight: 700, color: GOLD, lineHeight: 1 }}>999</span>
                   </div>
                   <div style={{ fontSize: 13, color: 'rgba(245,237,216,0.5)', fontFamily: 'sans-serif' }}>
-                    Your Complete Relationship Intelligence Report
+                    Your SoulSathiya Relationship Intelligence Report
                   </div>
                 </div>
 

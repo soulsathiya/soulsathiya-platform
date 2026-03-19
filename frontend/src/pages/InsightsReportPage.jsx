@@ -262,7 +262,7 @@ export default function InsightsReportPage() {
         {/* ── Overall Score Hero ── */}
         <div style={{ textAlign: 'center', marginBottom: 64 }}>
           <div style={{ fontSize: 12, color: GOLD, fontFamily: 'sans-serif', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 20 }}>
-            Relationship Intelligence Report
+            SoulSathiya Relationship Intelligence Report
           </div>
 
           <div style={{ position: 'relative', display: 'inline-block', marginBottom: 24 }}>

@@ -242,7 +242,7 @@ const ProfileViewPage = () => {
               <Lock className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
               <div>
                 <p className="text-sm font-semibold text-foreground">
-                  View Detailed Relationship Intelligence Report
+                  SoulSathiya Relationship Intelligence Report
                 </p>
                 <p className="text-xs text-muted-foreground mt-0.5">
                   Psychological compatibility · Communication analysis · Long-term alignment

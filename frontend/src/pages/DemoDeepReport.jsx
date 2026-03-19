@@ -176,7 +176,7 @@ const DemoDeepReport = () => {
       <main className="container mx-auto px-6 py-12 max-w-4xl">
         <div className="text-center mb-12">
           <Badge className="mb-4 bg-gradient-to-r from-primary to-secondary text-white">
-            Sample Deep Compatibility Report
+            Sample SoulSathiya Compatibility Intelligence Report
           </Badge>
           <h1 className="font-heading text-4xl mb-4">Your Relationship Insights</h1>
           <p className="text-lg text-muted-foreground">

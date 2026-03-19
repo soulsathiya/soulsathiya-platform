@@ -261,7 +261,7 @@ const DeepExplorationCTA = ({
         onClick={() => navigate(`/deep/report/${status.pair_id}`)}
       >
         <Sparkles className="w-4 h-4 mr-2" />
-        View Relationship Intelligence Report
+        View SoulSathiya Compatibility Intelligence Report
       </Button>
     );
   }
@@ -480,9 +480,9 @@ const DeepExplorationCTA = ({
         {loading ? (
           <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Processing…</>
         ) : userTier === 'elite' ? (
-          <><Sparkles className="w-4 h-4 mr-2" />Unlock Relationship Intelligence Report</>
+          <><Sparkles className="w-4 h-4 mr-2" />Unlock SoulSathiya Compatibility Intelligence Report</>
         ) : userTier === 'premium' ? (
-          <><Lock className="w-4 h-4 mr-2" />Unlock Relationship Intelligence Report</>
+          <><Lock className="w-4 h-4 mr-2" />Unlock SoulSathiya Compatibility Intelligence Report</>
         ) : (
           <><Crown className="w-4 h-4 mr-2" />Upgrade to Unlock Report</>
         )}
