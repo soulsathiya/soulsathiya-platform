@@ -56,6 +56,7 @@ const FOOTER_COLS = [
       { label: 'Help Center',  internal: true, to: '/help'        },
       { label: 'Safety Tips',  internal: true, to: '/safety-tips' },
       { label: 'Contact Us',   internal: true, to: '/contact'     },
+      { label: 'FAQ',          internal: true, to: '/faq'         },
     ],
   },
   {
