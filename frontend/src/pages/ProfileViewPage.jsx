@@ -222,23 +222,6 @@ const ProfileViewPage = () => {
           </div>
         )}
 
-        {/* Delete Account — own profile only */}
-        {isOwnProfile && (
-          <div className="card-surface p-8 mt-6 border border-red-900/40">
-            <h2 className="font-heading text-xl text-red-400 mb-2">Danger Zone</h2>
-            <p className="text-sm text-muted-foreground mb-4">
-              Deleting your account will hide your profile and disable login. This action cannot be undone.
-            </p>
-            <button
-              onClick={() => { setShowDeleteDialog(true); setDeleteConfirmText(''); }}
-              className="flex items-center gap-2 px-4 py-2 rounded-lg bg-red-900/30 border border-red-700/50 text-red-400 hover:bg-red-900/50 transition-colors text-sm font-medium"
-            >
-              <Trash2 className="w-4 h-4" />
-              Delete My Account
-            </button>
-          </div>
-        )}
-
         {/* Delete Account Confirmation Dialog */}
         {showDeleteDialog && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-4">
@@ -345,6 +328,23 @@ const ProfileViewPage = () => {
             </div>
           )}
         </div>
+
+        {/* Delete Account — own profile only, placed at the very bottom */}
+        {isOwnProfile && (
+          <div className="card-surface p-8 mt-6 border border-red-900/30 opacity-60 hover:opacity-100 transition-opacity duration-300">
+            <h2 className="font-heading text-base text-red-400/80 mb-1">Danger Zone</h2>
+            <p className="text-xs text-muted-foreground mb-3">
+              Deleting your account will hide your profile and disable login. This action cannot be undone.
+            </p>
+            <button
+              onClick={() => { setShowDeleteDialog(true); setDeleteConfirmText(''); }}
+              className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-red-900/20 border border-red-800/40 text-red-400/70 hover:bg-red-900/40 hover:text-red-400 transition-colors text-xs font-medium"
+            >
+              <Trash2 className="w-3.5 h-3.5" />
+              Delete My Account
+            </button>
+          </div>
+        )}
       </main>
     </div>
   );
