@@ -82,11 +82,11 @@ const deriveTraits = (profileData) => {
   const ms = profileData?.marital_status?.toLowerCase().replace(/\s+/g, '_');
   if (ms && intentMap[ms]) traits.push(intentMap[ms]);
 
-  // Core Values — religion
+  // Core Values — from cultural/traditional background (religion field used as signal only)
   if (profileData?.religion) {
     traits.push({
-      tag: 'Core Values', title: 'Faith & Family First',
-      explanation: 'Family bonds and cultural roots are non-negotiable anchors. Brings stability and long-term thinking.',
+      tag: 'Core Values', title: 'Rooted in Tradition',
+      explanation: 'Grounded in strong family values and cultural traditions. Brings stability, depth, and long-term thinking to relationships.',
       color: 'border-yellow-700/40 bg-yellow-900/25 text-yellow-400',
       dot: 'bg-yellow-400',
     });

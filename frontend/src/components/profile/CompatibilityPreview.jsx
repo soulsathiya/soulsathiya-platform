@@ -7,32 +7,26 @@ const deriveCompatibility = (profileData) => {
   const caution = [];
 
   // Best match signals
-  if (profileData?.religion) {
-    best.push({ icon: '🏡', text: 'Family-oriented, values-driven partners' });
-  }
+  best.push({ icon: '🏡', text: 'Family-oriented, values-driven individuals' });
   if (profileData?.diet === 'vegetarian' || profileData?.diet === 'vegan') {
-    best.push({ icon: '🌿', text: 'Health-conscious, mindful individuals' });
+    best.push({ icon: '🌿', text: 'Health-conscious, lifestyle-aligned partners' });
   }
   if (profileData?.hobbies?.length > 1) {
-    best.push({ icon: '✨', text: 'Curious, growth-oriented people' });
+    best.push({ icon: '✨', text: 'Curious, growth-oriented communicators' });
   }
   if (profileData?.occupation) {
-    best.push({ icon: '🎯', text: 'Ambitious, career-aware partners' });
+    best.push({ icon: '🎯', text: 'Purpose-driven, career-aware partners' });
   }
-  best.push({ icon: '💬', text: 'Emotionally expressive communicators' });
+  best.push({ icon: '💬', text: 'Emotionally expressive and open communicators' });
 
-  // Caution signals
-  caution.push({ icon: '⚡', text: 'Highly dominant or controlling personalities' });
-  caution.push({ icon: '🔇', text: 'Partners with low emotional availability' });
+  // Compatibility differences — framed as dynamics, not judgements
+  caution.push({ icon: '⚡', text: 'Highly dominant or controlling communication styles' });
+  caution.push({ icon: '🔇', text: 'Partners who prefer limited emotional expression' });
 
   if (profileData?.smoking === 'no' || profileData?.smoking === 'never') {
-    caution.push({ icon: '🌀', text: 'Significantly different lifestyle habits' });
+    caution.push({ icon: '🌀', text: 'Very different day-to-day lifestyle rhythms' });
   }
-  if (profileData?.religion) {
-    caution.push({ icon: '🧭', text: 'Partners who dismiss family traditions' });
-  } else {
-    caution.push({ icon: '🧭', text: 'Inflexible or overly rigid personalities' });
-  }
+  caution.push({ icon: '🧭', text: 'Those who are resistant to long-term planning or commitment' });
 
   return {
     best:    best.slice(0, 3),
@@ -89,9 +83,14 @@ const CompatibilityPreview = ({ profileData, firstName }) => {
       </p>
 
       <div className="flex flex-col sm:flex-row gap-3">
-        <Column title="Best Match With" items={best}   type="best"    />
-        <Column title="Watch Out For"   items={caution} type="caution" />
+        <Column title="Best Match With"               items={best}    type="best"    />
+        <Column title="May Experience Differences With" items={caution} type="caution" />
       </div>
+
+      {/* Trust disclaimer */}
+      <p className="text-[11px] text-muted-foreground/40 mt-4 leading-relaxed border-t border-border/20 pt-3">
+        These insights are based on behavioral and emotional patterns — intended as guidance, not definitive conclusions.
+      </p>
     </div>
   );
 };

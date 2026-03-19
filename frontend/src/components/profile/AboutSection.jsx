@@ -40,8 +40,8 @@ const buildNarrative = (profileData, firstName) => {
   }
 
   const lifeParts = [];
-  if (profileData.religion) lifeParts.push(`rooted in ${capitalize(profileData.religion)} traditions`);
-  if (profileData.diet === 'vegetarian' || profileData.diet === 'vegan') lifeParts.push('follows a mindful lifestyle');
+  if (profileData.religion) lifeParts.push('grounded in strong family values and cultural traditions');
+  if (profileData.diet === 'vegetarian' || profileData.diet === 'vegan') lifeParts.push('follows a mindful and intentional lifestyle');
   if (lifeParts.length) parts.push(`${name.includes(' ') ? 'They are' : name + ' is'} ${lifeParts.join(' and ')}.`);
 
   parts.push(`Believes in building a relationship based on trust, growth, and companionship.`);
@@ -83,7 +83,7 @@ const AboutSection = ({ profileData, firstName }) => {
   ].filter(f => f.value);
 
   const mindValues = [
-    profileData.religion   && { label: 'Spiritual Belief',  value: capitalize(profileData.religion) },
+    profileData.religion   && { label: 'Cultural Background', value: capitalize(profileData.religion) },
     profileData.diet === 'vegetarian' && { label: 'Lifestyle Value', value: 'Mindful living' },
     profileData.hobbies?.length > 0   && { label: 'Passion Areas',   value: profileData.hobbies.slice(0, 3).join(' · ') },
     profileData.marital_status === 'never_married' && { label: 'Life Stage', value: 'Ready for a first serious commitment' },

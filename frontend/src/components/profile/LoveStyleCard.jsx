@@ -22,8 +22,8 @@ const deriveLoveStyle = (profileData) => {
   }
   if (signals.has('grounded') && signals.has('intentional')) {
     return {
-      headline: 'Through loyalty, consistency, and quiet sacrifice',
-      body: 'Demonstrates love through reliability and deep commitment. Won\'t make a scene, but will always be there. Family and long-term security are at the heart of every affectionate act.',
+      headline: 'Through loyalty, consistency, and quiet commitment',
+      body: 'Demonstrates love through reliability and steady presence. Won\'t make a scene, but will always show up. Long-term security and family closeness shape how they express affection.',
     };
   }
   if (signals.has('driven') && signals.has('hopeful')) {

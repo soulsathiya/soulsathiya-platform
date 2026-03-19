@@ -44,8 +44,10 @@ const generateSummary = (user, profileData, age) => {
   }
 
   if (religion || hobbies.length > 0) {
-    const anchor = religion ? `deeply rooted in ${religion.toLowerCase()} values` : 'fuelled by curiosity and personal passions';
-    parts.push(`${anchor === parts[0] ? 'They are' : name + ' is'} ${anchor}.`);
+    const anchor = religion
+      ? 'grounded in strong family values and a deep respect for cultural traditions'
+      : 'fuelled by curiosity, personal passions, and a love for meaningful experiences';
+    parts.push(`${name} is ${anchor}.`);
   }
 
   parts.push(`${intent.charAt(0).toUpperCase() + intent.slice(1)} — built on trust, growth, and genuine companionship.`);
