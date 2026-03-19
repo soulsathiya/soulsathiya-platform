@@ -1,18 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
-import { ArrowLeft, Loader2, Trash2, X } from 'lucide-react';
+import { ArrowLeft, Loader2, Trash2, Lock, ArrowRight } from 'lucide-react';
 import { toast } from 'sonner';
 import axios from 'axios';
 
-import CompatibilityCard from '@/components/CompatibilityCard';
-import ProfileHero        from '@/components/profile/ProfileHero';
-import PersonalitySnapshot from '@/components/profile/PersonalitySnapshot';
-import AboutSection       from '@/components/profile/AboutSection';
-import PhotoGallery       from '@/components/profile/PhotoGallery';
-import UserVoice          from '@/components/profile/UserVoice';
-import InsightsSection    from '@/components/profile/InsightsSection';
-import TrustBadges        from '@/components/profile/TrustBadges';
-import PremiumUpsell      from '@/components/profile/PremiumUpsell';
+import CompatibilityCard     from '@/components/CompatibilityCard';
+import ProfileHero           from '@/components/profile/ProfileHero';
+import PersonalitySnapshot   from '@/components/profile/PersonalitySnapshot';
+import PersonalitySummary    from '@/components/profile/PersonalitySummary';
+import LoveStyleCard         from '@/components/profile/LoveStyleCard';
+import CompatibilityPreview  from '@/components/profile/CompatibilityPreview';
+import AboutSection          from '@/components/profile/AboutSection';
+import PhotoGallery          from '@/components/profile/PhotoGallery';
+import InsightsSection       from '@/components/profile/InsightsSection';
+import TrustBadges           from '@/components/profile/TrustBadges';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
@@ -26,7 +27,7 @@ const calcAge = (dob) => {
 
 const ProfileViewPage = () => {
   const { userId } = useParams();
-  const navigate = useNavigate();
+  const navigate   = useNavigate();
 
   const [currentUser,       setCurrentUser]       = useState(null);
   const [profile,           setProfile]           = useState(null);
@@ -38,15 +39,18 @@ const ProfileViewPage = () => {
   const [deleteConfirmText, setDeleteConfirmText] = useState('');
   const [deleting,          setDeleting]          = useState(false);
 
-  const isOwnProfile  = !userId || userId === currentUser?.user_id;
-  const targetUserId  = userId || currentUser?.user_id;
+  const isOwnProfile = !userId || userId === currentUser?.user_id;
+  const targetUserId = userId || currentUser?.user_id;
 
   useEffect(() => {
     const init = async () => {
       try {
         const meRes      = await axios.get(`${BACKEND_URL}/api/auth/me`, { withCredentials: true });
         setCurrentUser(meRes.data);
-        const profileRes = await axios.get(`${BACKEND_URL}/api/profile/${userId || meRes.data.user_id}`, { withCredentials: true });
+        const profileRes = await axios.get(
+          `${BACKEND_URL}/api/profile/${userId || meRes.data.user_id}`,
+          { withCredentials: true }
+        );
         setProfile(profileRes.data);
         setPhotos(profileRes.data.photos || []);
       } catch (error) {
@@ -59,20 +63,22 @@ const ProfileViewPage = () => {
     init();
   }, [userId, navigate]);
 
-  // ── Interest ──────────────────────────────────────────────────────────────
+  // ── Handlers ──────────────────────────────────────────────────────────────
   const handleSendInterest = async () => {
     try {
-      await axios.post(`${BACKEND_URL}/api/interests/send`, { to_user_id: targetUserId, message: '' }, { withCredentials: true });
+      await axios.post(
+        `${BACKEND_URL}/api/interests/send`,
+        { to_user_id: targetUserId, message: '' },
+        { withCredentials: true }
+      );
       setInterestSent(true);
       toast.success('Interest sent!');
     } catch (error) {
       const detail = error?.response?.data?.detail;
-      const message = (Array.isArray(detail) ? detail[0]?.msg : detail) || error?.message || 'Failed to send interest';
-      toast.error(message);
+      toast.error((Array.isArray(detail) ? detail[0]?.msg : detail) || 'Failed to send interest');
     }
   };
 
-  // ── Photos ────────────────────────────────────────────────────────────────
   const handlePhotoUpload = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -90,8 +96,7 @@ const ProfileViewPage = () => {
       setPhotos(refreshed.data.photos || []);
     } catch (error) {
       const detail = error?.response?.data?.detail;
-      const message = (Array.isArray(detail) ? detail[0]?.msg : detail) || error?.message || 'Upload failed';
-      toast.error(message);
+      toast.error((Array.isArray(detail) ? detail[0]?.msg : detail) || 'Upload failed');
     } finally {
       setUploading(false);
     }
@@ -113,14 +118,15 @@ const ProfileViewPage = () => {
         params: { is_hidden: !currentHidden },
         withCredentials: true,
       });
-      setPhotos(prev => prev.map(p => p.photo_id === photoId ? { ...p, is_hidden: !currentHidden } : p));
+      setPhotos(prev => prev.map(p =>
+        p.photo_id === photoId ? { ...p, is_hidden: !currentHidden } : p
+      ));
       toast.success(currentHidden ? 'Photo is now visible' : 'Photo is now private');
     } catch {
       toast.error('Failed to update privacy');
     }
   };
 
-  // ── Account deletion ──────────────────────────────────────────────────────
   const handleDeleteAccount = async () => {
     if (deleteConfirmText !== 'DELETE') return;
     setDeleting(true);
@@ -147,7 +153,8 @@ const ProfileViewPage = () => {
   const user        = profile?.user;
   const profileData = profile?.profile;
   const age         = calcAge(profileData?.date_of_birth);
-  const targetName  = user?.full_name?.split(' ')[0] || 'them';
+  const firstName   = user?.full_name?.split(' ')[0];
+  const targetName  = firstName || 'them';
 
   return (
     <div className="min-h-screen bg-background">
@@ -157,12 +164,12 @@ const ProfileViewPage = () => {
         <div className="container mx-auto px-6 py-4 flex items-center justify-between">
           <button
             onClick={() => navigate(-1)}
-            className="flex items-center space-x-2 text-muted-foreground hover:text-foreground transition-colors"
+            className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
           >
             <ArrowLeft className="w-5 h-5" />
             <span className="text-sm">Back</span>
           </button>
-          <Link to="/dashboard" className="flex items-center space-x-2">
+          <Link to="/dashboard" className="flex items-center gap-2">
             <img src="/logo.png" alt="SoulSathiya" className="w-7 h-7 object-contain" draggable={false} />
             <span className="text-xl font-heading font-bold">Soul<span className="text-primary">Sathiya</span></span>
           </Link>
@@ -173,7 +180,7 @@ const ProfileViewPage = () => {
       {/* ── Main content ──────────────────────────────────────────────────── */}
       <main className="container mx-auto px-6 py-8 max-w-4xl">
 
-        {/* 1. Hero */}
+        {/* 1. Hero — name, readiness score, 3 CTAs */}
         <ProfileHero
           user={user}
           profileData={profileData}
@@ -185,28 +192,34 @@ const ProfileViewPage = () => {
           onSendInterest={handleSendInterest}
         />
 
-        {/* 2. Personality chips */}
+        {/* 2. AI Personality Summary */}
+        <PersonalitySummary user={user} profileData={profileData} age={age} />
+
+        {/* 3. Personality chips (clickable with explanations) */}
         {profileData && <PersonalitySnapshot profileData={profileData} />}
 
-        {/* 3. Compatibility card — other users only */}
+        {/* 4. How This Person Loves */}
+        {profileData && <LoveStyleCard profileData={profileData} firstName={firstName} />}
+
+        {/* 5. Compatibility Preview — who they match best with */}
+        {profileData && <CompatibilityPreview profileData={profileData} firstName={firstName} />}
+
+        {/* 6. Actual Compatibility score card (other users only) */}
         {!isOwnProfile && (
-          <div className="mb-6">
+          <div id="compatibility-section" className="mb-6">
             <CompatibilityCard targetUserId={targetUserId} targetName={targetName} />
           </div>
         )}
 
-        {/* 4. User voice / bio quote */}
-        <UserVoice bio={profileData?.bio} userName={user?.full_name} />
+        {/* 7. About (narrative + tabs) */}
+        {profileData && <AboutSection profileData={profileData} firstName={firstName} />}
 
-        {/* 5. About tabs */}
-        {profileData && <AboutSection profileData={profileData} />}
-
-        {/* 6. SoulSathiya Insights */}
+        {/* 8. SoulSathiya Insights (locked bars, other users only) */}
         {!isOwnProfile && (
           <InsightsSection profileData={profileData} isPremiumUnlocked={false} />
         )}
 
-        {/* 7. Photos */}
+        {/* 9. Photos */}
         <PhotoGallery
           photos={photos}
           isOwnProfile={isOwnProfile}
@@ -216,15 +229,38 @@ const ProfileViewPage = () => {
           onTogglePrivacy={handleTogglePrivacy}
         />
 
-        {/* 8. Trust & Verification */}
+        {/* 10. Trust & Verification */}
         <TrustBadges user={user} profileData={profileData} />
 
-        {/* 9. Premium upsell — other users only */}
-        {!isOwnProfile && <PremiumUpsell targetName={targetName} />}
+        {/* 11. Report CTA — clean, separate from profile (other users only) */}
+        {!isOwnProfile && (
+          <div
+            className="rounded-2xl p-6 mb-6 border border-primary/20 flex flex-col sm:flex-row items-center justify-between gap-4"
+            style={{ background: 'linear-gradient(135deg, #0f1929 0%, #1a1208 100%)' }}
+          >
+            <div className="flex items-start gap-3">
+              <Lock className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
+              <div>
+                <p className="text-sm font-semibold text-foreground">
+                  View Detailed Relationship Intelligence Report
+                </p>
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  Psychological compatibility · Communication analysis · Long-term alignment
+                </p>
+              </div>
+            </div>
+            <Link to="/insights" className="flex-shrink-0">
+              <button className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-primary text-primary-foreground text-sm font-semibold hover:opacity-90 transition-opacity shadow-lg shadow-primary/20 whitespace-nowrap">
+                Unlock Report ₹999
+                <ArrowRight className="w-4 h-4" />
+              </button>
+            </Link>
+          </div>
+        )}
 
-        {/* 10. Danger Zone — own profile, bottom */}
+        {/* 12. Danger Zone — own profile only, at the very bottom */}
         {isOwnProfile && (
-          <div className="card-surface rounded-2xl p-6 mt-2 border border-red-900/20 opacity-50 hover:opacity-100 transition-opacity duration-300">
+          <div className="rounded-2xl p-6 mt-2 border border-red-900/20 opacity-50 hover:opacity-100 transition-opacity duration-300 card-surface">
             <h2 className="font-heading text-sm text-red-400/70 mb-1">Danger Zone</h2>
             <p className="text-xs text-muted-foreground mb-3">
               Deleting your account will hide your profile and disable login. This cannot be undone.
