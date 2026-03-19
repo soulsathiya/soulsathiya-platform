@@ -258,10 +258,9 @@ const ProfileViewPage = () => {
           </div>
         )}
 
-        {/* 12. Danger Zone — own profile only, at the very bottom */}
+        {/* 12. Delete account — own profile only, at the very bottom */}
         {isOwnProfile && (
           <div className="rounded-2xl p-6 mt-2 border border-red-900/20 opacity-50 hover:opacity-100 transition-opacity duration-300 card-surface">
-            <h2 className="font-heading text-sm text-red-400/70 mb-1">Danger Zone</h2>
             <p className="text-xs text-muted-foreground mb-3">
               Deleting your account will hide your profile and disable login. This cannot be undone.
             </p>
