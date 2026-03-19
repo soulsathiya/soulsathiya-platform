@@ -463,28 +463,6 @@ export default function InsightsAssessment() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [questionIdx, sectionIdx]);
 
-  // ── Multi-select handlers ────────────────────────────────────────────────────
-  const handleChoiceToggle = useCallback((letter) => {
-    setMultiChoiceSelected(prev => {
-      if (prev.includes(letter)) return prev.filter(l => l !== letter);
-      return [...prev.filter(l => l !== 'none'), letter];
-    });
-  }, []);
-
-  const handleChoiceNone = useCallback(() => {
-    setMultiChoiceSelected(prev => prev.includes('none') ? [] : ['none']);
-  }, []);
-
-  const handleChoiceConfirm = useCallback(() => {
-    if (multiChoiceSelected.length === 0) return;
-    // Send "none" string, single letter string, or multi-letter array
-    let value;
-    if (multiChoiceSelected.includes('none')) value = 'none';
-    else if (multiChoiceSelected.length === 1) value = multiChoiceSelected[0];
-    else value = multiChoiceSelected;
-    handleAnswer(value);
-  }, [multiChoiceSelected, handleAnswer]);
-
   // ── Handle an answer ────────────────────────────────────────────────────────
   const handleAnswer = useCallback(async (value) => {
     if (!currentQuestion || animating) return;
@@ -561,6 +539,28 @@ export default function InsightsAssessment() {
       }, 150);
     }
   }, [currentQuestion, currentSection, sectionAnswers, answers, completed, questionIdx, sectionIdx, guestToken, animating]);
+
+  // ── Multi-select handlers ────────────────────────────────────────────────────
+  const handleChoiceToggle = useCallback((letter) => {
+    setMultiChoiceSelected(prev => {
+      if (prev.includes(letter)) return prev.filter(l => l !== letter);
+      return [...prev.filter(l => l !== 'none'), letter];
+    });
+  }, []);
+
+  const handleChoiceNone = useCallback(() => {
+    setMultiChoiceSelected(prev => prev.includes('none') ? [] : ['none']);
+  }, []);
+
+  const handleChoiceConfirm = useCallback(() => {
+    if (multiChoiceSelected.length === 0) return;
+    // Send "none" string, single letter string, or multi-letter array
+    let value;
+    if (multiChoiceSelected.includes('none')) value = 'none';
+    else if (multiChoiceSelected.length === 1) value = multiChoiceSelected[0];
+    else value = multiChoiceSelected;
+    handleAnswer(value);
+  }, [multiChoiceSelected, handleAnswer]);
 
   // ── Continue to next section ─────────────────────────────────────────────────
   const handleContinue = useCallback(() => {
