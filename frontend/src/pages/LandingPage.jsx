@@ -799,6 +799,12 @@ const LandingPage = () => {
 
           {/* CTA row */}
           <div className="text-center space-y-4">
+
+            {/* Universal audience label */}
+            <p className="text-xs font-semibold text-primary/60 uppercase tracking-widest">
+              For Individuals &amp; Couples
+            </p>
+
             <Link to="/insights">
               <Button
                 size="lg"
@@ -806,10 +812,15 @@ const LandingPage = () => {
                 data-testid="insights-cta-btn"
               >
                 <Sparkles className="w-5 h-5 mr-2" />
-                Start Your Relationship Intelligence — Free
+                Build Your Relationship Intelligence Report
                 <ArrowRight className="w-5 h-5 ml-2" />
               </Button>
             </Link>
+
+            {/* Supporting microcopy — lifecycle-agnostic, universal tone */}
+            <p className="text-sm text-muted-foreground max-w-md mx-auto leading-relaxed">
+              Gain deep insight into how you connect, communicate, and build lasting relationships.
+            </p>
 
             <div className="flex items-center justify-center gap-6 flex-wrap">
               {[
