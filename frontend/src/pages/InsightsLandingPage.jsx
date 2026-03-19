@@ -16,10 +16,10 @@ const SECTIONS = [
 ];
 
 const FEATURES = [
-  { icon: Brain, text: '108 psychometric questions, 6 dimensions' },
+  { icon: Brain, text: 'A guided experience across 6 dimensions' },
   { icon: Sparkles, text: 'Personalised mini-insight after each level' },
   { icon: Shield, text: 'Completely private — only you see your results' },
-  { icon: Lock, text: 'No login required to start' },
+  { icon: Lock, text: 'Start instantly — no signup needed' },
 ];
 
 const TESTIMONIALS = [
@@ -92,7 +92,7 @@ export default function InsightsLandingPage() {
           </h1>
 
           <p style={{ fontSize: 18, lineHeight: 1.7, color: 'rgba(245,237,216,0.8)', maxWidth: 560, margin: '0 auto 36px' }}>
-            108 psychometric questions across 6 dimensions of love. No login required. Start now — your private journey awaits.
+            A guided experience across 6 dimensions of how you relate. Start instantly — your private journey awaits.
           </p>
 
           {/* Feature pills */}
@@ -181,9 +181,9 @@ export default function InsightsLandingPage() {
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 32 }}>
             {[
               { step: '01', title: 'Start instantly', desc: 'No login, no sign-up. Click and begin immediately.' },
-              { step: '02', title: 'Answer 108 questions', desc: 'Six levels of increasingly deep self-discovery.' },
+              { step: '02', title: 'Begin your guided experience', desc: 'Six levels of increasingly honest self-insight.' },
               { step: '03', title: 'Earn insights', desc: 'After each level, receive your personalised mini-insight.' },
-              { step: '04', title: 'Unlock your report', desc: 'Login and pay ₹999 to receive your full intelligence report.' },
+              { step: '04', title: 'Unlock your report', desc: 'Sign in and unlock your full Relationship Intelligence Report — ₹999, one time.' },
             ].map((item) => (
               <div key={item.step} style={{ textAlign: 'center' }}>
                 <div style={{ fontFamily: 'Cormorant Garamond, Georgia, serif', fontSize: 42, color: GOLD, fontWeight: 700, lineHeight: 1, marginBottom: 14 }}>
@@ -265,7 +265,7 @@ export default function InsightsLandingPage() {
             Your most meaningful relationship begins with understanding yourself.
           </h2>
           <p style={{ fontSize: 16, color: 'rgba(245,237,216,0.65)', lineHeight: 1.7, marginBottom: 40 }}>
-            108 questions. Six dimensions. One deeply honest portrait of who you are in love.
+            Six dimensions. One deeply honest portrait of how you connect, love, and grow.
           </p>
           <button
             onClick={() => navigate('/insights/assessment')}

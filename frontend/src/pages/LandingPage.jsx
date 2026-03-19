@@ -707,7 +707,7 @@ const LandingPage = () => {
               <span className="text-primary">Relationship Intelligence</span>
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-              A guided experience across 6 dimensions of love — completely private,
+              A guided experience across 6 dimensions of how you relate — completely private,
               start instantly. Get your personalised mini-insight after each level.
             </p>
           </div>

@@ -376,7 +376,7 @@ export default function InsightsReportPage() {
             Ready to find your match?
           </h2>
           <p style={{ fontSize: 15, color: 'rgba(245,237,216,0.65)', marginBottom: 28 }}>
-            Your Relationship Intelligence profile is now part of our matching algorithm. Create your full profile and meet people who truly align with who you are.
+Your Relationship Intelligence profile can now power deeper compatibility matching. Create your full profile and connect with people who truly align with how you relate and grow.
           </p>
           <div style={{ display: 'flex', gap: 14, justifyContent: 'center', flexWrap: 'wrap' }}>
             <button

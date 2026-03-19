@@ -32,10 +32,10 @@ const SECTION_LABELS = [
 const REPORT_FEATURES = [
   'Overall Relationship Intelligence Score (0–100)',
   'Detailed profile across all 6 dimensions',
-  'Your top 3 relationship strengths',
-  '3 highest-leverage growth areas',
-  'Ideal partner compatibility profile',
-  '6 personalised action recommendations',
+  'Your top 3 strengths in relationships',
+  '3 areas with the most room to grow',
+  'What you need most in a partner or relationship',
+  '6 personalised insights to act on',
   'Downloadable personal report',
 ];
 
@@ -311,7 +311,7 @@ export default function InsightsUnlock() {
             {/* Badge */}
             <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: 'rgba(212,165,32,0.1)', border: '1px solid rgba(212,165,32,0.3)', borderRadius: 20, padding: '6px 16px', marginBottom: 24, fontSize: 13, color: GOLD, fontFamily: 'sans-serif' }}>
               <Sparkles size={13} />
-              108 Questions Complete
+              All 6 Dimensions Complete
             </div>
 
             <h1 style={{ fontFamily: 'Cormorant Garamond, Georgia, serif', fontSize: 'clamp(30px, 4vw, 44px)', fontWeight: 700, lineHeight: 1.2, marginBottom: 16 }}>
@@ -321,7 +321,7 @@ export default function InsightsUnlock() {
             </h1>
 
             <p style={{ fontSize: 16, lineHeight: 1.8, color: 'rgba(245,237,216,0.7)', marginBottom: 32, maxWidth: 420 }}>
-              You've completed all six dimensions of your relationship self. Unlock your full personalised report with a one-time payment.
+              You've explored all six dimensions of how you connect and relate. Unlock your full personalised report with a one-time payment.
             </p>
 
             {/* Completed levels */}
@@ -511,7 +511,7 @@ export default function InsightsUnlock() {
                     <span style={{ fontFamily: 'Cormorant Garamond, Georgia, serif', fontSize: 56, fontWeight: 700, color: GOLD, lineHeight: 1 }}>999</span>
                   </div>
                   <div style={{ fontSize: 13, color: 'rgba(245,237,216,0.5)', fontFamily: 'sans-serif' }}>
-                    Full Relationship Intelligence Report
+                    Your Complete Relationship Intelligence Report
                   </div>
                 </div>
 

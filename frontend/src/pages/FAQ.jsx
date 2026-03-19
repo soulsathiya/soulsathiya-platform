@@ -46,13 +46,13 @@ const FAQ_ITEMS = [
   {
     question: 'Is SoulSathiya free to use?',
     answer:
-      'Yes. You can create your profile, take the assessment, and explore matches. Optional paid features unlock deeper insights.',
+      'Yes. You can create your profile, begin your Relationship Intelligence experience, and explore matches. Optional paid features unlock your complete report.',
     category: 'Pricing',
   },
   {
     question: 'What does the ₹999 payment include?',
     answer:
-      'It unlocks a detailed compatibility report including relationship strengths, challenges, communication patterns, and long-term alignment.',
+      'It unlocks your complete Relationship Intelligence Report — covering your strengths, growth areas, communication patterns, and how you build lasting relationships.',
     category: 'Pricing',
   },
   {
