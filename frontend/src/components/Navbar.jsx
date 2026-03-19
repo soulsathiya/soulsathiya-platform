@@ -23,9 +23,10 @@ const SoulSathiyaLogo = ({ className = 'w-9 h-9' }) => (
 
 // ─── Nav Links Config ──────────────────────────────────────────────────────────
 const NAV_LINKS = [
-  { label: 'How It Works', to: '/how-it-works' },
-  { label: 'About',        to: '/about'         },
-  { label: 'FAQ',          to: '/faq'           },
+  { label: 'Find Matches',        to: '/register'      },
+  { label: 'Relationship Report', to: '/insights'      },
+  { label: 'How It Works',        to: '/how-it-works'  },
+  { label: 'FAQ',                 to: '/faq'           },
 ];
 
 // ─── Navbar ────────────────────────────────────────────────────────────────────

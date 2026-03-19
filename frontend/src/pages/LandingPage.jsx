@@ -108,7 +108,7 @@ function PricingSection() {
     <section className="py-20 px-4 bg-card/40" id="pricing">
       <div className="container mx-auto max-w-6xl">
 
-        {/* Header */}
+        {/* ── Section Header ────────────────────────────────────────────── */}
         <div className="text-center mb-4">
           <div className="inline-flex items-center gap-2 bg-primary/10 border border-primary/20 text-primary px-4 py-1.5 rounded-full text-sm font-medium mb-5">
             <Sparkles className="w-4 h-4" />
@@ -122,201 +122,240 @@ function PricingSection() {
           </div>
         </div>
 
-        {/* Cards grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5 items-start">
-
-          {/* ── Free ──────────────────────────────────────────────────── */}
-          <div className="flex flex-col rounded-2xl border border-white/8 bg-[#0F1A2E] p-6 gap-5 hover:-translate-y-1 hover:shadow-xl transition-all duration-300">
-            <div className="space-y-1">
-              <p className="text-xs font-bold text-white/40 uppercase tracking-widest">Free</p>
-              <h3 className="font-heading text-xl font-bold text-white">Start Free</h3>
-              <p className="text-xs text-white/50 leading-snug">Start Your Compatibility Journey</p>
-            </div>
+        {/* ═══════════════════════════════════════════════════════════════
+            SECTION A — Matchmaking Plans
+        ════════════════════════════════════════════════════════════════ */}
+        <div className="mb-4">
+          <div className="flex items-center gap-3 mb-6">
+            <span className="text-lg" role="img" aria-label="ring">💍</span>
             <div>
-              <span className="text-4xl font-extrabold text-white">₹0</span>
-              <span className="text-white/40 text-sm ml-1">forever</span>
+              <h3 className="font-heading text-lg font-bold text-foreground">Matchmaking Plans</h3>
+              <p className="text-xs text-muted-foreground">For singles finding a life partner — subscription-based</p>
             </div>
-            <ul className="space-y-2.5 flex-1">
-              {['Create your personality profile','10 curated matches / month','3 interests per month','Basic compatibility insights','Browse verified profiles'].map(f => (
-                <li key={f} className="flex items-start gap-2.5 text-sm">
-                  <Check className="w-4 h-4 text-white/30 mt-0.5 shrink-0" />
-                  <span className="text-white/55 leading-snug">{f}</span>
-                </li>
-              ))}
-            </ul>
-            <Link to="/register" className="block">
-              <button className="w-full py-2.5 rounded-xl border border-white/15 text-white/70 hover:bg-white/5 hover:text-white text-sm font-semibold transition-all duration-200">
-                Start Finding Matches
-              </button>
-            </Link>
           </div>
 
-          {/* ── Premium ─────────────────────────────────────────────── */}
-          <div
-            className="flex flex-col rounded-2xl p-6 gap-5 transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl xl:scale-105 xl:-translate-y-1"
-            style={{
-              background:  'linear-gradient(155deg, #1a2a1a 0%, #0F1A2E 60%)',
-              border:      '1.5px solid rgba(212,175,55,0.55)',
-              boxShadow:   '0 0 40px rgba(212,175,55,0.12), 0 8px 32px rgba(0,0,0,0.5)',
-            }}
-          >
-            <div className="flex items-center gap-2 flex-wrap">
-              <PlanBadge variant="gold">⭐ Most Popular</PlanBadge>
-            </div>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 items-start">
 
-            <div className="space-y-1">
-              <p className="text-xs font-bold text-yellow-400/60 uppercase tracking-widest">Premium</p>
-              <h3 className="font-heading text-xl font-bold text-white">Find Your Match</h3>
-              <p className="text-xs text-white/50 leading-snug">Unlock deeper compatibility &amp; real connections</p>
-            </div>
-
-            <PeriodToggle tiers={PREMIUM_TIERS} selected={premiumKey} onChange={setPremiumKey} />
-
-            <div>
-              {premiumTier.strike && (
-                <p className="text-xs text-white/35 line-through mb-0.5">
-                  ₹{premiumTier.strike.toLocaleString('en-IN')}
-                </p>
-              )}
-              <div className="flex items-baseline gap-1.5">
-                <span className="text-4xl font-extrabold text-yellow-400">
-                  ₹{premiumTier.price.toLocaleString('en-IN')}
-                </span>
-                <span className="text-white/40 text-sm">/ {premiumTier.period}</span>
+            {/* ── Free ─────────────────────────────────────────────────── */}
+            <div className="flex flex-col rounded-2xl border border-white/8 bg-[#0F1A2E] p-6 gap-5 hover:-translate-y-1 hover:shadow-xl transition-all duration-300">
+              <div className="space-y-1">
+                <p className="text-xs font-bold text-white/40 uppercase tracking-widest">Free</p>
+                <h3 className="font-heading text-xl font-bold text-white">Start Free</h3>
+                <p className="text-xs text-white/50 leading-snug">Start Your Compatibility Journey</p>
               </div>
-              {premiumTier.label && (
-                <span className="inline-block mt-1 text-[10px] font-bold text-yellow-500 bg-yellow-500/10 border border-yellow-500/25 px-2 py-0.5 rounded-full">
-                  {premiumTier.label}
-                </span>
-              )}
-            </div>
-
-            <ul className="space-y-2.5 flex-1">
-              {[
-                'Unlimited profile views & interests',
-                'Advanced compatibility filters',
-                'See who viewed your profile',
-                'Priority customer support',
-                'Deep Compatibility Report (add-on)',
-                'Weekly curated match digest',
-              ].map(f => <FeatureRow key={f} text={f} />)}
-            </ul>
-
-            <Link to="/register" className="block">
-              <button
-                className="w-full py-3 rounded-xl text-sm font-bold transition-all duration-200 hover:scale-[1.02] hover:shadow-lg active:scale-[0.98]"
-                style={{ background: 'linear-gradient(90deg,#D4AF37,#F0CC5A)', color: '#000' }}
-              >
-                Find Your Compatible Partner →
-              </button>
-            </Link>
-          </div>
-
-          {/* ── Elite ───────────────────────────────────────────────── */}
-          <div className="flex flex-col rounded-2xl border border-purple-500/30 bg-[#0F1A2E] p-6 gap-5 hover:-translate-y-1 hover:shadow-xl transition-all duration-300"
-            style={{ boxShadow: '0 0 24px rgba(139,92,246,0.08)' }}>
-            <div className="flex items-center gap-2">
-              <PlanBadge variant="purple">💎 Most Comprehensive</PlanBadge>
-            </div>
-            <div className="space-y-1">
-              <p className="text-xs font-bold text-purple-400/60 uppercase tracking-widest">Elite</p>
-              <h3 className="font-heading text-xl font-bold text-white">Elite Matchmaking</h3>
-              <p className="text-xs text-white/50 leading-snug">For serious seekers of a lifelong partner</p>
-            </div>
-
-            <PeriodToggle tiers={ELITE_TIERS} selected={eliteKey} onChange={setEliteKey} />
-
-            <div>
-              <div className="flex items-baseline gap-1.5">
-                <span className="text-4xl font-extrabold text-purple-400">
-                  ₹{eliteTier.price.toLocaleString('en-IN')}
-                </span>
-                <span className="text-white/40 text-sm">/ {eliteTier.period}</span>
+              <div>
+                <span className="text-4xl font-extrabold text-white">₹0</span>
+                <span className="text-white/40 text-sm ml-1">forever</span>
               </div>
-              {eliteTier.label && (
-                <span className="inline-block mt-1 text-[10px] font-bold text-purple-400 bg-purple-500/10 border border-purple-500/25 px-2 py-0.5 rounded-full">
-                  {eliteTier.label}
-                </span>
-              )}
+              <ul className="space-y-2.5 flex-1">
+                {['Create your personality profile','10 curated matches / month','3 interests per month','Basic compatibility insights','Browse verified profiles'].map(f => (
+                  <li key={f} className="flex items-start gap-2.5 text-sm">
+                    <Check className="w-4 h-4 text-white/30 mt-0.5 shrink-0" />
+                    <span className="text-white/55 leading-snug">{f}</span>
+                  </li>
+                ))}
+              </ul>
+              <Link to="/register" className="block">
+                <button className="w-full py-2.5 rounded-xl border border-white/15 text-white/70 hover:bg-white/5 hover:text-white text-sm font-semibold transition-all duration-200">
+                  Start Finding Matches
+                </button>
+              </Link>
             </div>
 
-            <ul className="space-y-2.5 flex-1">
-              {[
-                'Everything in Premium',
-                'Weekly profile boost included',
-                'Dedicated relationship manager',
-                'Verified priority placement',
-                'Exclusive high-intent matches',
-                'Unlimited Compatibility Reports',
-                'Video call introduction service',
-              ].map(f => <FeatureRow key={f} text={f} />)}
-            </ul>
-
-            <Link to="/register" className="block">
-              <button className="w-full py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-sm font-bold transition-all duration-200 hover:shadow-lg hover:shadow-purple-500/25">
-                Get Premium Matchmaking Experience →
-              </button>
-            </Link>
-          </div>
-
-          {/* ── Relationship Intelligence ─────────────────────────── */}
-          <div className="flex flex-col rounded-2xl bg-[#0F1A2E] p-6 gap-5 hover:-translate-y-1 hover:shadow-xl transition-all duration-300"
-            style={{ border: '1.5px solid rgba(212,165,32,0.4)', boxShadow: '0 0 30px rgba(212,165,32,0.08)' }}>
-            <div className="flex items-center gap-2 flex-wrap">
-              <PlanBadge variant="gold">🧠 Self-Assessment</PlanBadge>
-              <PlanBadge variant="new">Start Instantly</PlanBadge>
-            </div>
-            <div className="space-y-1">
-              <p className="text-xs font-bold text-yellow-400/60 uppercase tracking-widest">Relationship Intelligence</p>
-              <h3 className="font-heading text-xl font-bold text-white">Know Yourself First</h3>
-              <p className="text-xs text-white/50 leading-snug">A guided experience · 6 dimensions · private</p>
-            </div>
-
-            <div>
-              <p className="text-xs text-white/35 mb-0.5">Start free · Full report one-time</p>
-              <div className="flex items-baseline gap-1.5">
-                <span className="text-4xl font-extrabold text-yellow-400">₹999</span>
+            {/* ── Premium ──────────────────────────────────────────────── */}
+            <div
+              className="flex flex-col rounded-2xl p-6 gap-5 transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl sm:scale-105 sm:-translate-y-1"
+              style={{
+                background:  'linear-gradient(155deg, #1a2a1a 0%, #0F1A2E 60%)',
+                border:      '1.5px solid rgba(212,175,55,0.55)',
+                boxShadow:   '0 0 40px rgba(212,175,55,0.12), 0 8px 32px rgba(0,0,0,0.5)',
+              }}
+            >
+              <div className="flex items-center gap-2 flex-wrap">
+                <PlanBadge variant="gold">⭐ Most Popular</PlanBadge>
               </div>
-              <span className="inline-block mt-1 text-[10px] font-bold text-yellow-400 bg-yellow-500/10 border border-yellow-500/25 px-2 py-0.5 rounded-full">
-                Assessment is completely free
-              </span>
+              <div className="space-y-1">
+                <p className="text-xs font-bold text-yellow-400/60 uppercase tracking-widest">Premium</p>
+                <h3 className="font-heading text-xl font-bold text-white">Find Your Match</h3>
+                <p className="text-xs text-white/50 leading-snug">Unlock deeper compatibility &amp; real connections</p>
+              </div>
+              <PeriodToggle tiers={PREMIUM_TIERS} selected={premiumKey} onChange={setPremiumKey} />
+              <div>
+                {premiumTier.strike && (
+                  <p className="text-xs text-white/35 line-through mb-0.5">
+                    ₹{premiumTier.strike.toLocaleString('en-IN')}
+                  </p>
+                )}
+                <div className="flex items-baseline gap-1.5">
+                  <span className="text-4xl font-extrabold text-yellow-400">
+                    ₹{premiumTier.price.toLocaleString('en-IN')}
+                  </span>
+                  <span className="text-white/40 text-sm">/ {premiumTier.period}</span>
+                </div>
+                {premiumTier.label && (
+                  <span className="inline-block mt-1 text-[10px] font-bold text-yellow-500 bg-yellow-500/10 border border-yellow-500/25 px-2 py-0.5 rounded-full">
+                    {premiumTier.label}
+                  </span>
+                )}
+              </div>
+              <ul className="space-y-2.5 flex-1">
+                {[
+                  'Unlimited profile views & interests',
+                  'Advanced compatibility filters',
+                  'See who viewed your profile',
+                  'Priority customer support',
+                  'SoulSathiya Compatibility Intelligence Report (add-on)',
+                  'Weekly curated match digest',
+                ].map(f => <FeatureRow key={f} text={f} />)}
+              </ul>
+              <Link to="/register" className="block">
+                <button
+                  className="w-full py-3 rounded-xl text-sm font-bold transition-all duration-200 hover:scale-[1.02] hover:shadow-lg active:scale-[0.98]"
+                  style={{ background: 'linear-gradient(90deg,#D4AF37,#F0CC5A)', color: '#000' }}
+                >
+                  Find Your Compatible Partner →
+                </button>
+              </Link>
             </div>
 
-            <ul className="space-y-2.5 flex-1">
-              {[
-                'Start instantly — no signup needed',
-                'Personalised insight after each level',
-                'Emotional & communication profile',
-                'Relationship pattern analysis',
-                'Ideal partner compatibility profile',
-                '6 personalised recommendations',
-              ].map(f => <FeatureRow key={f} text={f} />)}
-            </ul>
+            {/* ── Elite ─────────────────────────────────────────────────── */}
+            <div className="flex flex-col rounded-2xl border border-purple-500/30 bg-[#0F1A2E] p-6 gap-5 hover:-translate-y-1 hover:shadow-xl transition-all duration-300"
+              style={{ boxShadow: '0 0 24px rgba(139,92,246,0.08)' }}>
+              <div className="flex items-center gap-2">
+                <PlanBadge variant="purple">💎 Most Comprehensive</PlanBadge>
+              </div>
+              <div className="space-y-1">
+                <p className="text-xs font-bold text-purple-400/60 uppercase tracking-widest">Elite</p>
+                <h3 className="font-heading text-xl font-bold text-white">Elite Matchmaking</h3>
+                <p className="text-xs text-white/50 leading-snug">For serious seekers of a lifelong partner</p>
+              </div>
+              <PeriodToggle tiers={ELITE_TIERS} selected={eliteKey} onChange={setEliteKey} />
+              <div>
+                <div className="flex items-baseline gap-1.5">
+                  <span className="text-4xl font-extrabold text-purple-400">
+                    ₹{eliteTier.price.toLocaleString('en-IN')}
+                  </span>
+                  <span className="text-white/40 text-sm">/ {eliteTier.period}</span>
+                </div>
+                {eliteTier.label && (
+                  <span className="inline-block mt-1 text-[10px] font-bold text-purple-400 bg-purple-500/10 border border-purple-500/25 px-2 py-0.5 rounded-full">
+                    {eliteTier.label}
+                  </span>
+                )}
+              </div>
+              <ul className="space-y-2.5 flex-1">
+                {[
+                  'Everything in Premium',
+                  'Weekly profile boost included',
+                  'Dedicated relationship manager',
+                  'Verified priority placement',
+                  'Exclusive high-intent matches',
+                  'Unlimited Compatibility Intelligence Reports',
+                  'Video call introduction service',
+                ].map(f => <FeatureRow key={f} text={f} />)}
+              </ul>
+              <Link to="/register" className="block">
+                <button className="w-full py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-sm font-bold transition-all duration-200 hover:shadow-lg hover:shadow-purple-500/25">
+                  Get Premium Matchmaking Experience →
+                </button>
+              </Link>
+            </div>
 
-            <Link to="/insights" className="block">
-              <button
-                className="w-full py-3 rounded-xl text-sm font-bold transition-all duration-200 hover:scale-[1.02] hover:shadow-lg active:scale-[0.98]"
-                style={{ background: 'linear-gradient(90deg,#D4AF37,#F0CC5A)', color: '#000' }}
-              >
-                Start Free Assessment →
-              </button>
-            </Link>
           </div>
+
+          <p className="text-sm text-white/35 mt-6 text-center">
+            Start free. Upgrade when you're ready to take your journey seriously.
+          </p>
         </div>
 
-        {/* Microcopy */}
-        <p className="text-center text-sm text-white/35 mt-10">
-          Start free. Upgrade when you're ready to take your journey seriously.
-        </p>
+        {/* ── Visual separator ──────────────────────────────────────────── */}
+        <div className="flex items-center gap-4 my-12">
+          <div className="flex-1 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+          <span className="text-xs text-white/30 font-semibold uppercase tracking-widest px-2">A separate product</span>
+          <div className="flex-1 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+        </div>
+
+        {/* ═══════════════════════════════════════════════════════════════
+            SECTION B — SoulSathiya Relationship Intelligence Report
+        ════════════════════════════════════════════════════════════════ */}
+        <div>
+          <div className="flex items-center gap-3 mb-6">
+            <span className="text-lg" role="img" aria-label="brain">🧠</span>
+            <div>
+              <h3 className="font-heading text-lg font-bold text-foreground">SoulSathiya Relationship Intelligence Report</h3>
+              <p className="text-xs text-muted-foreground">For individuals &amp; couples — one-time, no subscription</p>
+            </div>
+          </div>
+
+          <div className="rounded-2xl p-8 flex flex-col md:flex-row gap-8 items-center"
+            style={{
+              background: 'linear-gradient(135deg, rgba(212,165,32,0.05) 0%, #0F1A2E 100%)',
+              border: '1.5px solid rgba(212,165,32,0.35)',
+              boxShadow: '0 0 40px rgba(212,165,32,0.06)',
+            }}>
+
+            {/* Left — pricing + description */}
+            <div className="flex-1 space-y-4">
+              <div className="flex items-center gap-2 flex-wrap">
+                <PlanBadge variant="gold">🧠 Self-Discovery</PlanBadge>
+                <PlanBadge variant="new">Start Instantly</PlanBadge>
+              </div>
+              <div>
+                <p className="text-xs font-bold text-yellow-400/60 uppercase tracking-widest mb-1">Relationship Intelligence</p>
+                <h4 className="font-heading text-2xl font-bold text-white mb-2">Know Yourself. Understand How You Connect.</h4>
+                <p className="text-sm text-white/60 leading-relaxed max-w-md">
+                  A guided experience across 6 emotional dimensions. For anyone who wants to understand
+                  how they connect, communicate, and build lasting relationships — regardless of where they are in life.
+                </p>
+              </div>
+              <div>
+                <p className="text-xs text-white/35 mb-1">Assessment is completely free · Full report one-time</p>
+                <div className="flex items-baseline gap-2">
+                  <span className="text-4xl font-extrabold text-yellow-400">₹999</span>
+                  <span className="text-white/40 text-sm">one-time · no subscription</span>
+                </div>
+              </div>
+              <Link to="/insights" className="inline-block">
+                <button
+                  className="px-8 py-3 rounded-xl text-sm font-bold transition-all duration-200 hover:scale-[1.02] hover:shadow-lg active:scale-[0.98]"
+                  style={{ background: 'linear-gradient(90deg,#D4AF37,#F0CC5A)', color: '#000' }}
+                >
+                  Build Your Relationship Intelligence Report →
+                </button>
+              </Link>
+              <p className="text-[11px] text-white/30">Start instantly — no signup needed to begin</p>
+            </div>
+
+            {/* Right — feature list */}
+            <div className="flex-shrink-0 w-full md:w-72">
+              <ul className="space-y-3">
+                {[
+                  'Relationship Intelligence Score (0–100)',
+                  'Detailed profile across all 6 dimensions',
+                  'Your top 3 strengths in relationships',
+                  '3 areas with the most room to grow',
+                  'What you need most in a partner or relationship',
+                  '6 personalised insights to act on',
+                  'Downloadable personal report',
+                ].map(f => (
+                  <li key={f} className="flex items-start gap-2.5 text-sm">
+                    <Check className="w-4 h-4 text-yellow-400 mt-0.5 shrink-0" />
+                    <span className="text-white/70 leading-snug">{f}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+          </div>
+        </div>
 
       </div>
     </section>
   );
 }
 
-// ─── Guided Journey Section (NEW) ────────────────────────────────────────────
-// Two-step visual flow: self-discovery → matchmaking
-// Placed immediately after hero so users always know what to do next.
+// ─── Guided Journey Section ───────────────────────────────────────────────────
+// Declared two-path fork: users choose their journey right after the hero.
 function GuidedJourneySection() {
   return (
     <section className="py-16 px-6 bg-card/30 border-b border-primary/10" id="get-started">
@@ -325,131 +364,121 @@ function GuidedJourneySection() {
         {/* Header */}
         <div className="text-center mb-10">
           <h2 className="font-heading text-3xl md:text-4xl font-bold text-foreground leading-tight">
-            Start With Yourself.{' '}
-            <span className="text-primary">Then Find the Right Match.</span>
+            What brings you to{' '}
+            <span className="text-primary">SoulSathiya</span> today?
           </h2>
           <p className="text-muted-foreground mt-3 max-w-xl mx-auto">
-            Two clear steps. One meaningful journey.
+            Two distinct journeys. Choose the one that's right for you.
           </p>
         </div>
 
-        {/* 2-step flow — same layout pattern as How It Works */}
-        <div className="flex flex-col md:flex-row md:items-stretch gap-6 md:gap-0">
+        {/* Two-path fork — equal weight, side by side */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-          {/* ── Step 1 ────────────────────────────────────────────────── */}
-          <div className="flex-1 rounded-2xl p-8 flex flex-col gap-5 relative overflow-hidden"
+          {/* ── Path A: Find My Match ─────────────────────────────────── */}
+          <div className="flex flex-col rounded-2xl p-8 gap-5 relative overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl"
             style={{
-              background: 'linear-gradient(135deg, rgba(212,165,32,0.06) 0%, #0F1A2E 100%)',
-              border: '1px solid rgba(212,165,32,0.28)',
+              background: 'linear-gradient(155deg, #1a2a1a 0%, #0F1A2E 100%)',
+              border: '1.5px solid rgba(212,175,55,0.45)',
+              boxShadow: '0 0 32px rgba(212,175,55,0.08)',
             }}>
-            <div className="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-primary to-secondary rounded-l-2xl" />
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-primary/15 border border-primary/30 flex items-center justify-center text-primary font-heading font-bold text-lg">
-                1
-              </div>
-              <span className="text-xs font-semibold text-primary/70 uppercase tracking-widest">First Step</span>
+            <div className="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-primary to-primary/30 rounded-l-2xl" />
+
+            {/* Icon + audience badge */}
+            <div className="flex items-start justify-between">
+              <span className="text-3xl" role="img" aria-label="Find my match">💍</span>
+              <span className="text-[10px] font-bold uppercase tracking-widest text-yellow-400/70 bg-yellow-500/10 border border-yellow-500/20 px-2.5 py-1 rounded-full">
+                For Singles
+              </span>
             </div>
+
             <div>
-              <h3 className="font-heading text-2xl text-foreground mb-2">
-                Discover Your Relationship Style
+              <h3 className="font-heading text-2xl font-bold text-foreground mb-2">
+                Find My Match
               </h3>
               <p className="text-muted-foreground leading-relaxed text-sm">
-                A guided experience across 6 emotional dimensions. Understand your patterns,
-                needs, and what truly makes you compatible — before looking at anyone else.
+                Build your compatibility profile and get matched with serious, psychologically
+                aligned partners — not just filters and photos.
               </p>
             </div>
+
             <ul className="space-y-2 flex-1">
               {[
-                'Emotional & communication profile',
-                'Values & relationship patterns',
-                'Personal insight after every level',
+                'Personality-driven compatibility matching',
+                'Verified, serious profiles only',
+                'Compatibility Insights with every match',
               ].map(item => (
-                <li key={item} className="flex items-center gap-2 text-sm text-foreground">
+                <li key={item} className="flex items-center gap-2 text-sm text-foreground/85">
                   <Check className="w-4 h-4 text-primary flex-shrink-0" />
                   {item}
                 </li>
               ))}
             </ul>
+
+            <div className="space-y-2">
+              <Link to="/register">
+                <button
+                  className="w-full py-3 rounded-xl text-sm font-bold transition-all duration-200 hover:scale-[1.02] hover:shadow-lg active:scale-[0.98]"
+                  style={{ background: 'linear-gradient(90deg,#D4AF37,#F0CC5A)', color: '#000' }}
+                >
+                  Start Finding Matches →
+                </button>
+              </Link>
+              <p className="text-[11px] text-muted-foreground/50 text-center">
+                Free to join · No obligation
+              </p>
+            </div>
+          </div>
+
+          {/* ── Path B: Understand My Relationship ───────────────────── */}
+          <div className="flex flex-col rounded-2xl p-8 gap-5 relative overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
+            style={{
+              background: '#0F1A2E',
+              border: '1.5px solid rgba(99,102,241,0.35)',
+              boxShadow: '0 0 24px rgba(99,102,241,0.06)',
+            }}>
+            <div className="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-indigo-400 to-indigo-400/20 rounded-l-2xl" />
+
+            {/* Icon + audience badge */}
+            <div className="flex items-start justify-between">
+              <span className="text-3xl" role="img" aria-label="Understand my relationship">🧠</span>
+              <span className="text-[10px] font-bold uppercase tracking-widest text-indigo-300/70 bg-indigo-500/10 border border-indigo-500/20 px-2.5 py-1 rounded-full">
+                For Individuals &amp; Couples
+              </span>
+            </div>
+
+            <div>
+              <h3 className="font-heading text-2xl font-bold text-foreground mb-2">
+                Understand My Relationship
+              </h3>
+              <p className="text-muted-foreground leading-relaxed text-sm">
+                A guided self-discovery experience across 6 emotional dimensions — how you
+                connect, communicate, and build lasting relationships.
+              </p>
+            </div>
+
+            <ul className="space-y-2 flex-1">
+              {[
+                'Emotional & communication style profile',
+                'Relationship patterns & needs',
+                'Personal insight after every dimension',
+              ].map(item => (
+                <li key={item} className="flex items-center gap-2 text-sm text-foreground/85">
+                  <Check className="w-4 h-4 text-indigo-400 flex-shrink-0" />
+                  {item}
+                </li>
+              ))}
+            </ul>
+
             <div className="space-y-2">
               <Link to="/insights">
                 <Button className="w-full font-semibold" data-testid="guided-assessment-btn">
                   <Sparkles className="w-4 h-4 mr-2" />
-                  Start Free Assessment
+                  Start Free Experience
                 </Button>
               </Link>
               <p className="text-[11px] text-muted-foreground/50 text-center">
-                Start instantly — no signup needed
-              </p>
-            </div>
-          </div>
-
-          {/* ── Flow connector ────────────────────────────────────────── */}
-          <div
-            aria-hidden="true"
-            className="flex-none flex flex-col md:flex-row items-center justify-center
-                       py-2 md:py-0 px-0 md:px-5 gap-0"
-          >
-            <div className="w-px h-6 md:h-px md:w-8
-                            bg-gradient-to-b   md:bg-gradient-to-r
-                            from-primary/10 to-primary/40" />
-            <div className="flex flex-col md:flex-row items-center gap-1 mx-0 my-1 md:my-0 md:mx-1">
-              <div className="w-9 h-9 rounded-full
-                              bg-card border border-primary/40
-                              flex items-center justify-center
-                              stage-connector-node">
-                <ArrowDown  className="w-4 h-4 text-primary md:hidden" />
-                <ArrowRight className="w-4 h-4 text-primary hidden md:flex" />
-              </div>
-              <span className="text-[10px] font-semibold text-primary/50
-                               uppercase tracking-widest
-                               md:hidden">
-                then
-              </span>
-            </div>
-            <div className="w-px h-6 md:h-px md:w-8
-                            bg-gradient-to-b   md:bg-gradient-to-r
-                            from-primary/40 to-primary/10" />
-          </div>
-
-          {/* ── Step 2 ────────────────────────────────────────────────── */}
-          <div className="flex-1 rounded-2xl p-8 flex flex-col gap-5 relative overflow-hidden"
-            style={{ background: '#0F1A2E', border: '1px solid rgba(31,42,68,0.9)' }}>
-            <div className="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-secondary to-primary/50 rounded-l-2xl" />
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-primary/15 border border-primary/30 flex items-center justify-center text-primary font-heading font-bold text-lg">
-                2
-              </div>
-              <span className="text-xs font-semibold text-primary/70 uppercase tracking-widest">Then</span>
-            </div>
-            <div>
-              <h3 className="font-heading text-2xl text-foreground mb-2">
-                Get Matched Based on Compatibility
-              </h3>
-              <p className="text-muted-foreground leading-relaxed text-sm">
-                Once you know yourself, find people who are psychologically aligned —
-                not just superficially similar. Real compatibility, not chance.
-              </p>
-            </div>
-            <ul className="space-y-2 flex-1">
-              {[
-                'AI-powered psychological matching',
-                'Verified, serious profiles only',
-                'Deep compatibility reports available',
-              ].map(item => (
-                <li key={item} className="flex items-center gap-2 text-sm text-foreground">
-                  <Check className="w-4 h-4 text-primary flex-shrink-0" />
-                  {item}
-                </li>
-              ))}
-            </ul>
-            <div className="space-y-2">
-              <Link to="/register">
-                <button className="w-full py-2.5 rounded-xl border border-white/15 text-white/70 hover:bg-white/5 hover:text-white text-sm font-semibold transition-all duration-200">
-                  Explore Matches →
-                </button>
-              </Link>
-              <p className="text-[11px] text-muted-foreground/50 text-center">
-                Create your free profile in minutes
+                Start instantly · No signup needed
               </p>
             </div>
           </div>
