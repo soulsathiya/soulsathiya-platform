@@ -6,15 +6,18 @@ from .profile import Gender, MaritalStatus, Religion, EducationLevel
 
 class PartnerPreferenceBase(BaseModel):
     user_id: str
-    
+
     # Age range
     age_min: int = Field(..., ge=18, le=100)
     age_max: int = Field(..., ge=18, le=100)
-    
+
     # Height range
     height_min: Optional[int] = Field(None, ge=120, le=250)
     height_max: Optional[int] = Field(None, ge=120, le=250)
-    
+
+    # Gender preference — None means "no filter / open"
+    preferred_gender: Optional[Gender] = None
+
     # Demographics
     preferred_marital_status: Optional[List[MaritalStatus]] = []
     preferred_religion: Optional[List[Religion]] = []
@@ -43,6 +46,7 @@ class PartnerPreferenceUpdate(BaseModel):
     age_max: Optional[int] = None
     height_min: Optional[int] = None
     height_max: Optional[int] = None
+    preferred_gender: Optional[Gender] = None
     preferred_marital_status: Optional[List[MaritalStatus]] = None
     preferred_religion: Optional[List[Religion]] = None
     preferred_cities: Optional[List[str]] = None

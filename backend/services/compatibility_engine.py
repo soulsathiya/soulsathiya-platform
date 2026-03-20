@@ -190,25 +190,71 @@ class CompatibilityEngine:
         return profile_id
     
     async def get_ranked_matches(self, user_id: str, limit: int = 50) -> List[Dict]:
-        """Compute compatibility scores live against all users with psychometric profiles."""
+        """Compute compatibility scores live against gender-eligible users with psychometric profiles."""
         user_profile = await self.db.psychometric_profiles.find_one(
-            {"user_id": user_id},
-            {"_id": 0}
+            {"user_id": user_id}, {"_id": 0}
         )
-
         if not user_profile:
             return []
 
-        # Fetch all other users who have completed the psychometric assessment
+        # ── Step 1: determine gender filter for this user ────────────────────
+        my_profile = await self.db.profiles.find_one(
+            {"user_id": user_id}, {"_id": 0, "gender": 1}
+        )
+        my_gender = (my_profile or {}).get("gender")  # "male" / "female" / "other" / None
+
+        my_prefs = await self.db.partner_preferences.find_one(
+            {"user_id": user_id}, {"_id": 0, "preferred_gender": 1}
+        )
+        seek_gender = (my_prefs or {}).get("preferred_gender")
+
+        # Default: male seeks female, female seeks male; "other" or unknown → no filter
+        if not seek_gender:
+            if my_gender == "male":
+                seek_gender = "female"
+            elif my_gender == "female":
+                seek_gender = "male"
+            # else seek_gender stays None → no gender restriction
+
+        # ── Step 2: fetch all candidates who finished the psychometric ───────
         other_profiles = await self.db.psychometric_profiles.find(
-            {"user_id": {"$ne": user_id}},
-            {"_id": 0, "user_id": 1}
+            {"user_id": {"$ne": user_id}}, {"_id": 0, "user_id": 1}
         ).to_list(300)
 
         if not other_profiles:
             return []
 
-        # Build supplementary lookup from pre-computed matches (distance, boost signals)
+        other_user_ids = [p["user_id"] for p in other_profiles]
+
+        # ── Step 3: build gender-eligible set (bulk profile fetch) ───────────
+        if seek_gender:
+            gender_profiles = await self.db.profiles.find(
+                {"user_id": {"$in": other_user_ids}, "gender": seek_gender},
+                {"_id": 0, "user_id": 1}
+            ).to_list(300)
+            eligible_ids = {p["user_id"] for p in gender_profiles}
+
+            # Mutual check: candidate must be seeking my_gender or have no preference
+            if my_gender and eligible_ids:
+                cand_prefs = await self.db.partner_preferences.find(
+                    {"user_id": {"$in": list(eligible_ids)}},
+                    {"_id": 0, "user_id": 1, "preferred_gender": 1}
+                ).to_list(300)
+                prefs_map = {p["user_id"]: p.get("preferred_gender") for p in cand_prefs}
+                eligible_ids = {
+                    uid for uid in eligible_ids
+                    if not prefs_map.get(uid) or prefs_map[uid] == my_gender
+                }
+        else:
+            eligible_ids = set(other_user_ids)
+
+        # ── Step 4: build active-user set ────────────────────────────────────
+        raw_users = await self.db.users.find(
+            {"is_active": {"$ne": False}}, {"_id": 0, "user_id": 1}
+        ).to_list(500)
+        active_user_ids = {u["user_id"] for u in raw_users}
+
+        # ── Step 5: supplementary pre-computed signals (distance, boost) ─────
         pre_computed = await self.db.matches.find(
             {"user_id": user_id},
             {"_id": 0, "matched_user_id": 1, "match_id": 1,
@@ -216,28 +262,20 @@ class CompatibilityEngine:
         ).to_list(300)
         pre_computed_map = {m["matched_user_id"]: m for m in pre_computed}
 
-        # Build active-user set to skip inactive accounts
-        active_user_ids = set()
-        raw_users = await self.db.users.find(
-            {"is_active": {"$ne": False}},
-            {"_id": 0, "user_id": 1}
-        ).to_list(500)
-        for u in raw_users:
-            active_user_ids.add(u["user_id"])
-
+        # ── Step 6: score only eligible, active candidates ───────────────────
         enriched_matches = []
-
         for other in other_profiles:
             other_user_id = other["user_id"]
 
             if other_user_id not in active_user_ids:
+                continue
+            if other_user_id not in eligible_ids:        # ← gender gate
                 continue
 
             compat_data = await self.calculate_compatibility(user_id, other_user_id)
             psychometric_score = compat_data["compatibility_percentage"]
 
             pre = pre_computed_map.get(other_user_id, {})
-
             rank_score = (
                 psychometric_score * 0.65 +
                 pre.get("compatibility_score", 50) * 0.15 +
