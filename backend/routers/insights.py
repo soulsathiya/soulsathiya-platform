@@ -465,8 +465,290 @@ def _commitment_tier(xp: int) -> dict:
     return {"label": "Beginning Explorer", "badge": "🌅", "message": _COMMITMENT_TIERS[-1][3], "pct": round(pct * 100)}
 
 
+def _percentile_label(score: int) -> str:
+    """Return a contextual percentile label for a dimension or overall score."""
+    if score >= 85:   return "Top 10% of respondents"
+    if score >= 75:   return "Top 25% of respondents"
+    if score >= 65:   return "Top 40% of respondents"
+    if score >= 55:   return "Above average"
+    if score >= 45:   return "Average range"
+    return "Below average — significant room to grow"
+
+
+def _detect_attachment_style(all_answers: dict) -> dict:
+    """Detect attachment style from s1_q10, or infer from section_1 score."""
+    s1_answers = all_answers.get("section_1", {})
+    q10 = s1_answers.get("s1_q10")
+
+    styles = {
+        "A": {
+            "name": "Secure",
+            "emoji": "💚",
+            "description": "You feel comfortable with both closeness and independence. You trust that love can be steady without needing constant reassurance.",
+            "in_relationships": "You communicate needs clearly, repair conflict gracefully, and create a safe emotional space for your partner to be fully themselves.",
+            "ideal_partner_trait": "Someone equally secure — or genuinely and actively working toward secure attachment.",
+        },
+        "B": {
+            "name": "Anxious",
+            "emoji": "💛",
+            "description": "You love deeply and long for closeness, but can worry about whether you are truly valued. Your sensitivity is a profound relational gift when channelled well.",
+            "in_relationships": "Learning to self-soothe before seeking reassurance will transform how you experience love. Your capacity to feel deeply is your superpower.",
+            "ideal_partner_trait": "Someone consistent, communicative, and emotionally available — who never plays hot and cold and shows up reliably.",
+        },
+        "C": {
+            "name": "Avoidant",
+            "emoji": "💙",
+            "description": "You value your independence deeply and may withdraw when relationships get too close. This is a learned protective response — not a character flaw.",
+            "in_relationships": "Practising vulnerability in small, safe moments is your greatest growth edge. Intimacy and autonomy can genuinely coexist.",
+            "ideal_partner_trait": "Someone who respects your need for space while staying emotionally open — without pressure or ultimatums.",
+        },
+        "D": {
+            "name": "Evolving / Mixed",
+            "emoji": "🌀",
+            "description": "You are in active discovery of your attachment patterns. This awareness puts you ahead of most people, who never examine this layer of themselves at all.",
+            "in_relationships": "Every relationship teaches you something new about how you love. Your openness to learning makes you a deeply rewarding and growing partner.",
+            "ideal_partner_trait": "Someone patient, self-aware, and curious — who sees growth as a shared, lifelong journey rather than a destination.",
+        },
+    }
+
+    if q10 in styles:
+        return styles[q10]
+
+    # Infer from section_1 score as fallback
+    s1_score = _compute_section_score(s1_answers)
+    if s1_score >= 0.75:
+        return styles["A"]
+    elif s1_score >= 0.50:
+        return styles["D"]
+    else:
+        return styles["B"]
+
+
+def _generate_inter_dimension_insights(section_scores: dict) -> list:
+    """Generate 3 personalised cross-dimensional insights from score combinations."""
+    insights = []
+
+    emo  = section_scores.get("section_1", 0.5)
+    val  = section_scores.get("section_2", 0.5)
+    comm = section_scores.get("section_3", 0.5)
+    pat  = section_scores.get("section_4", 0.5)
+    life = section_scores.get("section_5", 0.5)
+    fut  = section_scores.get("section_6", 0.5)
+
+    # Insight 1: Emotional Foundation × Communication
+    if emo >= 0.65 and comm >= 0.65:
+        insights.append("🔗 Emotional Foundation × Communication: You feel deeply and can express those feelings with clarity — an exceptionally rare combination. Most people can do one or the other; you're building the capacity for both. This is the core engine of lasting intimacy.")
+    elif emo >= 0.65 and comm < 0.55:
+        insights.append("🔗 Emotional Foundation × Communication: You have a rich inner emotional world, but translating it into clear spoken language is your growth edge. Bridging the gap between what you feel and what you say will be one of your most transformational relationship investments.")
+    elif emo < 0.55 and comm >= 0.65:
+        insights.append("🔗 Emotional Foundation × Communication: Your communication skills are genuinely strong — you have the language. Now the work is deepening what you're communicating from. Pairing strong expression with deeper emotional self-awareness will take your relationships to an entirely new level.")
+    else:
+        insights.append("🔗 Emotional Foundation × Communication: Both your inner emotional world and its outward expression have meaningful room to develop. Working on these together is powerful — the sequence that works best is: go inward first (what am I feeling?), then outward (how do I express this?).")
+
+    # Insight 2: Relationship Patterns × Growth & Future
+    if pat >= 0.65 and fut >= 0.75:
+        insights.append("🔗 Relationship Patterns × Growth & Future: You've examined how you've loved in the past and you're oriented toward a clear future — this balance is rare and genuinely powerful. You are neither trapped by history nor naive about what lies ahead. This is emotional maturity in action.")
+    elif pat >= 0.65 and fut < 0.60:
+        insights.append("🔗 Relationship Patterns × Growth & Future: You've done impressive work understanding your relationship history. Your next step is translating that self-knowledge into forward momentum. Consider this: what specifically are you building toward — not just what are you healing from?")
+    elif pat < 0.55 and fut >= 0.75:
+        insights.append("🔗 Relationship Patterns × Growth & Future: Your enthusiasm and readiness for the future is genuine and energising. Pairing it with a deeper examination of recurring relationship patterns will make that future far more durable — understanding the past is the best insurance going forward.")
+    else:
+        insights.append("🔗 Relationship Patterns × Growth & Future: Both dimensions have meaningful room to grow. The work of understanding how you've loved before directly feeds the clarity of where you're heading next. These two dimensions are deeply interdependent.")
+
+    # Insight 3: Values & Life Vision × Daily Life & Lifestyle
+    if val >= 0.65 and life >= 0.65:
+        insights.append("🔗 Values & Lifestyle: Your clarity on both your values and your daily lifestyle preferences means you know not just what you believe in, but how you actually want to live. This alignment dramatically reduces the 'small friction' incompatibilities that quietly erode so many relationships over time.")
+    elif val >= 0.65 and life < 0.55:
+        insights.append("🔗 Values & Lifestyle: Your strong values clarity is a wonderful compass — now apply that same intentionality to your daily rhythms and lifestyle. The gap between your principles and your everyday habits is worth closing. How you spend each day is ultimately how you live your values.")
+    elif val < 0.55 and life >= 0.65:
+        insights.append("🔗 Values & Lifestyle: You know how you want to live day-to-day with real clarity. Pairing that with deeper reflection on your core values will give your lifestyle choices lasting meaning and direction. Right now the 'how' of life is clearer than the 'why'.")
+    else:
+        insights.append("🔗 Values & Lifestyle: Clarifying both your values and lifestyle preferences together is some of the most practical relationship preparation you can do. These two dimensions shape everything — from who you are attracted to, to how you navigate everyday life as a couple.")
+
+    return insights
+
+
+def _generate_expanded_partner_profile(section_scores: dict, attachment_style: dict) -> dict:
+    """Generate a rich, multi-dimensional ideal partner profile."""
+    emo  = section_scores.get("section_1", 0.5)
+    val  = section_scores.get("section_2", 0.5)
+    comm = section_scores.get("section_3", 0.5)
+    pat  = section_scores.get("section_4", 0.5)
+    life = section_scores.get("section_5", 0.5)
+    fut  = section_scores.get("section_6", 0.5)
+
+    if emo >= 0.65:
+        emo_trait = "High emotional availability — someone who can meet you in depth and vulnerability without pulling away."
+    elif emo >= 0.45:
+        emo_trait = "Consistent emotional presence — reliable and warm, even if not always intensely expressive."
+    else:
+        emo_trait = "Patient emotional warmth — someone who creates safety gently, without pushing or demanding."
+
+    if val >= 0.65:
+        val_trait = "Strong values alignment — they don't need to be identical to yours, but the fundamentals must resonate deeply."
+    else:
+        val_trait = "Openness to building a shared value system together over time — curious and growth-oriented."
+
+    if comm >= 0.65:
+        comm_trait = "A skilled communicator who can hold difficult conversations with care, presence, and without retreating."
+    else:
+        comm_trait = "A patient communicator who creates space for you to express yourself fully and without judgment."
+
+    if pat >= 0.65:
+        pat_trait = "Someone who has done their own inner work and takes genuine responsibility for their patterns — not a fixer, but a fellow grower."
+    else:
+        pat_trait = "Self-aware, non-judgmental, and willing to grow alongside you — not perfect, but genuinely trying."
+
+    if life >= 0.65:
+        life_trait = "Daily life compatibility — similar rhythms, energy levels, and a shared sense of what a good day looks and feels like."
+    else:
+        life_trait = "Flexibility and adaptability in lifestyle — willing to co-create new rhythms rather than forcing a pre-existing mould."
+
+    if fut >= 0.75:
+        fut_trait = "A clear sense of direction — they know what they are building and why, and they are ready to build it with you."
+    else:
+        fut_trait = "Shared openness to growth and becoming — someone who values who you are each becoming, not just who you are today."
+
+    summary = (
+        f"Based on your {attachment_style['name']} attachment style and your full six-dimension profile, "
+        f"your ideal partner brings {emo_trait.lower().rstrip('.')} "
+        f"and shares {val_trait.lower().rstrip('.')}."
+    )
+
+    return {
+        "summary": summary,
+        "dimensions": [
+            {"label": "Emotional",      "icon": "❤️",  "trait": emo_trait},
+            {"label": "Values",         "icon": "🌟",  "trait": val_trait},
+            {"label": "Communication",  "icon": "💬",  "trait": comm_trait},
+            {"label": "Patterns",       "icon": "🔄",  "trait": pat_trait},
+            {"label": "Lifestyle",      "icon": "☀️",  "trait": life_trait},
+            {"label": "Future",         "icon": "🚀",  "trait": fut_trait},
+        ],
+    }
+
+
+def _generate_score_specific_recommendations(
+    section_scores: dict,
+    section_profiles: list,
+    attachment_style: dict,
+) -> list:
+    """Generate 6 recommendations tied directly to this user's scores and patterns."""
+
+    weakest = sorted(section_profiles, key=lambda x: x["score"])
+
+    dimension_recs = {
+        "Emotional Foundation": (
+            "Start a daily emotional check-in: each evening, name one emotion you felt today and trace it to its likely source. "
+            "This 3-minute practice, done for 30 consecutive days, builds the emotional vocabulary that transforms how you connect."
+        ),
+        "Values & Life Vision": (
+            "Write your personal values manifesto — 3 non-negotiable values and 3 aspirational ones. "
+            "Review it monthly and honestly assess whether your recent choices reflect these values. The gap between stated and lived values is where growth lives."
+        ),
+        "Communication & Connection": (
+            "Practise the 'feel, need, request' framework in one real conversation this week: "
+            "'I feel [emotion]. I need [need]. Could you [specific request]?' "
+            "This single framework, practised consistently, transforms relationship dialogue from reactive to intentional."
+        ),
+        "Relationship Patterns": (
+            "Map your last 3 significant relationships: what initially attracted you, what worked, and what recurring theme or dynamic emerged each time. "
+            "Patterns only become visible when you look across relationships — not just within them. Write it out."
+        ),
+        "Daily Life & Lifestyle": (
+            "Write out your ideal week in specific detail — morning rituals, social energy, weekend pace, financial rhythms. "
+            "Then honestly compare it to how you actually live now. "
+            "This clarity exercise prevents years of lifestyle incompatibility from quietly eroding a promising relationship."
+        ),
+        "Growth & Future": (
+            "Create a vivid, specific 'Relationship Vision': not just 'happy' — specific. "
+            "What do weekday mornings look like? How do you handle disagreement? What does your home feel like? "
+            "Specificity turns a wish into a direction."
+        ),
+    }
+
+    recs = []
+
+    # Rec 1: Weakest dimension — most targeted advice
+    recs.append(dimension_recs.get(
+        weakest[0]["title"],
+        "Focus daily, intentional practice on your lowest-scoring dimension — even 10 minutes a day creates compound growth over 90 days."
+    ))
+
+    # Rec 2: Attachment style — personalised book/practice
+    attachment_name = attachment_style.get("name", "")
+    if attachment_name == "Anxious":
+        recs.append(
+            "Read 'Attached' by Levine & Heller, focusing closely on the Anxious Attachment chapter. "
+            "Then identify your top 3 specific triggers — the situations that most activate your anxious patterns. "
+            "Naming them precisely is 50% of rewiring them."
+        )
+    elif attachment_name == "Avoidant":
+        recs.append(
+            "Read 'Attached' by Levine & Heller, focusing on the Avoidant chapter. "
+            "Then practise one deliberate act of vulnerability per week — sharing something real with someone safe. "
+            "Small, consistent steps are how avoidant patterns are genuinely transformed."
+        )
+    elif attachment_name == "Secure":
+        recs.append(
+            "Your secure attachment is a real relational asset. "
+            "Read 'The Relationship Cure' by John Gottman to deepen your ability to support partners "
+            "who may carry different (and more challenging) attachment histories than your own."
+        )
+    else:
+        recs.append(
+            "Read 'Attached' by Levine & Heller to map your attachment patterns with greater precision. "
+            "Understanding the Secure, Anxious, and Avoidant styles will clarify dynamics you may have sensed but not yet been able to name."
+        )
+
+    # Rec 3: Communication-specific (personalised by score)
+    comm_score = section_scores.get("section_3", 0.5)
+    if comm_score < 0.65:
+        recs.append(
+            "Invest in one communication skill this month: active listening without preparing your response. "
+            "In your next 3 significant conversations, your only task is to understand — not to be understood. "
+            "This single shift changes the quality of every relationship you have."
+        )
+    else:
+        recs.append(
+            "Your communication strength is a genuine gift to your relationships. "
+            "Now deepen it under pressure: develop a personal 'pause signal' — a word or phrase that means "
+            "'I need 20 minutes before I can discuss this well.' Using it consistently prevents the reactive moments that undo good communication."
+        )
+
+    # Rec 4: Second weakest dimension
+    recs.append(dimension_recs.get(
+        weakest[1]["title"],
+        "Apply intentional daily practice to your second-lowest dimension — consistent small actions over 60 days will create measurable change."
+    ))
+
+    # Rec 5: Therapy / coaching (personalised by scores)
+    emo_score = section_scores.get("section_1", 0.5)
+    pat_score = section_scores.get("section_4", 0.5)
+    if emo_score < 0.55 or pat_score < 0.55:
+        recs.append(
+            "Consider 6 sessions with a therapist who specialises in attachment and relationship patterns. "
+            "For your specific profile — where Emotional Foundation or Relationship Patterns show the most growth potential — "
+            "this is the highest-ROI investment you can make in your relationship future."
+        )
+    else:
+        recs.append(
+            "Consider 3 sessions with a relationship-focused coach to convert this report's insights into specific, accountable goals. "
+            "Even high scorers benefit enormously from a structured space for reflection and targeted practice."
+        )
+
+    # Rec 6: Reassessment with specific dimensions named
+    recs.append(
+        f"Retake this assessment in 6 months and track the movement in your '{weakest[0]['title']}' "
+        f"and '{weakest[1]['title']}' scores specifically — these are your two highest-leverage dimensions right now. "
+        f"Scores are not fixed. They reflect where you are, not who you are."
+    )
+
+    return recs
+
+
 def _generate_full_report(all_answers: dict, user_name: str = "") -> dict:
-    """Generate the complete ₹999 Relationship Intelligence Report."""
+    """Generate the complete, enriched ₹999 Relationship Intelligence Report."""
     section_scores = {}
     section_profiles = []
     total_score = 0.0
@@ -478,12 +760,14 @@ def _generate_full_report(all_answers: dict, user_name: str = "") -> dict:
         section_scores[sid] = score
         total_score += score
         insight = _get_mini_insight(sid, score)
+        score_int = round(score * 100)
         section_profiles.append({
             "section_id": sid,
             "title": section["title"],
             "icon": section["icon"],
             "level": section["level"],
-            "score": round(score * 100),
+            "score": score_int,
+            "percentile": _percentile_label(score_int),
             "profile": insight["profile"],
             "badge": insight["badge"],
             "headline": insight["headline"],
@@ -494,58 +778,97 @@ def _generate_full_report(all_answers: dict, user_name: str = "") -> dict:
 
     overall = round((total_score / SECTIONS_COUNT) * 100)
 
-    # Determine top strengths and growth areas
+    # Sort by score for strengths / growth areas
     sorted_by_score = sorted(section_profiles, key=lambda x: x["score"], reverse=True)
-    top_strengths  = [s["strength"] for s in sorted_by_score[:3]]
-    growth_areas   = [s["growth"]   for s in sorted_by_score[-3:]]
+    top3   = sorted_by_score[:3]
+    bottom3 = sorted_by_score[-3:]
 
-    # Partner compatibility profile (based on dominant patterns)
-    emo_score  = section_scores.get("section_1", 0.5)
-    comm_score = section_scores.get("section_3", 0.5)
-    ready_score = section_scores.get("section_4", 0.5)
+    # Synthesised strengths — include dimension title and score for context
+    top_strengths = [
+        f"{top3[0]['title']} ({top3[0]['score']}/100): {top3[0]['strength']}",
+        f"{top3[1]['title']} ({top3[1]['score']}/100): {top3[1]['strength']}",
+        f"{top3[2]['title']} ({top3[2]['score']}/100): {top3[2]['strength']}",
+    ]
+    growth_areas = [
+        f"{bottom3[2]['title']} ({bottom3[2]['score']}/100): {bottom3[2]['growth']}",
+        f"{bottom3[1]['title']} ({bottom3[1]['score']}/100): {bottom3[1]['growth']}",
+        f"{bottom3[0]['title']} ({bottom3[0]['score']}/100): {bottom3[0]['growth']}",
+    ]
 
-    if emo_score >= 0.65 and comm_score >= 0.65:
-        partner_profile = "Someone with high emotional availability and a willingness to engage in deep, honest conversation. They should match your emotional literacy and value vulnerability as a strength."
-    elif ready_score >= 0.65:
-        partner_profile = "Someone who is equally ready for commitment and has done their own inner work. Shared values and clear communication will be your strongest foundation."
+    # New enriched sections
+    attachment_style = _detect_attachment_style(all_answers)
+    inter_dimension_insights = _generate_inter_dimension_insights(section_scores)
+    expanded_partner = _generate_expanded_partner_profile(section_scores, attachment_style)
+    recommendations = _generate_score_specific_recommendations(section_scores, section_profiles, attachment_style)
+
+    # Score context explanation
+    if overall >= 80:
+        score_context = (
+            f"A score of {overall}/100 places you in the top tier of relationship readiness. "
+            f"You've done meaningful self-work across most dimensions. "
+            f"The growth areas that remain are nuanced — the kind that only reveal themselves at depth."
+        )
+    elif overall >= 65:
+        score_context = (
+            f"A score of {overall}/100 reflects genuine emotional intelligence with specific areas still developing. "
+            f"This is a healthy, realistic profile — and importantly, your growth areas are clearly identifiable and directly actionable."
+        )
+    elif overall >= 50:
+        score_context = (
+            f"A score of {overall}/100 shows you are on a genuine growth journey. "
+            f"Several dimensions have meaningful room to develop, and this report gives you a clear, prioritised roadmap for where to focus your energy."
+        )
     else:
-        partner_profile = "Someone patient and consistent — who creates safety and gives you the space to grow into the relationship at your natural pace. Stability and gentleness will matter most."
+        score_context = (
+            f"A score of {overall}/100 reflects an honest self-assessment at the start of a deeper journey. "
+            f"This level of honesty is the most important starting point — far more valuable than a high score built on self-deception."
+        )
 
-    # ── Commitment Score (XP) ──────────────────────────────────────────────
+    # Fix headline: name goes at the front, no double-name bug
+    first_name = user_name.split()[0] if user_name else ""
+    if first_name:
+        if overall >= 60:
+            headline = f"{first_name}, your Relationship Intelligence is rich, layered, and full of promise."
+        else:
+            headline = f"{first_name}, you are at the beginning of something significant."
+    else:
+        if overall >= 60:
+            headline = "Your Relationship Intelligence is rich, layered, and full of promise."
+        else:
+            headline = "You are at the beginning of something significant."
+
+    # Commitment Score (XP)
     total_answered = sum(len(v) for v in all_answers.values() if isinstance(v, dict))
     xp_earned      = min(total_answered * _XP_PER_Q, _XP_MAX)
     commitment     = _commitment_tier(xp_earned)
 
-    name_str = f" {user_name.split()[0]}" if user_name else ""
-
     return {
         "overall_score": overall,
         "overall_label": "Advanced" if overall >= 70 else ("Developing" if overall >= 45 else "Foundational"),
-        "headline": f"Your Relationship Intelligence is{name_str} rich, layered, and full of promise." if overall >= 60 else f"You are at the beginning of something significant{name_str}.",
+        "overall_percentile": _percentile_label(overall),
+        "headline": headline,
         "summary": (
             f"Across all six dimensions of relationship intelligence, you scored {overall}/100. "
-            f"Your strongest dimension is {sorted_by_score[0]['title']} — where you demonstrate "
-            f"{sorted_by_score[0]['profile'].lower()}. Your most meaningful area for growth is "
-            f"{sorted_by_score[-1]['title']}, where conscious work will unlock your greatest transformation."
+            f"Your strongest dimension is {sorted_by_score[0]['title']} ({sorted_by_score[0]['score']}/100) — "
+            f"where you demonstrate {sorted_by_score[0]['profile'].lower()}. "
+            f"Your greatest growth opportunity is {sorted_by_score[-1]['title']} ({sorted_by_score[-1]['score']}/100), "
+            f"where focused work will unlock your most significant transformation."
         ),
+        "score_context": score_context,
         "section_profiles": section_profiles,
         "top_strengths": top_strengths,
         "growth_areas": growth_areas,
+        "attachment_style": attachment_style,
+        "inter_dimension_insights": inter_dimension_insights,
         "xp_earned": xp_earned,
         "xp_max": _XP_MAX,
         "commitment_tier": commitment["label"],
         "commitment_badge": commitment["badge"],
         "commitment_pct": commitment["pct"],
         "commitment_message": commitment["message"],
-        "partner_compatibility_profile": partner_profile,
-        "recommendations": [
-            "Begin a daily emotional check-in practice: 3 minutes of journaling about what you're feeling and why.",
-            "Identify your top 3 values and assess every relationship choice against them for 90 days.",
-            "Read 'Attached' by Levine & Heller to understand your attachment style more deeply.",
-            "Practice the 'feel, need, request' communication framework in all relationships — romantic and platonic.",
-            "Find a therapist or coach specialising in relationship patterns for 6 sessions. It will be the best investment you make.",
-            "Complete this assessment again in 6 months to track your growth.",
-        ],
+        "partner_compatibility_profile": expanded_partner["summary"],
+        "partner_profile_dimensions": expanded_partner["dimensions"],
+        "recommendations": recommendations,
         "generated_at": datetime.now(timezone.utc).isoformat(),
     }
 
