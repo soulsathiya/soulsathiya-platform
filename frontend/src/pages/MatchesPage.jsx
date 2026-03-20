@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { Heart, ShieldCheck, MapPin, Briefcase, Zap, MessageCircle, UserPlus, Loader2, Filter, Star } from 'lucide-react';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
+import { Heart, ShieldCheck, MapPin, Briefcase, Zap, MessageCircle, UserPlus, Loader2, Filter, Star, Sparkles, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -144,11 +144,14 @@ const MatchCard = ({ match, onSendInterest, interestsSent }) => {
 
 const MatchesPage = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const isNewUser = new URLSearchParams(location.search).get('new') === 'true';
   const [matches, setMatches] = useState([]);
   const [loading, setLoading] = useState(true);
   const [interestsSent, setInterestsSent] = useState(new Set());
   const [user, setUser] = useState(null);
   const [sortBy, setSortBy] = useState('compatibility');
+  const [showWelcomeBanner, setShowWelcomeBanner] = useState(isNewUser);
 
   useEffect(() => {
     const init = async () => {
@@ -213,6 +216,37 @@ const MatchesPage = () => {
       </header>
 
       <main className="container mx-auto px-6 py-10 max-w-7xl">
+
+        {/* ── First-time welcome banner ── */}
+        {showWelcomeBanner && (
+          <div
+            className="relative mb-8 rounded-2xl overflow-hidden"
+            style={{ background: 'linear-gradient(135deg, rgba(212,175,55,0.12) 0%, rgba(99,102,241,0.10) 100%)', border: '1px solid rgba(212,175,55,0.25)' }}
+          >
+            <div className="px-6 py-5 flex flex-col sm:flex-row sm:items-center gap-4">
+              {/* Icon */}
+              <div className="w-12 h-12 rounded-xl flex-shrink-0 flex items-center justify-center" style={{ background: 'rgba(212,175,55,0.15)' }}>
+                <Sparkles className="w-6 h-6" style={{ color: '#D4AF37' }} />
+              </div>
+              {/* Text */}
+              <div className="flex-1 min-w-0">
+                <p className="font-bold text-white text-base leading-snug">Your compatibility profile is live! 🎉</p>
+                <p className="text-sm mt-0.5" style={{ color: 'rgba(255,255,255,0.5)' }}>
+                  These matches are ranked by your psychometric compatibility score — the deeper your answers, the more accurate the match.
+                </p>
+              </div>
+              {/* Dismiss */}
+              <button
+                onClick={() => setShowWelcomeBanner(false)}
+                className="absolute top-3 right-3 p-1 rounded-lg transition-colors hover:bg-white/10"
+                aria-label="Dismiss"
+              >
+                <X className="w-4 h-4 text-white/40" />
+              </button>
+            </div>
+          </div>
+        )}
+
         {/* Page Title */}
         <div className="mb-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>

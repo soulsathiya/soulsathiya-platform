@@ -597,7 +597,7 @@ const PsychometricOnboarding = () => {
 
   // ── Result screen ─────────────────────────────────────────────────────────
   if (view === 'result' && result) {
-    return <ResultScreen score={result.overall} dimScores={result.dimScores} onDashboard={() => navigate('/dashboard')} />;
+    return <ResultScreen score={result.overall} dimScores={result.dimScores} onDashboard={() => navigate('/matches?new=true')} />;
   }
 
   // ── Quiz screen ───────────────────────────────────────────────────────────
