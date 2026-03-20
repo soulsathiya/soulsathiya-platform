@@ -249,22 +249,23 @@ async def send_otp(request: Request, body: SendOtpRequest):
     otp_code = _generate_otp()
     expires_at = datetime.now(timezone.utc) + timedelta(minutes=10)
 
-    # Upsert OTP record (one active OTP per email at a time).
-    # Use a case-insensitive regex filter so that any previously stored variant
-    # of the email (e.g. mixed case from an older client) is found and updated
-    # rather than a second document being inserted.
-    await db.otp_tokens.update_one(
-        {"email": {"$regex": f"^{body.email}$", "$options": "i"}},
-        {
-            "$set": {
-                "email": body.email,   # normalise to lowercase on every write
-                "otp": otp_code,
-                "expires_at": expires_at,
-                "used": False,
-            }
-        },
-        upsert=True,
+    import re as _re
+    _escaped = _re.escape(body.email)
+
+    # Delete ALL existing OTP records for this email (case-insensitive) before
+    # inserting a fresh one.  The old approach (regex upsert without sort) had a
+    # bug: if multiple documents existed for the same email, update_one picked an
+    # indeterminate one to update while find_one(sort=[("_id",-1)]) returned a
+    # different (stale) document, causing consistent "Invalid OTP" failures.
+    await db.otp_tokens.delete_many(
+        {"email": {"$regex": f"^{_escaped}$", "$options": "i"}}
     )
+    await db.otp_tokens.insert_one({
+        "email": body.email,
+        "otp": otp_code,
+        "expires_at": expires_at,
+        "used": False,
+    })
 
     sent = await email_service.send_otp_email(to=body.email, otp=otp_code)
 
@@ -279,9 +280,11 @@ async def send_otp(request: Request, body: SendOtpRequest):
 @limiter.limit("10/minute")
 async def verify_otp(request: Request, body: VerifyOtpRequest):
     """Verify an OTP and log the user in (creating an account if needed)."""
+    import re as _re
+    _escaped_email = _re.escape(body.email)
     # Always fetch the most recently issued OTP for this email
     record = await db.otp_tokens.find_one(
-        {"email": {"$regex": f"^{body.email}$", "$options": "i"}},
+        {"email": {"$regex": f"^{_escaped_email}$", "$options": "i"}},
         sort=[("_id", -1)],
     )
 
@@ -300,15 +303,14 @@ async def verify_otp(request: Request, body: VerifyOtpRequest):
 
     # Explicit str() cast on stored value guards against int/str type mismatch
     # Strip all non-digits from the submitted OTP as extra defence
-    import re as _re
     stored_otp    = str(record.get("otp", "")).strip()
     submitted_otp = _re.sub(r"\D", "", body.otp.strip())
 
     if stored_otp != submitted_otp:
         raise HTTPException(status_code=400, detail="Invalid OTP. Please try again.")
 
-    # Mark OTP as used
-    await db.otp_tokens.update_one({"email": body.email}, {"$set": {"used": True}})
+    # Mark the specific OTP document as used (by _id to avoid any ambiguity)
+    await db.otp_tokens.update_one({"_id": record["_id"]}, {"$set": {"used": True}})
 
     # Get or create user (email-only account, no password)
     user = await auth_service.get_user_by_email(body.email)

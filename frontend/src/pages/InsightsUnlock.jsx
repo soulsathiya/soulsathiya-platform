@@ -385,7 +385,7 @@ export default function InsightsUnlock() {
                         type="email"
                         value={email}
                         onChange={e => setEmail(e.target.value)}
-                        onKeyDown={e => e.key === 'Enter' && handleSendOtp()}
+                        onKeyDown={e => e.key === 'Enter' && !loggingIn && handleSendOtp()}
                         placeholder="you@example.com"
                         style={{
                           flex: 1, background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.12)',
