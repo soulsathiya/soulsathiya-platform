@@ -12,7 +12,7 @@ class InterestStatus(str, Enum):
 
 
 class InterestBase(BaseModel):
-    from_user_id: str
+    from_user_id: Optional[str] = None   # set server-side from session; not required in request body
     to_user_id: str
     message: Optional[str] = None
 

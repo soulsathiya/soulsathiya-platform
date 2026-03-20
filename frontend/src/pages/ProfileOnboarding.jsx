@@ -641,12 +641,20 @@ const ProfileOnboarding = () => {
         ? preferences.preferred_cities.split(',').map((s) => s.trim()).filter(Boolean)
         : [];
 
+      // Derive preferred_gender from user's own gender (opposite by default)
+      const ownGender = profile.gender;
+      const derivedPreferredGender =
+        ownGender === 'male' ? 'female' :
+        ownGender === 'female' ? 'male' :
+        undefined;
+
       const prefsPayload = {
         user_id: user?.user_id || '',
         age_min: parseInt(preferences.age_min) || 21,
         age_max: parseInt(preferences.age_max) || 35,
         ...(preferences.height_min && { height_min: parseInt(preferences.height_min) }),
         ...(preferences.height_max && { height_max: parseInt(preferences.height_max) }),
+        ...(derivedPreferredGender && { preferred_gender: derivedPreferredGender }),
         preferred_religion: preferences.preferred_religion,
         preferred_education: preferences.preferred_education,
         preferred_marital_status: preferences.preferred_marital_status,

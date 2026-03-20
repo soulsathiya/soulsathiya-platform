@@ -233,19 +233,8 @@ class CompatibilityEngine:
                 {"_id": 0, "user_id": 1}
             ).to_list(300)
             eligible_ids = {p["user_id"] for p in gender_profiles}
-
-            # Mutual check: candidate must be seeking my_gender or have no preference
-            if my_gender and eligible_ids:
-                cand_prefs = await self.db.partner_preferences.find(
-                    {"user_id": {"$in": list(eligible_ids)}},
-                    {"_id": 0, "user_id": 1, "preferred_gender": 1}
-                ).to_list(300)
-                prefs_map = {p["user_id"]: p.get("preferred_gender") for p in cand_prefs}
-                eligible_ids = {
-                    uid for uid in eligible_ids
-                    if not prefs_map.get(uid) or prefs_map[uid] == my_gender
-                }
         else:
+            # No gender preference set and no own gender on record → show everyone
             eligible_ids = set(other_user_ids)
 
         # ── Step 4: build active-user set ────────────────────────────────────
