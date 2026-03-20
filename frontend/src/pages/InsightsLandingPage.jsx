@@ -289,7 +289,7 @@ export default function InsightsLandingPage() {
                 { icon: '💬', text: 'Communication chemistry — love language match & conflict style analysis' },
                 { icon: '🔄', text: 'Relationship pattern overlap — where your histories intertwine' },
                 { icon: '☀️', text: 'Lifestyle compatibility — pace, family, and daily rhythm' },
-                { icon: '🚀', text: 'Growth trajectory — where you're headed together' },
+                { icon: '🚀', text: "Growth trajectory — where you're headed together" },
               ].map(({ icon, text }) => (
                 <div key={text} style={{ display: 'flex', alignItems: 'flex-start', gap: 12, marginBottom: 14 }}>
                   <span style={{ fontSize: 16, flexShrink: 0 }}>{icon}</span>
