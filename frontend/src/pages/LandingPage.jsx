@@ -276,18 +276,19 @@ function PricingSection() {
         </div>
 
         {/* ═══════════════════════════════════════════════════════════════
-            SECTION B — SoulSathiya Relationship Intelligence Report
+            SECTION B — SoulSathiya Relationship Intelligence Reports
         ════════════════════════════════════════════════════════════════ */}
         <div>
           <div className="flex items-center gap-3 mb-6">
             <span className="text-lg" role="img" aria-label="brain">🧠</span>
             <div>
-              <h3 className="font-heading text-lg font-bold text-foreground">SoulSathiya Relationship Intelligence Report</h3>
+              <h3 className="font-heading text-lg font-bold text-foreground">SoulSathiya Relationship Intelligence</h3>
               <p className="text-xs text-muted-foreground">For individuals &amp; couples — one-time, no subscription</p>
             </div>
           </div>
 
-          <div className="rounded-2xl p-8 flex flex-col md:flex-row gap-8 items-center"
+          {/* ── Individual Report ── */}
+          <div className="rounded-2xl p-8 flex flex-col md:flex-row gap-8 items-center mb-4"
             style={{
               background: 'linear-gradient(135deg, rgba(212,165,32,0.05) 0%, #0F1A2E 100%)',
               border: '1.5px solid rgba(212,165,32,0.35)',
@@ -297,22 +298,22 @@ function PricingSection() {
             {/* Left — pricing + description */}
             <div className="flex-1 space-y-4">
               <div className="flex items-center gap-2 flex-wrap">
-                <PlanBadge variant="gold">🧠 Self-Discovery</PlanBadge>
+                <PlanBadge variant="gold">🧠 Individual</PlanBadge>
                 <PlanBadge variant="new">Start Instantly</PlanBadge>
               </div>
               <div>
-                <p className="text-xs font-bold text-yellow-400/60 uppercase tracking-widest mb-1">Relationship Intelligence</p>
+                <p className="text-xs font-bold text-yellow-400/60 uppercase tracking-widest mb-1">Relationship Intelligence Report</p>
                 <h4 className="font-heading text-2xl font-bold text-white mb-2">Know Yourself. Understand How You Connect.</h4>
                 <p className="text-sm text-white/60 leading-relaxed max-w-md">
-                  A guided experience across 6 emotional dimensions. For anyone who wants to understand
-                  how they connect, communicate, and build lasting relationships — regardless of where they are in life.
+                  108 questions across 6 emotional dimensions. For anyone — single or in a relationship — who wants to understand
+                  how they connect, communicate, and build lasting love.
                 </p>
               </div>
               <div>
                 <p className="text-xs text-white/35 mb-1">Assessment is completely free · Full report one-time</p>
                 <div className="flex items-baseline gap-2">
                   <span className="text-4xl font-extrabold text-yellow-400">₹999</span>
-                  <span className="text-white/40 text-sm">one-time · no subscription</span>
+                  <span className="text-white/40 text-sm">per person · one-time</span>
                 </div>
               </div>
               <Link to="/insights" className="inline-block">
@@ -336,7 +337,7 @@ function PricingSection() {
                   '3 areas with the most room to grow',
                   'What you need most in a partner or relationship',
                   '6 personalised insights to act on',
-                  'Downloadable personal report',
+                  'Downloadable print-ready report',
                 ].map(f => (
                   <li key={f} className="flex items-start gap-2.5 text-sm">
                     <Check className="w-4 h-4 text-yellow-400 mt-0.5 shrink-0" />
@@ -344,6 +345,82 @@ function PricingSection() {
                   </li>
                 ))}
               </ul>
+            </div>
+
+          </div>
+
+          {/* ── Compatibility Intelligence Report — Couple Pricing ── */}
+          <div className="rounded-2xl p-8"
+            style={{
+              background: 'linear-gradient(135deg, rgba(99,102,241,0.06) 0%, rgba(212,165,32,0.04) 100%)',
+              border: '1.5px solid rgba(99,102,241,0.30)',
+            }}>
+
+            <div className="flex items-center gap-3 mb-6">
+              <span className="text-2xl">💞</span>
+              <div>
+                <p className="text-xs font-bold uppercase tracking-widest mb-0.5" style={{ color: '#818cf8' }}>For Couples</p>
+                <h4 className="font-heading text-xl font-bold text-white">Compatibility Intelligence Report</h4>
+                <p className="text-xs text-white/50 mt-0.5">Both partners complete their 108-question assessment independently, then unlock a deep cross-analysis — one payment, both get full access.</p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+
+              {/* Path 1 */}
+              <div className="rounded-xl p-5 flex flex-col gap-3"
+                style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(99,102,241,0.2)' }}>
+                <div className="text-xs font-bold uppercase tracking-widest text-white/40">Path 1</div>
+                <div className="text-xs text-white/50 leading-snug">Both have individual reports (each paid ₹999)</div>
+                <div className="mt-auto">
+                  <div className="flex items-baseline gap-1.5">
+                    <span className="text-3xl font-extrabold" style={{ color: '#818cf8' }}>₹799</span>
+                    <span className="text-white/40 text-xs">per couple</span>
+                  </div>
+                  <div className="text-[11px] text-white/35 mt-1">Either partner pays · both get access</div>
+                </div>
+              </div>
+
+              {/* Path 2 */}
+              <div className="rounded-xl p-5 flex flex-col gap-3 relative"
+                style={{ background: 'rgba(212,165,32,0.06)', border: '1.5px solid rgba(212,165,32,0.35)' }}>
+                <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+                  <span className="bg-yellow-500 text-black text-[10px] font-bold px-3 py-1 rounded-full whitespace-nowrap">Most Chosen</span>
+                </div>
+                <div className="text-xs font-bold uppercase tracking-widest text-yellow-400/60">Path 2</div>
+                <div className="text-xs text-white/50 leading-snug">One has individual report, partner doesn't yet</div>
+                <div className="mt-auto">
+                  <div className="flex items-baseline gap-1.5">
+                    <span className="text-3xl font-extrabold text-yellow-400">₹1,499</span>
+                  </div>
+                  <div className="text-[11px] text-white/35 mt-1">Partner's report + Compatibility Report · saves ₹299</div>
+                </div>
+              </div>
+
+              {/* Path 3 */}
+              <div className="rounded-xl p-5 flex flex-col gap-3"
+                style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(99,102,241,0.2)' }}>
+                <div className="text-xs font-bold uppercase tracking-widest text-white/40">Path 3</div>
+                <div className="text-xs text-white/50 leading-snug">Neither has taken the assessment yet</div>
+                <div className="mt-auto">
+                  <div className="flex items-baseline gap-1.5">
+                    <span className="text-3xl font-extrabold" style={{ color: '#818cf8' }}>₹1,999</span>
+                    <span className="text-white/40 text-xs">couple pack</span>
+                  </div>
+                  <div className="text-[11px] text-white/35 mt-1">Both individual reports + Compatibility Report · saves ₹798</div>
+                </div>
+              </div>
+
+            </div>
+
+            <div className="mt-6 flex flex-col sm:flex-row gap-3 items-start sm:items-center">
+              <Link to="/insights" className="inline-block">
+                <button className="px-6 py-2.5 rounded-xl text-sm font-bold transition-all duration-200 hover:scale-[1.02]"
+                  style={{ background: 'linear-gradient(90deg,#D4AF37,#F0CC5A)', color: '#000' }}>
+                  Start Your Assessment →
+                </button>
+              </Link>
+              <p className="text-[11px] text-white/35">Complete your individual report first, then invite your partner from within the report.</p>
             </div>
 
           </div>

@@ -257,6 +257,111 @@ export default function InsightsLandingPage() {
         </div>
       </section>
 
+      {/* ── Compatibility Intelligence Report ── */}
+      <section style={{ padding: '80px 24px' }}>
+        <div style={{ maxWidth: 960, margin: '0 auto' }}>
+
+          {/* Section header */}
+          <div style={{ textAlign: 'center', marginBottom: 52 }}>
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: 'rgba(212,165,32,0.1)', border: '1px solid rgba(212,165,32,0.3)', borderRadius: 20, padding: '6px 16px', marginBottom: 20, fontSize: 12, color: GOLD, fontFamily: 'sans-serif', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
+              💞 For Couples
+            </div>
+            <h2 style={{ fontFamily: 'Cormorant Garamond, Georgia, serif', fontSize: 'clamp(28px, 4vw, 44px)', fontWeight: 700, marginBottom: 18, lineHeight: 1.2 }}>
+              Go Deeper Together —<br />
+              <span style={{ color: GOLD }}>Compatibility Intelligence Report</span>
+            </h2>
+            <p style={{ fontSize: 16, color: 'rgba(245,237,216,0.65)', maxWidth: 560, margin: '0 auto', lineHeight: 1.7 }}>
+              Once both partners complete the 108-question assessment independently, SoulSathiya
+              cross-analyses both profiles to reveal how your relationship truly works — and where it can grow.
+            </p>
+          </div>
+
+          {/* Two columns: what you get + pricing */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 28, marginBottom: 40 }}>
+
+            {/* What you get */}
+            <div style={{ background: CARD, border: '1px solid rgba(212,165,32,0.15)', borderRadius: 20, padding: '32px 28px' }}>
+              <div style={{ fontSize: 28, marginBottom: 16 }}>🔬</div>
+              <div style={{ fontFamily: 'Cormorant Garamond, Georgia, serif', fontSize: 22, fontWeight: 700, marginBottom: 20 }}>What You'll Discover</div>
+              {[
+                { icon: '❤️', text: 'Emotional dynamic — your combined attachment map' },
+                { icon: '🌟', text: 'Values alignment — deal-breakers surfaced, shared vision revealed' },
+                { icon: '💬', text: 'Communication chemistry — love language match & conflict style analysis' },
+                { icon: '🔄', text: 'Relationship pattern overlap — where your histories intertwine' },
+                { icon: '☀️', text: 'Lifestyle compatibility — pace, family, and daily rhythm' },
+                { icon: '🚀', text: 'Growth trajectory — where you're headed together' },
+              ].map(({ icon, text }) => (
+                <div key={text} style={{ display: 'flex', alignItems: 'flex-start', gap: 12, marginBottom: 14 }}>
+                  <span style={{ fontSize: 16, flexShrink: 0 }}>{icon}</span>
+                  <span style={{ fontSize: 14, color: 'rgba(245,237,216,0.75)', lineHeight: 1.55 }}>{text}</span>
+                </div>
+              ))}
+              <div style={{ marginTop: 20, background: 'rgba(212,165,32,0.07)', border: '1px solid rgba(212,165,32,0.2)', borderRadius: 10, padding: '12px 16px', fontSize: 13, color: 'rgba(245,237,216,0.7)', lineHeight: 1.6 }}>
+                <strong style={{ color: GOLD }}>One payment, two people.</strong> Either partner pays — both get full access to the shared report.
+              </div>
+            </div>
+
+            {/* Pricing paths */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+
+              {/* Path 1 */}
+              <div style={{ background: CARD, border: '1px solid rgba(212,165,32,0.15)', borderRadius: 16, padding: '22px 24px' }}>
+                <div style={{ fontSize: 12, color: 'rgba(245,237,216,0.45)', fontFamily: 'sans-serif', letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: 8 }}>Both have individual reports</div>
+                <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, marginBottom: 6 }}>
+                  <span style={{ fontFamily: 'Cormorant Garamond, Georgia, serif', fontSize: 32, fontWeight: 700, color: GOLD }}>₹799</span>
+                  <span style={{ fontSize: 13, color: 'rgba(245,237,216,0.5)' }}>per couple</span>
+                </div>
+                <div style={{ fontSize: 13, color: 'rgba(245,237,216,0.6)', lineHeight: 1.5 }}>Just the Compatibility Intelligence Report — one partner pays, both access</div>
+              </div>
+
+              {/* Path 2 — Most Chosen */}
+              <div style={{ background: 'rgba(212,165,32,0.07)', border: `1.5px solid ${GOLD}`, borderRadius: 16, padding: '22px 24px', position: 'relative' }}>
+                <div style={{ position: 'absolute', top: -11, left: 20, background: `linear-gradient(135deg, ${GOLD}, #B8860B)`, color: '#0C1323', fontSize: 11, fontWeight: 700, padding: '3px 12px', borderRadius: 20, fontFamily: 'sans-serif', letterSpacing: '0.05em' }}>
+                  MOST CHOSEN
+                </div>
+                <div style={{ fontSize: 12, color: 'rgba(245,237,216,0.45)', fontFamily: 'sans-serif', letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: 8 }}>One has individual report, partner hasn't yet</div>
+                <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, marginBottom: 6 }}>
+                  <span style={{ fontFamily: 'Cormorant Garamond, Georgia, serif', fontSize: 32, fontWeight: 700, color: GOLD }}>₹1,499</span>
+                </div>
+                <div style={{ fontSize: 13, color: 'rgba(245,237,216,0.6)', lineHeight: 1.5 }}>Partner's individual report + Compatibility Report · saves ₹299</div>
+              </div>
+
+              {/* Path 3 */}
+              <div style={{ background: CARD, border: '1px solid rgba(212,165,32,0.15)', borderRadius: 16, padding: '22px 24px' }}>
+                <div style={{ fontSize: 12, color: 'rgba(245,237,216,0.45)', fontFamily: 'sans-serif', letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: 8 }}>Neither has taken the assessment</div>
+                <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, marginBottom: 6 }}>
+                  <span style={{ fontFamily: 'Cormorant Garamond, Georgia, serif', fontSize: 32, fontWeight: 700, color: GOLD }}>₹1,999</span>
+                  <span style={{ fontSize: 13, color: 'rgba(245,237,216,0.5)' }}>couple pack</span>
+                </div>
+                <div style={{ fontSize: 13, color: 'rgba(245,237,216,0.6)', lineHeight: 1.5 }}>Both individual reports + Compatibility Report · saves ₹798</div>
+              </div>
+
+            </div>
+          </div>
+
+          {/* CTA */}
+          <div style={{ textAlign: 'center' }}>
+            <button
+              onClick={() => window.location.href = '/insights/assessment'}
+              style={{
+                display: 'inline-flex', alignItems: 'center', gap: 10,
+                background: `linear-gradient(135deg, ${GOLD}, #B8860B)`,
+                color: '#0C1323', fontWeight: 700, fontSize: 16,
+                padding: '15px 36px', borderRadius: 12, border: 'none',
+                cursor: 'pointer', boxShadow: `0 8px 28px rgba(212,165,32,0.3)`,
+              }}
+            >
+              Start Your Assessment — It Begins with You
+              <ArrowRight size={17} />
+            </button>
+            <p style={{ marginTop: 12, fontSize: 12, color: 'rgba(245,237,216,0.4)' }}>
+              Complete your 108-question assessment, then invite your partner to unlock your Compatibility Report
+            </p>
+          </div>
+
+        </div>
+      </section>
+
       {/* ── Final CTA ── */}
       <section style={{ padding: '100px 24px', textAlign: 'center' }}>
         <div style={{ maxWidth: 600, margin: '0 auto' }}>
