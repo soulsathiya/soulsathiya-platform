@@ -3,10 +3,17 @@ from datetime import datetime, timezone
 from typing import Optional
 import uuid
 
-from models.interest import InterestCreate, InterestResponse
+from pydantic import BaseModel
+from models.interest import InterestResponse
 from dependencies import db, get_current_user, compatibility_engine, require_tier, TIER_HIERARCHY
 
 router = APIRouter(tags=["matches"])
+
+
+class SendInterestBody(BaseModel):
+    """Minimal body for POST /interests/send — from_user_id is always taken from session."""
+    to_user_id: str
+    message: Optional[str] = None
 
 
 # ==================== MATCH ROUTES ====================
@@ -131,7 +138,7 @@ async def get_matches(
 
 @router.post("/interests/send")
 async def send_interest(
-    interest_data: InterestCreate,
+    interest_data: SendInterestBody,
     current_user: dict = Depends(get_current_user)
 ):
     """Send interest to another user"""
