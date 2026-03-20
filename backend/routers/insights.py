@@ -1302,3 +1302,645 @@ async def insights_admin_analytics(current_user: dict = Depends(get_current_user
             "estimate_inr":     paid_users * 999,
         },
     }
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+#  COMPATIBILITY INTELLIGENCE REPORT — Helpers
+# ═══════════════════════════════════════════════════════════════════════════════
+
+COMPAT_PRICE_PAISE = 79900  # ₹799
+
+
+def _attach_name(code: Optional[str]) -> str:
+    return {"A": "Secure", "B": "Anxious", "C": "Avoidant", "D": "Evolving"}.get(code or "D", "Evolving")
+
+
+def _compat_section_1(a1: dict, b1: dict, na: str, nb: str) -> dict:
+    sa = _compute_section_score(a1)
+    sb = _compute_section_score(b1)
+    alignment = round(100 - abs(sa - sb) * 100)
+
+    attach_a = a1.get("s1_q10", "D")
+    attach_b = b1.get("s1_q10", "D")
+    an_a, an_b = _attach_name(attach_a), _attach_name(attach_b)
+
+    pair = tuple(sorted([attach_a or "D", attach_b or "D"]))
+    if pair == ("A", "A"):
+        attach_dyn = f"Both {na} and {nb} are Secure — the most harmonious pairing. You naturally create a safe, consistent emotional home where both partners feel valued and free."
+    elif set(pair) == {"A", "B"}:
+        s, ax = (na, nb) if attach_a == "A" else (nb, na)
+        attach_dyn = f"{s}'s security naturally soothes {ax}'s anxious patterns. {ax}'s warmth enriches {s}'s world. With consistent reassurance and open communication, this becomes a profoundly trusting bond."
+    elif set(pair) == {"A", "C"}:
+        s, av = (na, nb) if attach_a == "A" else (nb, na)
+        attach_dyn = f"{s}'s steady presence gives {av} the safety to gradually open. Key: {s} should avoid pressure, and {av} should name their need for space before withdrawing — this single practice transforms the dynamic."
+    elif set(pair) == {"A", "D"}:
+        s, ev = (na, nb) if attach_a == "A" else (nb, na)
+        attach_dyn = f"{s}'s security provides a stable container for {ev}'s evolving patterns. {s}'s consistency helps {ev} crystallise their attachment style over time — a genuinely supportive pairing."
+    elif set(pair) == {"B", "C"}:
+        ax, av = (na, nb) if attach_a == "B" else (nb, na)
+        attach_dyn = f"Anxious-Avoidant is the most challenging pairing — {ax} reaches for more closeness exactly when {av} needs space. Naming this dynamic together is the first and most important step. With deep mutual awareness, this pairing is absolutely workable."
+    elif pair == ("B", "B"):
+        attach_dyn = f"Both {na} and {nb} carry Anxious patterns — creating beautiful emotional intensity and deep care. The risk is mutual triggering. Individual self-soothing practices will be the most protective investment as a couple."
+    elif set(pair) == {"B", "D"}:
+        ax, ev = (na, nb) if attach_a == "B" else (nb, na)
+        attach_dyn = f"{ax}'s need for reassurance meets {ev}'s evolving self-awareness. {ev}'s genuine curiosity can provide the consistency {ax} needs, if communicated proactively — a growth-oriented pairing."
+    elif pair == ("C", "C"):
+        attach_dyn = f"Both {na} and {nb} are Avoidant — comfortable independence is natural here. The long-term risk is emotional distance quietly growing. Scheduling intentional vulnerability will counteract the drift."
+    elif set(pair) == {"C", "D"}:
+        av, ev = (na, nb) if attach_a == "C" else (nb, na)
+        attach_dyn = f"{av}'s independence meets {ev}'s open exploration — potentially harmonious if both stay curious rather than defensive about their emotional styles."
+    else:
+        attach_dyn = f"Both {na} and {nb} are on evolving attachment journeys. Your mutual self-awareness and openness to growth is itself a profound strength — you are building your attachment style together."
+
+    if alignment >= 75:
+        headline = "Strong Emotional Resonance"
+        narrative = f"{na} and {nb} share a strong emotional foundation — similar depth, availability, and resilience. This creates natural safety and genuine mutual understanding from the very start."
+    elif alignment >= 50:
+        headline = "Complementary Emotional Styles"
+        narrative = f"{na} and {nb} bring different but complementary emotional energies. With awareness and open communication, these differences become a source of richness rather than friction."
+    else:
+        headline = "Emotional Navigation Needed"
+        narrative = f"{na} and {nb} have notably different emotional styles. This gap is navigable — but it requires deliberate, compassionate conversation and genuine willingness from both to understand the other's emotional world."
+
+    return {
+        "section_id": "section_1", "title": "Emotional Foundation", "icon": "❤️",
+        "score_a": round(sa * 100), "score_b": round(sb * 100),
+        "alignment": alignment,
+        "tier": "strong" if alignment >= 75 else ("moderate" if alignment >= 50 else "navigate"),
+        "headline": headline, "narrative": narrative,
+        "key_insight": f"Attachment Dynamic — {attach_dyn}",
+        "attachment_a": {"name": an_a, "code": attach_a or "D"},
+        "attachment_b": {"name": an_b, "code": attach_b or "D"},
+    }
+
+
+def _compat_section_2(a2: dict, b2: dict, na: str, nb: str) -> dict:
+    sa = _compute_section_score(a2)
+    sb = _compute_section_score(b2)
+    alignment = round(100 - abs(sa - sb) * 100)
+
+    children_a = a2.get("s2_q5")
+    children_b = b2.get("s2_q5")
+    children_labels = {
+        "A": "definitely wants children", "B": "is open to having children",
+        "C": "prefers not to have children", "D": "already has children and feels complete",
+    }
+    cl_a = children_labels.get(children_a, "has a flexible view on children")
+    cl_b = children_labels.get(children_b, "has a flexible view on children")
+
+    if children_a == "A" and children_b == "C":
+        dealbreaker = f"⚠️ Important: {na} definitely wants children while {nb} prefers not to — this deserves open, honest conversation early."
+    elif children_a == "C" and children_b == "A":
+        dealbreaker = f"⚠️ Important: {nb} definitely wants children while {na} prefers not to — this deserves a direct, compassionate conversation."
+    elif children_a == children_b and children_a in ("A", "C"):
+        dealbreaker = f"✅ Strong alignment on children: both {na} and {nb} {cl_a}."
+    else:
+        dealbreaker = f"Children: {na} {cl_a}; {nb} {cl_b}."
+
+    relig_a = a2.get("s2_q3")
+    relig_b = b2.get("s2_q3")
+    relocate_a = a2.get("s2_q7", "flexible")
+    relocate_b = b2.get("s2_q7", "flexible")
+
+    if alignment >= 75:
+        headline = "Deep Values Alignment"
+        narrative = f"{na} and {nb} share a strong alignment in core values and life vision — the bedrock of lasting partnership. Shared values make daily decisions easier and long-term friction dramatically lower."
+    elif alignment >= 50:
+        headline = "Meaningful Common Ground"
+        narrative = f"{na} and {nb} share important values with some areas of difference. These differences are navigable through honest, early conversation — particularly around family, spirituality, and lifestyle priorities."
+    else:
+        headline = "Values Exploration Needed"
+        narrative = f"{na} and {nb} show meaningful differences in values and life vision. These areas warrant deep, open conversation before commitment. Differences at the values level require conscious, loving navigation."
+
+    return {
+        "section_id": "section_2", "title": "Values & Life Vision", "icon": "🌟",
+        "score_a": round(sa * 100), "score_b": round(sb * 100),
+        "alignment": alignment,
+        "tier": "strong" if alignment >= 75 else ("moderate" if alignment >= 50 else "navigate"),
+        "headline": headline, "narrative": narrative,
+        "key_insight": f"{dealbreaker} Religion: {'aligned' if relig_a == relig_b else 'different perspectives — worth exploring openly'}. Relocation: {na} says '{relocate_a}', {nb} says '{relocate_b}'.",
+    }
+
+
+def _compat_section_3(a3: dict, b3: dict, na: str, nb: str) -> dict:
+    sa = _compute_section_score(a3)
+    sb = _compute_section_score(b3)
+    alignment = round(100 - abs(sa - sb) * 100)
+
+    lang_labels = {"A": "Words of Affirmation", "B": "Quality Time", "C": "Acts of Service", "D": "Physical Touch"}
+    ll_a = lang_labels.get(a3.get("s3_q1"), "varied love language")
+    ll_b = lang_labels.get(b3.get("s3_q1"), "varied love language")
+
+    if a3.get("s3_q1") == b3.get("s3_q1"):
+        lang_note = f"Excellent match — both feel most loved through {ll_a}. This natural alignment means you'll feel seen without needing to translate how you give and receive love."
+    else:
+        lang_note = f"{na}'s love language is {ll_a}; {nb}'s is {ll_b}. Learning to speak each other's language is one of the most high-impact investments a couple can make."
+
+    conflict_labels = {
+        "A": "stays calm and focuses on the issue", "B": "gets emotional and steps away",
+        "C": "tries to win and make their point",   "D": "goes quiet or shuts down",
+    }
+    cf_a = conflict_labels.get(a3.get("s3_q3"), "has their own approach")
+    cf_b = conflict_labels.get(b3.get("s3_q3"), "has their own approach")
+
+    if alignment >= 75:
+        headline = "Natural Communication Harmony"
+        narrative = f"{na} and {nb} communicate in deeply compatible ways — similar directness, listening styles, and capacity for difficult conversations. This alignment is one of the most valuable foundations a couple can have."
+    elif alignment >= 50:
+        headline = "Good Communication Potential"
+        narrative = f"{na} and {nb} have compatible communication foundations with some stylistic differences. Understanding each other's natural rhythm transforms everyday moments and difficult conversations alike."
+    else:
+        headline = "Communication Style Gap"
+        narrative = f"{na} and {nb} have notably different communication styles. This calls for intentional investment — the 'feel, need, request' framework ('I feel [X], I need [Y], could you [Z]?') is a powerful starting point for both."
+
+    return {
+        "section_id": "section_3", "title": "Communication & Connection", "icon": "💬",
+        "score_a": round(sa * 100), "score_b": round(sb * 100),
+        "alignment": alignment,
+        "tier": "strong" if alignment >= 75 else ("moderate" if alignment >= 50 else "navigate"),
+        "headline": headline, "narrative": narrative,
+        "key_insight": f"Love Languages — {lang_note} In conflict: {na} {cf_a}; {nb} {cf_b}.",
+    }
+
+
+def _compat_section_4(a4: dict, b4: dict, na: str, nb: str) -> dict:
+    sa = _compute_section_score(a4)
+    sb = _compute_section_score(b4)
+    alignment = round(100 - abs(sa - sb) * 100)
+
+    ready_a = _score_answer(a4.get("s4_q10", 4)) * 100
+    ready_b = _score_answer(b4.get("s4_q10", 4)) * 100
+    ready_gap = abs(ready_a - ready_b)
+
+    role_labels = {"A": "the caretaker", "B": "the independent one", "C": "the romantic", "D": "the grounded one"}
+    rl_a = role_labels.get(a4.get("s4_q6"), "a balanced role")
+    rl_b = role_labels.get(b4.get("s4_q6"), "a balanced role")
+
+    if alignment >= 75:
+        headline = "Matched Readiness & Patterns"
+        narrative = f"{na} and {nb} bring similar levels of self-awareness, healing, and relationship readiness — entering this connection from comparable emotional positions. This is a significant advantage."
+    elif alignment >= 50:
+        headline = "Complementary Relationship Histories"
+        narrative = f"{na} and {nb} bring different but complementary relationship experiences. Understanding each other's patterns without judgment is the work that transforms a promising connection into a profound one."
+    else:
+        headline = "Different Readiness Levels"
+        narrative = f"{na} and {nb} show meaningful differences in relationship readiness and pattern-awareness. Honesty about where each person is — and patience with the gap — is the foundation of navigating this well."
+
+    readiness_note = ""
+    if ready_gap > 30:
+        more_ready = na if ready_a > ready_b else nb
+        less_ready = nb if ready_a > ready_b else na
+        readiness_note = f" Note: {more_ready} shows higher relationship readiness — worth discussing openly and without pressure."
+
+    return {
+        "section_id": "section_4", "title": "Relationship Patterns", "icon": "🔄",
+        "score_a": round(sa * 100), "score_b": round(sb * 100),
+        "alignment": alignment,
+        "tier": "strong" if alignment >= 75 else ("moderate" if alignment >= 50 else "navigate"),
+        "headline": headline, "narrative": narrative,
+        "key_insight": f"In past relationships: {na} was typically {rl_a}; {nb} was {rl_b}.{readiness_note}",
+    }
+
+
+def _compat_section_5(a5: dict, b5: dict, na: str, nb: str) -> dict:
+    sa = _compute_section_score(a5)
+    sb = _compute_section_score(b5)
+    alignment = round(100 - abs(sa - sb) * 100)
+
+    social_labels = {"A": "Extrovert", "B": "Introvert", "C": "Ambivert", "D": "Selectively Social"}
+    sl_a = social_labels.get(a5.get("s5_q6"), "flexible")
+    sl_b = social_labels.get(b5.get("s5_q6"), "flexible")
+
+    if a5.get("s5_q6") == b5.get("s5_q6"):
+        social_note = f"Both are {sl_a} — natural social energy alignment."
+    elif {a5.get("s5_q6"), b5.get("s5_q6")} == {"A", "B"}:
+        ext = na if a5.get("s5_q6") == "A" else nb
+        intr = nb if a5.get("s5_q6") == "A" else na
+        social_note = f"Classic Extrovert-Introvert dynamic: {ext} energises through people; {intr} recharges through solitude. Respecting both needs — without making the other wrong — is the key practice."
+    else:
+        social_note = f"{na} is {sl_a}; {nb} is {sl_b} — compatible with some flexibility around social plans and downtime."
+
+    family_a = a5.get("s5_q18")
+    family_b = b5.get("s5_q18")
+    family_note = ""
+    if family_a and family_b and family_a != family_b:
+        family_note = f" Living near family: {na} says '{family_a}', {nb} says '{family_b}' — worth a dedicated conversation."
+
+    if alignment >= 75:
+        headline = "Lifestyle Harmony"
+        narrative = f"{na} and {nb} share compatible daily rhythms, social energy, and lifestyle preferences — reducing the everyday friction that quietly erodes many relationships over time."
+    elif alignment >= 50:
+        headline = "Adaptable Lifestyle Fit"
+        narrative = f"{na} and {nb} have some lifestyle differences that, with awareness and respect, are very navigable. The goal is creating shared rhythms that honour both people's needs."
+    else:
+        headline = "Lifestyle Navigation Needed"
+        narrative = f"{na} and {nb} have notable differences in how they prefer to live day-to-day. Deliberate conversation about daily rhythms, social needs, and how you both recharge will build a sustainable shared life."
+
+    return {
+        "section_id": "section_5", "title": "Daily Life & Lifestyle", "icon": "☀️",
+        "score_a": round(sa * 100), "score_b": round(sb * 100),
+        "alignment": alignment,
+        "tier": "strong" if alignment >= 75 else ("moderate" if alignment >= 50 else "navigate"),
+        "headline": headline, "narrative": narrative,
+        "key_insight": social_note + family_note,
+    }
+
+
+def _compat_section_6(a6: dict, b6: dict, na: str, nb: str) -> dict:
+    sa = _compute_section_score(a6)
+    sb = _compute_section_score(b6)
+    alignment = round(100 - abs(sa - sb) * 100)
+
+    vision_labels = {
+        "A": "Partnership — two equals growing forward",
+        "B": "Soulmate — deeply destined and spiritually guided",
+        "C": "Family — building a life, home, and lasting legacy",
+        "D": "Adventure — exploring the world together",
+    }
+    fam_labels = {
+        "A": "extended family with children close by",
+        "B": "intimate — partner and one or two children",
+        "C": "child-free but richly loving and connected",
+        "D": "open and unwritten",
+    }
+    vl_a = vision_labels.get(a6.get("s6_q1"), "a meaningful future")
+    vl_b = vision_labels.get(b6.get("s6_q1"), "a meaningful future")
+    fl_a = fam_labels.get(a6.get("s6_q6"), "open")
+    fl_b = fam_labels.get(b6.get("s6_q6"), "open")
+
+    if alignment >= 75:
+        headline = "Shared Future Vision"
+        narrative = f"{na} and {nb} are building toward the same kind of future — aligned in what love means, what they're creating together, and the kind of partnership both want. This shared direction is a profound advantage."
+    elif alignment >= 50:
+        headline = "Complementary Future Orientations"
+        narrative = f"{na} and {nb} share important elements of their future vision with some meaningful differences — often creating a richer shared life than either would have built alone."
+    else:
+        headline = "Future Vision to Explore Together"
+        narrative = f"{na} and {nb} hold different visions for their future. This is the most important conversation to have early — what each is ultimately building toward. Different visions aren't incompatible; unexplored ones are."
+
+    return {
+        "section_id": "section_6", "title": "Growth & Future", "icon": "🚀",
+        "score_a": round(sa * 100), "score_b": round(sb * 100),
+        "alignment": alignment,
+        "tier": "strong" if alignment >= 75 else ("moderate" if alignment >= 50 else "navigate"),
+        "headline": headline, "narrative": narrative,
+        "key_insight": f"Relationship vision: {na} seeks {vl_a}; {nb} seeks {vl_b}. Family vision: {na} envisions {fl_a}; {nb} envisions {fl_b}.",
+    }
+
+
+def _generate_compatibility_report(
+    answers_a: dict, answers_b: dict,
+    name_a: str = "Person A", name_b: str = "Person B",
+) -> dict:
+    """Cross-analyse two users' 108-question answers and generate a couple report."""
+    na = name_a.split()[0] if name_a else "Person A"
+    nb = name_b.split()[0] if name_b else "Person B"
+
+    s1 = _compat_section_1(answers_a.get("section_1", {}), answers_b.get("section_1", {}), na, nb)
+    s2 = _compat_section_2(answers_a.get("section_2", {}), answers_b.get("section_2", {}), na, nb)
+    s3 = _compat_section_3(answers_a.get("section_3", {}), answers_b.get("section_3", {}), na, nb)
+    s4 = _compat_section_4(answers_a.get("section_4", {}), answers_b.get("section_4", {}), na, nb)
+    s5 = _compat_section_5(answers_a.get("section_5", {}), answers_b.get("section_5", {}), na, nb)
+    s6 = _compat_section_6(answers_a.get("section_6", {}), answers_b.get("section_6", {}), na, nb)
+    sections = [s1, s2, s3, s4, s5, s6]
+
+    # Weighted overall: Values 25%, Emotional 20%, Communication 20%, Patterns 15%, Future 12%, Lifestyle 8%
+    weights = {"section_1": 0.20, "section_2": 0.25, "section_3": 0.20,
+               "section_4": 0.15, "section_5": 0.08, "section_6": 0.12}
+    overall = round(sum(s["alignment"] * weights[s["section_id"]] for s in sections))
+    overall = max(0, min(100, overall))
+
+    sorted_secs = sorted(sections, key=lambda x: x["alignment"], reverse=True)
+    top_aligns  = [f"{s['title']}: {s['headline']}" for s in sorted_secs[:2]]
+    navigate    = [s["title"] for s in sorted_secs if s["tier"] == "navigate"]
+
+    if overall >= 80:
+        overall_label = "Exceptional Compatibility"
+        overall_narrative = (
+            f"{na} and {nb} show exceptional alignment across the dimensions that matter most in lasting love. "
+            f"This is a rare combination of values resonance, emotional alignment, and shared vision — "
+            f"the foundation for something genuinely extraordinary."
+        )
+    elif overall >= 68:
+        overall_label = "Strong Compatibility"
+        overall_narrative = (
+            f"{na} and {nb} share a strong foundation with meaningful alignment in the areas that determine "
+            f"long-term relationship success. The differences that exist are navigable — and often make the relationship richer."
+        )
+    elif overall >= 55:
+        overall_label = "Good Compatibility"
+        overall_narrative = (
+            f"{na} and {nb} have real compatibility with some areas that deserve honest conversation. "
+            f"Every strong relationship requires navigation — what matters is both partners' willingness to do the work."
+        )
+    else:
+        overall_label = "Growth-Oriented Compatibility"
+        overall_narrative = (
+            f"{na} and {nb} have meaningful differences alongside genuine connection. "
+            f"This report maps the terrain — every difference named is one that can be navigated with awareness and willingness."
+        )
+
+    # Conversation prompts from divergent dimensions
+    prompts = []
+    if abs(s1["score_a"] - s1["score_b"]) > 20:
+        prompts.append("Ask each other: 'What does emotional safety mean to you, and what helps you feel most secure in a relationship?'")
+    if abs(s2["score_a"] - s2["score_b"]) > 20:
+        prompts.append("Discuss: 'What are your three non-negotiable life values — and how do they show up in your daily choices?'")
+    if abs(s3["score_a"] - s3["score_b"]) > 20:
+        prompts.append("Explore: 'When do you feel most heard and understood? What does good communication look and feel like to you?'")
+    if abs(s4["score_a"] - s4["score_b"]) > 20:
+        prompts.append("Share: 'What is one pattern from a past relationship you have actively worked on transforming — and how has that changed you?'")
+    if abs(s5["score_a"] - s5["score_b"]) > 20:
+        prompts.append("Talk about: 'Describe your ideal ordinary Tuesday — what does a good everyday life feel like to you?'")
+    if abs(s6["score_a"] - s6["score_b"]) > 20:
+        prompts.append("Vision-share: 'What does the relationship you are building toward look like in 10 years — in specific, vivid detail?'")
+    prompts.append("Explore together: 'What is the one thing you most want your partner to understand about how you love?'")
+    prompts.append("Reflect: 'What does a relationship bring out in you that nothing else does — and how do you want to grow through this one?'")
+
+    return {
+        "overall_score":      overall,
+        "overall_label":      overall_label,
+        "overall_narrative":  overall_narrative,
+        "sections":           sections,
+        "top_alignments":     top_aligns,
+        "navigate_areas":     navigate,
+        "conversation_prompts": prompts[:6],
+        "name_a":             na,
+        "name_b":             nb,
+        "generated_at":       datetime.now(timezone.utc).isoformat(),
+    }
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+#  ENDPOINTS 11-16 — Compatibility Intelligence Report (Couple Product)
+# ═══════════════════════════════════════════════════════════════════════════════
+
+class CompatInviteRequest(BaseModel):
+    partner_email: str
+
+class CompatPaymentBody(BaseModel):
+    pair_id: str
+
+class CompatPaymentVerify(BaseModel):
+    pair_id:             str
+    razorpay_payment_id: str
+    razorpay_order_id:   str
+    razorpay_signature:  Optional[str] = None
+
+
+@router.post("/compatibility/invite")
+async def create_compat_invite(
+    payload:      CompatInviteRequest,
+    current_user: dict = Depends(get_current_user),
+):
+    """Initiate a Compatibility Intelligence Report — invite a partner by email."""
+    user_id = current_user["user_id"]
+
+    profile = await db.insight_profiles.find_one({"user_id": user_id}, {"_id": 0})
+    if not profile or profile.get("payment_status") != "paid":
+        raise HTTPException(
+            status_code=403,
+            detail="You must complete and unlock your individual Relationship Intelligence Report first.",
+        )
+
+    partner_email = payload.partner_email.strip().lower()
+    import re as _re2
+    _esc = _re2.escape(partner_email)
+    partner_user = await db.users.find_one(
+        {"email": {"$regex": f"^{_esc}$", "$options": "i"}},
+        {"_id": 0, "user_id": 1, "full_name": 1},
+    )
+
+    if partner_user:
+        existing = await db.compatibility_pairs.find_one({
+            "$or": [
+                {"initiator_user_id": user_id, "partner_user_id": partner_user["user_id"]},
+                {"initiator_user_id": partner_user["user_id"], "partner_user_id": user_id},
+            ],
+            "status": {"$nin": ["expired"]},
+        }, {"_id": 0})
+        if existing:
+            return {
+                "pair_id":      existing["pair_id"],
+                "status":       existing["status"],
+                "invite_token": existing.get("invite_token"),
+                "message":      "A compatibility pair with this person already exists.",
+            }
+
+    pair_id      = f"cpair_{uuid.uuid4().hex[:12]}"
+    invite_token = uuid.uuid4().hex
+    now          = datetime.now(timezone.utc)
+
+    await db.compatibility_pairs.insert_one({
+        "pair_id":            pair_id,
+        "initiator_user_id":  user_id,
+        "initiator_name":     current_user.get("full_name", ""),
+        "partner_user_id":    partner_user["user_id"] if partner_user else None,
+        "partner_name":       partner_user.get("full_name", "") if partner_user else "",
+        "invite_email":       partner_email,
+        "invite_token":       invite_token,
+        "status":             "pending_invite",
+        "paid_by_user_id":    None,
+        "razorpay_order_id":  None,
+        "razorpay_payment_id": None,
+        "report_data":        None,
+        "created_at":         now,
+        "expires_at":         now + timedelta(days=30),
+    })
+
+    invite_link = f"{FRONTEND_URL}/insights/compatibility/accept/{invite_token}"
+    return {
+        "pair_id":       pair_id,
+        "invite_token":  invite_token,
+        "invite_link":   invite_link,
+        "partner_found": partner_user is not None,
+        "partner_name":  partner_user.get("full_name") if partner_user else None,
+        "status":        "pending_invite",
+        "message":       f"Invitation created. Share this link with your partner.",
+    }
+
+
+@router.post("/compatibility/accept/{invite_token}")
+async def accept_compat_invite(
+    invite_token: str,
+    current_user: dict = Depends(get_current_user),
+):
+    """Accept a compatibility report invitation (partner side)."""
+    user_id = current_user["user_id"]
+
+    pair = await db.compatibility_pairs.find_one(
+        {"invite_token": invite_token, "status": "pending_invite"}, {"_id": 0}
+    )
+    if not pair:
+        raise HTTPException(status_code=404, detail="Invitation not found or already accepted.")
+    if pair["initiator_user_id"] == user_id:
+        raise HTTPException(status_code=400, detail="You cannot accept your own invitation.")
+
+    partner_profile = await db.insight_profiles.find_one({"user_id": user_id}, {"_id": 0})
+    if not partner_profile or partner_profile.get("payment_status") != "paid":
+        raise HTTPException(
+            status_code=403,
+            detail="You must complete and unlock your own Relationship Intelligence Report before accepting.",
+        )
+
+    await db.compatibility_pairs.update_one(
+        {"invite_token": invite_token},
+        {"$set": {
+            "partner_user_id": user_id,
+            "partner_name":    current_user.get("full_name", ""),
+            "status":          "both_ready",
+            "accepted_at":     datetime.now(timezone.utc),
+        }},
+    )
+    return {
+        "pair_id":        pair["pair_id"],
+        "status":         "both_ready",
+        "initiator_name": pair.get("initiator_name", ""),
+        "message":        "Invitation accepted! Both partners are ready. You can now unlock the Compatibility Intelligence Report.",
+    }
+
+
+@router.get("/compatibility/status")
+async def get_compat_status(current_user: dict = Depends(get_current_user)):
+    """Get all compatibility pairs for the current user."""
+    user_id = current_user["user_id"]
+    pairs = await db.compatibility_pairs.find(
+        {"$or": [{"initiator_user_id": user_id}, {"partner_user_id": user_id}],
+         "status": {"$nin": ["expired"]}},
+        {"_id": 0, "report_data": 0},
+    ).to_list(20)
+    return {"pairs": pairs}
+
+
+@router.get("/compatibility/pair/{invite_token}")
+async def get_pair_by_token(invite_token: str):
+    """Public: get basic pair info from invite token (for accept page)."""
+    pair = await db.compatibility_pairs.find_one(
+        {"invite_token": invite_token},
+        {"_id": 0, "pair_id": 1, "initiator_name": 1, "status": 1, "invite_email": 1},
+    )
+    if not pair:
+        raise HTTPException(status_code=404, detail="Invitation not found.")
+    return pair
+
+
+@router.post("/compatibility/payment")
+async def create_compat_payment(
+    payload:      CompatPaymentBody,
+    current_user: dict = Depends(get_current_user),
+):
+    """Create a ₹799 Razorpay order for the Compatibility Intelligence Report."""
+    user_id = current_user["user_id"]
+
+    pair = await db.compatibility_pairs.find_one(
+        {"pair_id": payload.pair_id,
+         "$or": [{"initiator_user_id": user_id}, {"partner_user_id": user_id}]},
+        {"_id": 0},
+    )
+    if not pair:
+        raise HTTPException(status_code=404, detail="Pair not found.")
+    if pair["status"] == "paid":
+        return {"already_paid": True, "message": "Compatibility report already unlocked."}
+    if pair["status"] != "both_ready":
+        raise HTTPException(status_code=400, detail="Both partners must complete their individual reports first.")
+
+    order_id = f"order_compat_{uuid.uuid4().hex[:14]}"
+    await db.compatibility_pairs.update_one(
+        {"pair_id": payload.pair_id},
+        {"$set": {"razorpay_order_id": order_id, "payment_initiated_by": user_id}},
+    )
+    return {
+        "already_paid": False,
+        "order": {
+            "id":              order_id,
+            "amount":          COMPAT_PRICE_PAISE,
+            "currency":        "INR",
+            "razorpay_key_id": RAZORPAY_KEY_ID,
+            "is_dummy":        _is_dummy_mode(),
+        },
+    }
+
+
+@router.post("/compatibility/verify-payment")
+async def verify_compat_payment(
+    payload:      CompatPaymentVerify,
+    current_user: dict = Depends(get_current_user),
+):
+    """Verify ₹799 payment and generate the Compatibility Intelligence Report."""
+    user_id = current_user["user_id"]
+    now     = datetime.now(timezone.utc)
+
+    pair = await db.compatibility_pairs.find_one(
+        {"pair_id": payload.pair_id,
+         "$or": [{"initiator_user_id": user_id}, {"partner_user_id": user_id}]},
+        {"_id": 0},
+    )
+    if not pair:
+        raise HTTPException(status_code=404, detail="Pair not found.")
+    if pair["status"] == "paid":
+        return {"success": True, "pair_id": payload.pair_id, "message": "Already unlocked."}
+
+    if not _is_dummy_mode() and payload.razorpay_signature:
+        import hmac, hashlib
+        expected = hmac.new(
+            RAZORPAY_KEY_SECRET.encode(),
+            f"{payload.razorpay_order_id}|{payload.razorpay_payment_id}".encode(),
+            hashlib.sha256,
+        ).hexdigest()
+        if not hmac.compare_digest(expected, payload.razorpay_signature):
+            raise HTTPException(status_code=400, detail="Payment signature verification failed.")
+
+    prof_a = await db.insight_profiles.find_one({"user_id": pair["initiator_user_id"]}, {"_id": 0})
+    prof_b = await db.insight_profiles.find_one({"user_id": pair["partner_user_id"]}, {"_id": 0})
+    if not prof_a or not prof_b:
+        raise HTTPException(status_code=400, detail="Could not retrieve both profiles for report generation.")
+
+    user_a = await db.users.find_one({"user_id": pair["initiator_user_id"]}, {"_id": 0, "full_name": 1})
+    user_b = await db.users.find_one({"user_id": pair["partner_user_id"]},   {"_id": 0, "full_name": 1})
+    name_a = (user_a or {}).get("full_name", "Person A")
+    name_b = (user_b or {}).get("full_name", "Person B")
+
+    report = _generate_compatibility_report(
+        prof_a.get("answers") or {}, prof_b.get("answers") or {}, name_a, name_b
+    )
+
+    await db.compatibility_pairs.update_one(
+        {"pair_id": payload.pair_id},
+        {"$set": {
+            "status":              "paid",
+            "paid_by_user_id":     user_id,
+            "razorpay_payment_id": payload.razorpay_payment_id,
+            "report_data":         report,
+            "paid_at":             now,
+        }},
+    )
+    return {
+        "success":  True,
+        "pair_id":  payload.pair_id,
+        "message":  "Payment confirmed! Your Compatibility Intelligence Report is ready.",
+    }
+
+
+@router.get("/compatibility/report/{pair_id}")
+async def get_compat_report(
+    pair_id:      str,
+    current_user: dict = Depends(get_current_user),
+):
+    """Retrieve the full Compatibility Intelligence Report (both partners can access)."""
+    user_id = current_user["user_id"]
+
+    pair = await db.compatibility_pairs.find_one(
+        {"pair_id": pair_id,
+         "$or": [{"initiator_user_id": user_id}, {"partner_user_id": user_id}]},
+        {"_id": 0},
+    )
+    if not pair:
+        raise HTTPException(status_code=404, detail="Report not found or access denied.")
+    if pair["status"] != "paid":
+        raise HTTPException(status_code=402, detail="Report not yet unlocked. Please complete payment.")
+
+    return {
+        "pair_id":  pair_id,
+        "report":   pair["report_data"],
+        "paid_at":  pair.get("paid_at"),
+    }

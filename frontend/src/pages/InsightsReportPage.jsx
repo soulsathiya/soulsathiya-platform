@@ -7,7 +7,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { Loader2, Download, ArrowRight, Zap } from 'lucide-react';
+import { Loader2, Download, ArrowRight, Zap, Heart, Send, CheckCircle2 } from 'lucide-react';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8000';
 const GOLD  = '#D4A520';
@@ -652,6 +652,10 @@ export default function InsightsReportPage() {
   const navigate   = useNavigate();
   const [report,   setReport]   = useState(null);
   const [loading,  setLoading]  = useState(true);
+  const [inviteEmail,  setInviteEmail]  = useState('');
+  const [inviting,     setInviting]     = useState(false);
+  const [inviteResult, setInviteResult] = useState(null);
+  const [inviteError,  setInviteError]  = useState('');
 
   useEffect(() => {
     (async () => {
@@ -999,7 +1003,122 @@ export default function InsightsReportPage() {
           </div>
         </section>
 
-        {/* ══ 11. CTA ══ */}
+        {/* ══ 11. Compatibility Intelligence — Invite Partner ══ */}
+        <section style={{ marginBottom: 48 }}>
+          <div style={{
+            background: 'linear-gradient(135deg, rgba(212,165,32,0.07), rgba(99,102,241,0.07))',
+            border: '1px solid rgba(212,165,32,0.22)', borderRadius: 20,
+            padding: '36px 32px',
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16 }}>
+              <Heart size={20} color={GOLD} />
+              <h2 style={{ fontFamily: 'Cormorant Garamond, Georgia, serif', fontSize: 22, fontWeight: 700, margin: 0 }}>
+                Explore Your <span style={{ color: GOLD }}>Compatibility Intelligence</span>
+              </h2>
+            </div>
+            <p style={{ fontSize: 14, color: 'rgba(245,237,216,0.65)', lineHeight: 1.75, marginBottom: 24, maxWidth: 560 }}>
+              If your partner has also completed their 108-question assessment, invite them to generate a
+              <strong style={{ color: 'rgba(245,237,216,0.9)' }}> Compatibility Intelligence Report</strong> — a deep cross-analysis
+              of both your profiles across all 6 dimensions. One of you pays ₹799; both get full access.
+            </p>
+
+            {inviteResult ? (
+              /* Success state */
+              <div style={{
+                background: 'rgba(22,101,52,0.15)', border: '1px solid rgba(34,197,94,0.25)',
+                borderRadius: 14, padding: '20px 24px',
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 10 }}>
+                  <CheckCircle2 size={20} color="#4ade80" />
+                  <span style={{ color: '#4ade80', fontWeight: 700, fontSize: 15 }}>Invitation Created!</span>
+                </div>
+                <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: 13, lineHeight: 1.7, marginBottom: 16 }}>
+                  Share this link with your partner. Once they accept and both reports are ready, either of you can unlock the Compatibility Report for ₹799.
+                </p>
+                <div style={{
+                  background: 'rgba(0,0,0,0.3)', borderRadius: 8, padding: '10px 14px',
+                  color: GOLD, fontSize: 12, wordBreak: 'break-all', fontFamily: 'monospace',
+                  border: '1px solid rgba(212,165,32,0.2)',
+                }}>
+                  {inviteResult.invite_link}
+                </div>
+                <div style={{ display: 'flex', gap: 10, marginTop: 14, flexWrap: 'wrap' }}>
+                  <button
+                    onClick={() => { navigator.clipboard.writeText(inviteResult.invite_link); }}
+                    style={{
+                      background: 'rgba(212,165,32,0.15)', border: '1px solid rgba(212,165,32,0.3)',
+                      borderRadius: 8, padding: '8px 16px', color: GOLD,
+                      fontSize: 13, fontWeight: 600, cursor: 'pointer',
+                    }}>
+                    Copy Link
+                  </button>
+                  {inviteResult.pair_id && (
+                    <button
+                      onClick={() => navigate(`/insights/compatibility/report/${inviteResult.pair_id}`)}
+                      style={{
+                        background: `linear-gradient(135deg, ${GOLD}, #B8860B)`,
+                        color: NAVY, border: 'none', borderRadius: 8,
+                        padding: '8px 16px', fontSize: 13, fontWeight: 700, cursor: 'pointer',
+                        display: 'flex', alignItems: 'center', gap: 6,
+                      }}>
+                      View Compatibility Report <ArrowRight size={13} />
+                    </button>
+                  )}
+                </div>
+              </div>
+            ) : (
+              /* Invite form */
+              <div>
+                <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', maxWidth: 520 }}>
+                  <input
+                    type="email"
+                    value={inviteEmail}
+                    onChange={e => { setInviteEmail(e.target.value); setInviteError(''); }}
+                    placeholder="Partner's email address"
+                    style={{
+                      flex: 1, minWidth: 200,
+                      background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(212,165,32,0.25)',
+                      borderRadius: 10, padding: '11px 16px', color: '#F5EDD8',
+                      fontSize: 14, fontFamily: 'sans-serif', outline: 'none',
+                    }}
+                  />
+                  <button
+                    disabled={inviting || !inviteEmail.trim()}
+                    onClick={async () => {
+                      setInviting(true); setInviteError('');
+                      try {
+                        const res = await axios.post(
+                          `${BACKEND_URL}/api/insights/compatibility/invite`,
+                          { partner_email: inviteEmail.trim() },
+                          { withCredentials: true }
+                        );
+                        setInviteResult(res.data);
+                      } catch (e) {
+                        setInviteError(e.response?.data?.detail || 'Failed to send invitation. Please try again.');
+                      } finally { setInviting(false); }
+                    }}
+                    style={{
+                      background: inviting ? 'rgba(212,165,32,0.4)' : `linear-gradient(135deg, ${GOLD}, #B8860B)`,
+                      color: NAVY, border: 'none', borderRadius: 10,
+                      padding: '11px 20px', fontSize: 14, fontWeight: 700,
+                      cursor: inviting ? 'not-allowed' : 'pointer',
+                      display: 'flex', alignItems: 'center', gap: 7, whiteSpace: 'nowrap',
+                    }}>
+                    <Send size={14} /> {inviting ? 'Sending…' : 'Invite Partner'}
+                  </button>
+                </div>
+                {inviteError && (
+                  <div style={{ color: '#f87171', fontSize: 13, marginTop: 10 }}>{inviteError}</div>
+                )}
+                <p style={{ color: 'rgba(245,237,216,0.4)', fontSize: 12, marginTop: 12 }}>
+                  Your partner will receive a personalised invite link. Both individual reports must be unlocked before the compatibility report can be generated.
+                </p>
+              </div>
+            )}
+          </div>
+        </section>
+
+        {/* ══ 12. CTA ══ */}
         <div style={{ background: `linear-gradient(135deg, rgba(212,165,32,0.08), rgba(184,134,11,0.05))`,
           border: `1px solid ${GOLD}25`, borderRadius: 20,
           padding: '44px 32px', textAlign: 'center' }}>

@@ -50,10 +50,12 @@ import UnsubscribePage from './pages/UnsubscribePage';
 import KYCVerificationPage from './pages/KYCVerificationPage';
 
 // Insights — Guest-first Relationship Intelligence
-import InsightsLandingPage  from './pages/InsightsLandingPage';
-import InsightsAssessment   from './pages/InsightsAssessment';
-import InsightsUnlock       from './pages/InsightsUnlock';
-import InsightsReportPage   from './pages/InsightsReportPage';
+import InsightsLandingPage             from './pages/InsightsLandingPage';
+import InsightsAssessment              from './pages/InsightsAssessment';
+import InsightsUnlock                  from './pages/InsightsUnlock';
+import InsightsReportPage              from './pages/InsightsReportPage';
+import CompatibilityIntelligenceReport from './pages/CompatibilityIntelligenceReport';
+import CompatibilityInvitePage         from './pages/CompatibilityInvitePage';
 
 // Admin Pages
 import { AdminLogin, AdminLayout, AdminDashboard, AdminUsers, AdminProfiles, AdminSubscriptions, AdminDeep, AdminReports, AdminAnalytics, AdminKYC } from './pages/admin';
@@ -143,6 +145,10 @@ function AppRouter() {
       <Route path="/insights/assessment" element={<InsightsAssessment />} />
       <Route path="/insights/unlock"     element={<InsightsUnlock />} />
       <Route path="/insights/report"     element={<InsightsReportPage />} />
+
+      {/* Compatibility Intelligence Report — couple product */}
+      <Route path="/insights/compatibility/accept/:inviteToken" element={<CompatibilityInvitePage />} />
+      <Route path="/insights/compatibility/report/:pairId"      element={<CompatibilityIntelligenceReport />} />
 
       {/* Notification settings & unsubscribe */}
       <Route path="/notification-preferences" element={<NotificationPreferencesPage />} />
