@@ -2,10 +2,11 @@
 
 Scoring philosophy
 ──────────────────
-Domain compatibility uses an exponential-decay curve instead of the
-naive linear `100 - diff`.  This spreads real-world scores across the
-full 30-95 range so that a 90 %+ match genuinely feels rare and special,
-while a 60 % match still looks credible and worth exploring.
+Domain compatibility uses a tight exponential-decay curve (÷35, ^1.5)
+instead of the naive linear `100 - diff`.  This spreads real-world
+scores across the full 30-90 range so that an 85 %+ match genuinely
+feels rare and special, while a 60 % match looks credible and worth
+exploring.
 
 Deal-breaker domains (values, marriage_expectations) carry an additional
 hard penalty when the gap exceeds 35 points, ensuring that fundamental
@@ -95,16 +96,16 @@ class CompatibilityEngine:
             return "harmonizer", None
     
     def calculate_domain_compatibility(self, score_a: float, score_b: float) -> float:
-        """Exponential-decay curve: small gaps stay high, larger gaps drop fast.
+        """Tight exponential-decay curve: even small gaps create meaningful spread.
 
-        Formula:  100 × max(0, 1 − (diff / 50)^1.5)
+        Formula:  100 × max(0, 1 − (diff / 35)^1.5)
 
-        Examples:  diff=0 → 100,  diff=10 → 91,  diff=15 → 84,
-                   diff=20 → 75,  diff=25 → 65,  diff=30 → 54,
-                   diff=40 → 28,  diff=50 → 0
+        Examples:  diff=0 → 100,  diff=5 → 95,   diff=10 → 85,
+                   diff=15 → 72,  diff=20 → 57,   diff=25 → 40,
+                   diff=30 → 21,  diff=35 → 0
         """
         diff = abs(score_a - score_b)
-        ratio = min(diff / 50.0, 1.0)              # cap at 1.0
+        ratio = min(diff / 35.0, 1.0)              # cap at 1.0
         compatibility = 100.0 * max(0.0, 1.0 - math.pow(ratio, 1.5))
         return round(compatibility, 2)
     
