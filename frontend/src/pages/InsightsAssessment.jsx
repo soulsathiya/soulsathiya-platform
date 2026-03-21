@@ -419,14 +419,20 @@ export default function InsightsAssessment() {
       // Restore local progress
       const local = loadLocal();
       if (local.token) {
+        // If all 6 sections are already complete, redirect — don't show finished quiz
+        const completedSections = local.completed || [];
+        if (completedSections.length >= 6) {
+          navigate('/insights/unlock');
+          return;
+        }
         setGuestToken(local.token);
         setAnswers(local.answers   || {});
-        setCompleted(local.completed || []);
+        setCompleted(completedSections);
         const si = Math.min(local.section || 0, 5);
         const qi = Math.min(local.qIndex  || 0, 17);
         setSectionIdx(si);
         setQuestionIdx(qi);
-        setXp((local.completed?.length || 0) * 180 + qi * 10);
+        setXp(completedSections.length * 180 + qi * 10);
       } else {
         // Start new guest session
         try {

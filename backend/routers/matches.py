@@ -4,7 +4,6 @@ from typing import Optional
 import uuid
 
 from pydantic import BaseModel
-from models.interest import InterestResponse
 from dependencies import db, get_current_user, compatibility_engine, require_tier, TIER_HIERARCHY
 
 router = APIRouter(tags=["matches"])
@@ -13,6 +12,12 @@ router = APIRouter(tags=["matches"])
 class SendInterestBody(BaseModel):
     """Minimal body for POST /interests/send — from_user_id is always taken from session."""
     to_user_id: str
+    message: Optional[str] = None
+
+
+class RespondInterestBody(BaseModel):
+    """Body for POST /interests/{id}/respond — interest_id comes from URL path."""
+    action: str          # "accept" or "reject"
     message: Optional[str] = None
 
 
@@ -192,7 +197,7 @@ async def send_interest(
 @router.post("/interests/{interest_id}/respond")
 async def respond_to_interest(
     interest_id: str,
-    response: InterestResponse,
+    response: RespondInterestBody,
     current_user: dict = Depends(get_current_user)
 ):
     """Accept or reject an interest"""
