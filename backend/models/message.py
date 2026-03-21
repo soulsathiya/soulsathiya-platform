@@ -13,6 +13,12 @@ class MessageCreate(MessageBase):
     pass
 
 
+class SendMessageBody(BaseModel):
+    """Minimal body for POST /messages/send — from_user_id is taken from session."""
+    to_user_id: str
+    content: str = Field(..., min_length=1, max_length=2000)
+
+
 class Message(MessageBase):
     model_config = ConfigDict(from_attributes=True)
     

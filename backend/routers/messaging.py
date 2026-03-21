@@ -4,7 +4,7 @@ import uuid
 import asyncio
 import logging
 
-from models.message import MessageCreate
+from models.message import SendMessageBody
 from dependencies import db, get_current_user, notification_service, email_service
 
 logger = logging.getLogger(__name__)
@@ -14,7 +14,7 @@ router = APIRouter(prefix="/messages", tags=["messaging"])
 
 @router.post("/send")
 async def send_message(
-    message_data: MessageCreate,
+    message_data: SendMessageBody,
     current_user: dict = Depends(get_current_user)
 ):
     """Send a message (requires mutual interest)"""
