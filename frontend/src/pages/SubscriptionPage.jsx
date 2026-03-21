@@ -184,7 +184,7 @@ const SubscriptionPage = () => {
               onClick={() => navigate('/dashboard')}
               className="w-full py-2.5 rounded-xl border border-white/15 text-white/70 hover:bg-white/5 hover:text-white text-sm font-semibold transition-all duration-200"
             >
-              {currentTier === 'free' ? '&#10003; Your Current Plan' : 'Continue Free'}
+              {currentTier === 'free' ? '✓ Your Current Plan' : 'Continue Free'}
             </button>
           </div>
 
@@ -237,7 +237,7 @@ const SubscriptionPage = () => {
               {paying === 'premium'
                 ? <><Loader2 className="w-4 h-4 animate-spin" /> Processing...</>
                 : currentTier === 'premium'
-                ? '&#10003; Current Plan'
+                ? '✓ Current Plan'
                 : 'Upgrade to Premium \u2192'}
             </button>
           </div>
@@ -288,7 +288,7 @@ const SubscriptionPage = () => {
               {paying === 'elite'
                 ? <><Loader2 className="w-4 h-4 animate-spin" /> Processing...</>
                 : currentTier === 'elite'
-                ? '&#10003; Current Plan'
+                ? '✓ Current Plan'
                 : 'Go Elite \u2192'}
             </button>
           </div>
