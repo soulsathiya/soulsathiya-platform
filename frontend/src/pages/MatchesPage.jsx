@@ -66,7 +66,7 @@ const MatchCard = ({ match, onSendInterest, interestsSent }) => {
             </Badge>
           </div>
         )}
-        {/* Compatibility score overlay — hero number */}
+        {/* Compatibility score overlay */}
         <div className="absolute bottom-3 right-3 bg-card/95 backdrop-blur-sm rounded-xl px-3.5 py-2 flex flex-col items-center shadow-lg border border-white/10">
           <span className={`text-xl font-extrabold tabular-nums leading-none ${getScoreColor(compatibility_score)}`}>
             {compatibility_score?.toFixed(0)}%
@@ -110,7 +110,7 @@ const MatchCard = ({ match, onSendInterest, interestsSent }) => {
         <div>
           <div className="flex justify-between text-xs text-muted-foreground mb-1">
             <span>Compatibility</span>
-            <span className={getScoreColor(compatibility_score)}>{compatibility_score?.toFixed(1)}%</span>
+            <span className={getScoreColor(compatibility_score)}>{compatibility_score?.toFixed(0)}%</span>
           </div>
           <div className="h-1.5 bg-muted rounded-full overflow-hidden">
             <div

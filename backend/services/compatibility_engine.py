@@ -234,87 +234,227 @@ class CompatibilityEngine:
         
         return profile_id
     
+    # ── Tier-based visibility boost (higher tier = more visibility) ──────
+    TIER_VISIBILITY_BONUS = {
+        "free": 0,
+        "premium": 6,     # mild boost — always slightly more visible
+        "elite": 12,       # strong boost — top-tier visibility
+    }
+
     async def get_ranked_matches(self, user_id: str, limit: int = 50) -> List[Dict]:
-        """Compute compatibility scores live against gender-eligible users with psychometric profiles."""
+        """Three-layer matching engine:
+        Layer 1 — Hard Filters:  gender, age range, marital status, religion
+        Layer 2 — Soft Prefs:    location, education, diet/lifestyle (affect ranking, don't eliminate)
+        Layer 3 — Intelligence:  psychometric score, tier boost, purchased boost, distance, recency
+        """
         user_profile = await self.db.psychometric_profiles.find_one(
             {"user_id": user_id}, {"_id": 0}
         )
         if not user_profile:
             return []
 
-        # ── Step 1: determine gender filter for this user ────────────────────
+        # ── Fetch current user's profile and preferences ─────────────────────
         my_profile = await self.db.profiles.find_one(
-            {"user_id": user_id}, {"_id": 0, "gender": 1}
+            {"user_id": user_id}, {"_id": 0}
         )
-        my_gender = (my_profile or {}).get("gender")  # "male" / "female" / "other" / None
+        my_gender = (my_profile or {}).get("gender")
 
         my_prefs = await self.db.partner_preferences.find_one(
-            {"user_id": user_id}, {"_id": 0, "preferred_gender": 1}
-        )
-        seek_gender = (my_prefs or {}).get("preferred_gender")
+            {"user_id": user_id}, {"_id": 0}
+        ) or {}
 
-        # Default: male seeks female, female seeks male; "other" or unknown → no filter
+        seek_gender = my_prefs.get("preferred_gender")
         if not seek_gender:
             if my_gender == "male":
                 seek_gender = "female"
             elif my_gender == "female":
                 seek_gender = "male"
-            # else seek_gender stays None → no gender restriction
 
-        # ── Step 2: fetch all candidates who finished the psychometric ───────
+        # ── Step 1: fetch all candidates who finished psychometric ────────────
         other_profiles = await self.db.psychometric_profiles.find(
             {"user_id": {"$ne": user_id}}, {"_id": 0, "user_id": 1}
-        ).to_list(300)
+        ).to_list(500)
 
         if not other_profiles:
             return []
 
         other_user_ids = [p["user_id"] for p in other_profiles]
 
-        # ── Step 3: build gender-eligible set (bulk profile fetch) ───────────
-        if seek_gender:
-            gender_profiles = await self.db.profiles.find(
-                {"user_id": {"$in": other_user_ids}, "gender": seek_gender},
-                {"_id": 0, "user_id": 1}
-            ).to_list(300)
-            eligible_ids = {p["user_id"] for p in gender_profiles}
-        else:
-            # No gender preference set and no own gender on record → show everyone
-            eligible_ids = set(other_user_ids)
-
-        # ── Step 4: build active-user set ────────────────────────────────────
-        raw_users = await self.db.users.find(
-            {"is_active": {"$ne": False}}, {"_id": 0, "user_id": 1}
+        # ── Step 2: bulk-fetch candidate profiles for filtering ──────────────
+        candidate_profiles_cursor = await self.db.profiles.find(
+            {"user_id": {"$in": other_user_ids}}, {"_id": 0}
         ).to_list(500)
-        active_user_ids = {u["user_id"] for u in raw_users}
+        candidate_profile_map = {p["user_id"]: p for p in candidate_profiles_cursor}
 
-        # ── Step 5: supplementary pre-computed signals (distance, boost) ─────
+        # ── Step 3: build active-user set ────────────────────────────────────
+        raw_users = await self.db.users.find(
+            {"is_active": {"$ne": False}},
+            {"_id": 0, "user_id": 1, "subscription_tier": 1}
+        ).to_list(500)
+        active_user_map = {u["user_id"]: u for u in raw_users}
+
+        # ── Step 4: pre-computed signals (distance, boost) ───────────────────
         pre_computed = await self.db.matches.find(
             {"user_id": user_id},
             {"_id": 0, "matched_user_id": 1, "match_id": 1,
              "compatibility_score": 1, "distance_km": 1, "is_boosted": 1}
-        ).to_list(300)
+        ).to_list(500)
         pre_computed_map = {m["matched_user_id"]: m for m in pre_computed}
 
-        # ── Step 6: score only eligible, active candidates ───────────────────
+        # ── Active boosts lookup ─────────────────────────────────────────────
+        from datetime import timezone as tz
+        now = datetime.now(tz.utc)
+        active_boosts = await self.db.boosts.find(
+            {"status": "active", "expires_at": {"$gt": now}},
+            {"_id": 0, "user_id": 1}
+        ).to_list(200)
+        boosted_user_ids = {b["user_id"] for b in active_boosts}
+
+        # ── Extract hard-filter preferences ──────────────────────────────────
+        pref_age_min = my_prefs.get("age_min")
+        pref_age_max = my_prefs.get("age_max")
+        pref_marital = my_prefs.get("preferred_marital_status") or []
+        pref_religion = my_prefs.get("preferred_religion") or []
+
+        # ── Extract soft preferences ─────────────────────────────────────────
+        pref_cities = [c.lower() for c in (my_prefs.get("preferred_cities") or [])]
+        pref_states = [s.lower() for s in (my_prefs.get("preferred_states") or [])]
+        pref_education = my_prefs.get("preferred_education") or []
+        pref_diet = [d.lower() for d in (my_prefs.get("preferred_diet") or [])]
+        pref_drinking = [d.lower() for d in (my_prefs.get("preferred_drinking") or [])]
+        pref_smoking = [s.lower() for s in (my_prefs.get("preferred_smoking") or [])]
+
+        # ── Score all candidates through 3 layers ────────────────────────────
         enriched_matches = []
+
         for other in other_profiles:
             other_user_id = other["user_id"]
 
-            if other_user_id not in active_user_ids:
+            # Must be active
+            if other_user_id not in active_user_map:
                 continue
-            if other_user_id not in eligible_ids:        # ← gender gate
+
+            cand_profile = candidate_profile_map.get(other_user_id)
+            if not cand_profile:
                 continue
+
+            # ═══════════════════════════════════════════════════════════════════
+            # LAYER 1: HARD FILTERS — eliminate impossible matches
+            # ═══════════════════════════════════════════════════════════════════
+
+            # 1a. Gender filter
+            if seek_gender and cand_profile.get("gender") != seek_gender:
+                continue
+
+            # 1b. Age filter
+            cand_dob = cand_profile.get("date_of_birth")
+            cand_age = None
+            if cand_dob:
+                if isinstance(cand_dob, str):
+                    try:
+                        cand_dob = datetime.strptime(cand_dob, "%Y-%m-%d").date()
+                    except (ValueError, TypeError):
+                        cand_dob = None
+                if cand_dob:
+                    today = datetime.now().date()
+                    cand_age = today.year - cand_dob.year - (
+                        (today.month, today.day) < (cand_dob.month, cand_dob.day)
+                    )
+
+            if cand_age is not None:
+                if pref_age_min and cand_age < pref_age_min:
+                    continue
+                if pref_age_max and cand_age > pref_age_max:
+                    continue
+
+            # 1c. Marital status filter (if user specified preferences)
+            if pref_marital:
+                cand_marital = cand_profile.get("marital_status")
+                if cand_marital and cand_marital not in pref_marital:
+                    continue
+
+            # 1d. Religion filter (if user specified preferences)
+            if pref_religion:
+                cand_religion = cand_profile.get("religion")
+                if cand_religion and cand_religion not in pref_religion:
+                    continue
+
+            # ═══════════════════════════════════════════════════════════════════
+            # LAYER 2: SOFT PREFERENCES — affect ranking, don't eliminate
+            # ═══════════════════════════════════════════════════════════════════
+            soft_bonus = 0.0
+
+            # 2a. Location match (city > state)
+            cand_city = (cand_profile.get("city") or "").lower()
+            cand_state = (cand_profile.get("state") or "").lower()
+            if pref_cities and cand_city in pref_cities:
+                soft_bonus += 8   # strong bonus for same city
+            elif pref_states and cand_state in pref_states:
+                soft_bonus += 4   # moderate bonus for same state
+
+            # 2b. Education alignment
+            if pref_education:
+                cand_edu = cand_profile.get("education_level")
+                if cand_edu and cand_edu in pref_education:
+                    soft_bonus += 4
+
+            # 2c. Diet alignment
+            if pref_diet:
+                cand_diet = (cand_profile.get("diet") or "").lower()
+                if cand_diet and cand_diet in pref_diet:
+                    soft_bonus += 3
+
+            # 2d. Drinking alignment
+            if pref_drinking:
+                cand_drink = (cand_profile.get("drinking") or "").lower()
+                if cand_drink and cand_drink in pref_drinking:
+                    soft_bonus += 2
+
+            # 2e. Smoking alignment
+            if pref_smoking:
+                cand_smoke = (cand_profile.get("smoking") or "").lower()
+                if cand_smoke and cand_smoke in pref_smoking:
+                    soft_bonus += 2
+
+            # ═══════════════════════════════════════════════════════════════════
+            # LAYER 3: INTELLIGENCE LAYER — psychometric + tier + boost
+            # ═══════════════════════════════════════════════════════════════════
 
             compat_data = await self.calculate_compatibility(user_id, other_user_id)
             psychometric_score = compat_data["compatibility_percentage"]
 
             pre = pre_computed_map.get(other_user_id, {})
+            distance_km = pre.get("distance_km", 0)
+
+            # Candidate's subscription tier visibility bonus
+            cand_user = active_user_map.get(other_user_id, {})
+            cand_tier = cand_user.get("subscription_tier") or "free"
+            tier_bonus = self.TIER_VISIBILITY_BONUS.get(cand_tier, 0)
+
+            # Purchased boost (stacks with tier bonus)
+            is_boosted = other_user_id in boosted_user_ids or pre.get("is_boosted", False)
+            boost_bonus = 10 if is_boosted else 0
+
+            # Final ranking formula:
+            #   Psychometric compatibility:  55%  (your core differentiator)
+            #   Soft preference alignment:   15%  (preference matching)
+            #   Distance proximity:           8%  (closer = better)
+            #   Tier visibility bonus:        10% (premium/elite get more visibility)
+            #   Purchased boost bonus:         7% (paid boost stacks on top)
+            #   Profile completeness:          5% (reward complete profiles)
+            profile_completeness = min(len([
+                v for k, v in cand_profile.items()
+                if k not in ("user_id", "profile_id", "created_at", "updated_at")
+                and v is not None and v != "" and v != []
+            ]) / 15.0 * 100, 100)
+
             rank_score = (
-                psychometric_score * 0.65 +
-                pre.get("compatibility_score", 50) * 0.15 +
-                (100 - min(pre.get("distance_km", 0), 100)) * 0.10 +
-                (10 if pre.get("is_boosted") else 0) * 0.10
+                psychometric_score * 0.55 +
+                min(soft_bonus, 19) * 0.15 * (100 / 19) +   # normalize soft_bonus to 0-100 scale
+                (100 - min(distance_km, 100)) * 0.08 +
+                tier_bonus * (100 / 12) * 0.10 +              # normalize tier to 0-100 scale
+                (boost_bonus * 10) * 0.07 +                    # 0 or 100 scale
+                profile_completeness * 0.05
             )
 
             enriched_matches.append({
@@ -323,8 +463,9 @@ class CompatibilityEngine:
                 "psychometric_score": round(psychometric_score, 1),
                 "rank_score": round(rank_score, 2),
                 "compatibility_data": compat_data,
-                "distance_km": pre.get("distance_km"),
-                "is_boosted": pre.get("is_boosted", False),
+                "distance_km": distance_km if distance_km else None,
+                "is_boosted": is_boosted,
+                "candidate_tier": cand_tier,
             })
 
         enriched_matches.sort(key=lambda x: x["rank_score"], reverse=True)

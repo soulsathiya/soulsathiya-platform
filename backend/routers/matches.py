@@ -29,18 +29,27 @@ async def get_matches(
     max_distance_km: Optional[int] = None,
     current_user: dict = Depends(get_current_user)
 ):
-    """Get psychometric-ranked compatible matches"""
+    """Get psychometric-ranked compatible matches with tier-based limits"""
+    # Tier-based match visibility: Free sees fewer, Elite sees all
+    user_tier = current_user.get("subscription_tier") or "free"
+    tier_match_limits = {
+        "free": 10,       # enough to see value, creates upgrade motivation
+        "premium": 30,    # strong match pool
+        "elite": 50,      # full access
+    }
+    match_limit = tier_match_limits.get(user_tier, 10)
+
     # Check if user has completed psychometric profile
     psych_profile = await db.psychometric_profiles.find_one(
         {"user_id": current_user["user_id"]},
         {"_id": 0}
     )
-    
+
     if psych_profile:
-        # Get psychometric-ranked matches
+        # Get psychometric-ranked matches (engine handles all 3 filter layers)
         matches = await compatibility_engine.get_ranked_matches(
             user_id=current_user["user_id"],
-            limit=50
+            limit=match_limit
         )
         
         # Get active boosts
