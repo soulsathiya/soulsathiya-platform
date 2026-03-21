@@ -145,21 +145,24 @@ async def send_interest(
     if interest_data.to_user_id == current_user["user_id"]:
         raise HTTPException(status_code=400, detail="Cannot send interest to yourself")
 
-    # Enforce basic-tier monthly interest limit (10/month)
+    # Enforce monthly interest limits by tier
+    # Free: 3/month, Premium: 40/month, Elite: unlimited
     user_tier = current_user.get("subscription_tier") or "free"
-    if TIER_HIERARCHY.get(user_tier, 0) < TIER_HIERARCHY.get("premium", 2):
+    tier_limits = {"free": 3, "premium": 40}  # elite = unlimited (not in dict)
+    if user_tier in tier_limits:
         from datetime import timezone
-        import datetime
-        month_start = datetime.datetime.now(timezone.utc).replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+        import datetime as dt_mod
+        month_start = dt_mod.datetime.now(timezone.utc).replace(day=1, hour=0, minute=0, second=0, microsecond=0)
         monthly_count = await db.interests.count_documents({
             "from_user_id": current_user["user_id"],
             "sent_at": {"$gte": month_start}
         })
-        limit = 10 if user_tier == "basic" else 0  # free users get 0 (can't send interests)
-        if user_tier == "free":
-            raise HTTPException(status_code=403, detail="Free users cannot send interests. Please upgrade to Basic or higher.")
+        limit = tier_limits[user_tier]
         if monthly_count >= limit:
-            raise HTTPException(status_code=403, detail=f"Basic plan limit reached: {limit} interests per month. Upgrade to Premium for unlimited.")
+            raise HTTPException(
+                status_code=403,
+                detail=f"You've used all {limit} connection requests this month. Upgrade your plan for more."
+            )
     
     existing = await db.interests.find_one({
         "from_user_id": current_user["user_id"],

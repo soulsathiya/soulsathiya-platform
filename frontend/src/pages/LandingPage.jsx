@@ -37,17 +37,6 @@ const MANDALA_PARTICLES = [
 
 // ─── Pricing Section (self-contained sub-component) ──────────────────────────
 
-const PREMIUM_TIERS = [
-  { key: '1mo', period: '1 month',  price: 999,   strike: 1999,  label: null           },
-  { key: '3mo', period: '3 months', price: 2499,  strike: 3999,  label: 'Most Chosen'  },
-  { key: '6mo', period: '6 months', price: 4999,  strike: 7999,  label: 'Best Value'   },
-];
-const ELITE_TIERS = [
-  { key: '1mo', period: '1 month',  price: 2499,  strike: null,  label: null           },
-  { key: '3mo', period: '3 months', price: 6999,  strike: null,  label: 'Best Value'   },
-  { key: '6mo', period: '6 months', price: 12999, strike: null,  label: 'Best Savings' },
-];
-
 function PlanBadge({ children, variant = 'gold' }) {
   const styles = {
     gold:   'bg-gradient-to-r from-yellow-500 to-yellow-400 text-black',
@@ -62,32 +51,6 @@ function PlanBadge({ children, variant = 'gold' }) {
   );
 }
 
-function PeriodToggle({ tiers, selected, onChange }) {
-  return (
-    <div className="flex rounded-xl overflow-hidden border border-white/10 bg-black/20 p-0.5 gap-0.5">
-      {tiers.map(t => (
-        <button
-          key={t.key}
-          onClick={() => onChange(t.key)}
-          className={`
-            relative flex-1 px-2 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200
-            ${selected === t.key
-              ? 'bg-yellow-500 text-black shadow'
-              : 'text-white/60 hover:text-white/90'}
-          `}
-        >
-          {t.period.split(' ')[0]}&nbsp;mo
-          {t.label && selected !== t.key && (
-            <span className="absolute -top-2 left-1/2 -translate-x-1/2 bg-yellow-500 text-black text-[9px] font-bold px-1.5 py-0.5 rounded-full leading-none whitespace-nowrap">
-              {t.label}
-            </span>
-          )}
-        </button>
-      ))}
-    </div>
-  );
-}
-
 function FeatureRow({ text }) {
   return (
     <li className="flex items-start gap-2.5 text-sm">
@@ -98,57 +61,49 @@ function FeatureRow({ text }) {
 }
 
 function PricingSection() {
-  const [premiumKey, setPremiumKey] = useState('3mo');
-  const [eliteKey,   setEliteKey]   = useState('3mo');
-
-  const premiumTier = PREMIUM_TIERS.find(t => t.key === premiumKey);
-  const eliteTier   = ELITE_TIERS.find(t => t.key === eliteKey);
-
   return (
     <section className="py-20 px-4 bg-card/40" id="pricing">
       <div className="container mx-auto max-w-6xl">
 
         {/* ── Section Header ────────────────────────────────────────────── */}
-        <div className="text-center mb-4">
+        <div className="text-center mb-10">
           <div className="inline-flex items-center gap-2 bg-primary/10 border border-primary/20 text-primary px-4 py-1.5 rounded-full text-sm font-medium mb-5">
             <Sparkles className="w-4 h-4" />
             Transparent Pricing
           </div>
           <h2 className="font-heading text-4xl font-bold text-foreground mb-3">
-            Upgrade Your <span className="text-primary">Experience</span>
+            Choose Your <span className="text-primary">Journey</span>
           </h2>
-          <div className="inline-flex items-center gap-2 bg-yellow-500/10 border border-yellow-500/25 text-yellow-400 px-4 py-1.5 rounded-full text-xs font-bold tracking-wide mb-4">
-            ⚡ Founding Member Pricing — Limited Time
-          </div>
+          <p className="text-muted-foreground max-w-lg mx-auto">
+            Three simple plans. No hidden fees. Upgrade or downgrade anytime.
+          </p>
         </div>
 
         {/* ═══════════════════════════════════════════════════════════════
             SECTION A — Matchmaking Plans
         ════════════════════════════════════════════════════════════════ */}
         <div className="mb-4">
-          <div className="flex items-center gap-3 mb-6">
-            <span className="text-lg" role="img" aria-label="ring">💍</span>
-            <div>
-              <h3 className="font-heading text-lg font-bold text-foreground">Matchmaking Plans</h3>
-              <p className="text-xs text-muted-foreground">For singles finding a life partner — subscription-based</p>
-            </div>
-          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch">
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 items-start">
-
-            {/* ── Free ─────────────────────────────────────────────────── */}
+            {/* ── FREE ─────────────────────────────────────────────────── */}
             <div className="flex flex-col rounded-2xl border border-white/8 bg-[#0F1A2E] p-6 gap-5 hover:-translate-y-1 hover:shadow-xl transition-all duration-300">
               <div className="space-y-1">
                 <p className="text-xs font-bold text-white/40 uppercase tracking-widest">Free</p>
                 <h3 className="font-heading text-xl font-bold text-white">Start Free</h3>
-                <p className="text-xs text-white/50 leading-snug">Start Your Compatibility Journey</p>
+                <p className="text-xs text-white/50 leading-snug">Begin your compatibility journey</p>
               </div>
               <div>
                 <span className="text-4xl font-extrabold text-white">₹0</span>
                 <span className="text-white/40 text-sm ml-1">forever</span>
               </div>
               <ul className="space-y-2.5 flex-1">
-                {['Create your personality profile','10 curated matches / month','3 interests per month','Basic compatibility insights','Browse verified profiles'].map(f => (
+                {[
+                  'Create your personality profile',
+                  '10 curated matches / month',
+                  '3 interests per month',
+                  'Basic compatibility insights',
+                  'Browse verified profiles',
+                ].map(f => (
                   <li key={f} className="flex items-start gap-2.5 text-sm">
                     <Check className="w-4 h-4 text-white/30 mt-0.5 shrink-0" />
                     <span className="text-white/55 leading-snug">{f}</span>
@@ -162,9 +117,9 @@ function PricingSection() {
               </Link>
             </div>
 
-            {/* ── Premium ──────────────────────────────────────────────── */}
+            {/* ── PREMIUM — ₹2,499/month ───────────────────────────────── */}
             <div
-              className="flex flex-col rounded-2xl p-6 gap-5 transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl sm:scale-105 sm:-translate-y-1"
+              className="flex flex-col rounded-2xl p-6 gap-5 transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl md:scale-[1.04]"
               style={{
                 background:  'linear-gradient(155deg, #1a2a1a 0%, #0F1A2E 60%)',
                 border:      '1.5px solid rgba(212,175,55,0.55)',
@@ -177,35 +132,22 @@ function PricingSection() {
               <div className="space-y-1">
                 <p className="text-xs font-bold text-yellow-400/60 uppercase tracking-widest">Premium</p>
                 <h3 className="font-heading text-xl font-bold text-white">Find Your Match</h3>
-                <p className="text-xs text-white/50 leading-snug">Unlock deeper compatibility &amp; real connections</p>
+                <p className="text-xs text-white/50 leading-snug">For active seekers</p>
               </div>
-              <PeriodToggle tiers={PREMIUM_TIERS} selected={premiumKey} onChange={setPremiumKey} />
               <div>
-                {premiumTier.strike && (
-                  <p className="text-xs text-white/35 line-through mb-0.5">
-                    ₹{premiumTier.strike.toLocaleString('en-IN')}
-                  </p>
-                )}
                 <div className="flex items-baseline gap-1.5">
-                  <span className="text-4xl font-extrabold text-yellow-400">
-                    ₹{premiumTier.price.toLocaleString('en-IN')}
-                  </span>
-                  <span className="text-white/40 text-sm">/ {premiumTier.period}</span>
+                  <span className="text-4xl font-extrabold text-yellow-400">₹2,499</span>
+                  <span className="text-white/40 text-sm">/ month</span>
                 </div>
-                {premiumTier.label && (
-                  <span className="inline-block mt-1 text-[10px] font-bold text-yellow-500 bg-yellow-500/10 border border-yellow-500/25 px-2 py-0.5 rounded-full">
-                    {premiumTier.label}
-                  </span>
-                )}
               </div>
               <ul className="space-y-2.5 flex-1">
                 {[
-                  'Unlimited profile views & interests',
-                  'Advanced compatibility filters',
+                  '40 interests / month',
                   'See who viewed your profile',
-                  'Priority customer support',
-                  'SoulSathiya Compatibility Intelligence Report (add-on)',
                   'Weekly curated match digest',
+                  'Advanced compatibility filters',
+                  'Priority customer support',
+                  'One Compatibility Intelligence Report / month (add-on)',
                 ].map(f => <FeatureRow key={f} text={f} />)}
               </ul>
               <Link to="/register" className="block">
@@ -213,12 +155,12 @@ function PricingSection() {
                   className="w-full py-3 rounded-xl text-sm font-bold transition-all duration-200 hover:scale-[1.02] hover:shadow-lg active:scale-[0.98]"
                   style={{ background: 'linear-gradient(90deg,#D4AF37,#F0CC5A)', color: '#000' }}
                 >
-                  Find Your Compatible Partner →
+                  Upgrade to Premium →
                 </button>
               </Link>
             </div>
 
-            {/* ── Elite ─────────────────────────────────────────────────── */}
+            {/* ── ELITE — ₹6,999/month ──────────────────────────────────── */}
             <div className="flex flex-col rounded-2xl border border-purple-500/30 bg-[#0F1A2E] p-6 gap-5 hover:-translate-y-1 hover:shadow-xl transition-all duration-300"
               style={{ boxShadow: '0 0 24px rgba(139,92,246,0.08)' }}>
               <div className="flex items-center gap-2">
@@ -227,36 +169,29 @@ function PricingSection() {
               <div className="space-y-1">
                 <p className="text-xs font-bold text-purple-400/60 uppercase tracking-widest">Elite</p>
                 <h3 className="font-heading text-xl font-bold text-white">Elite Matchmaking</h3>
-                <p className="text-xs text-white/50 leading-snug">For serious seekers of a lifelong partner</p>
+                <p className="text-xs text-white/50 leading-snug">For serious marriage intent</p>
               </div>
-              <PeriodToggle tiers={ELITE_TIERS} selected={eliteKey} onChange={setEliteKey} />
               <div>
                 <div className="flex items-baseline gap-1.5">
-                  <span className="text-4xl font-extrabold text-purple-400">
-                    ₹{eliteTier.price.toLocaleString('en-IN')}
-                  </span>
-                  <span className="text-white/40 text-sm">/ {eliteTier.period}</span>
+                  <span className="text-4xl font-extrabold text-purple-400">₹6,999</span>
+                  <span className="text-white/40 text-sm">/ month</span>
                 </div>
-                {eliteTier.label && (
-                  <span className="inline-block mt-1 text-[10px] font-bold text-purple-400 bg-purple-500/10 border border-purple-500/25 px-2 py-0.5 rounded-full">
-                    {eliteTier.label}
-                  </span>
-                )}
               </div>
               <ul className="space-y-2.5 flex-1">
                 {[
+                  'Unlimited interests',
                   'Everything in Premium',
                   'Weekly profile boost included',
                   'Dedicated relationship manager',
                   'Verified priority placement',
                   'Exclusive high-intent matches',
-                  'Unlimited Compatibility Intelligence Reports',
+                  'Unlimited Compatibility Reports',
                   'Video call introduction service',
                 ].map(f => <FeatureRow key={f} text={f} />)}
               </ul>
               <Link to="/register" className="block">
                 <button className="w-full py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-sm font-bold transition-all duration-200 hover:shadow-lg hover:shadow-purple-500/25">
-                  Get Premium Matchmaking Experience →
+                  Go Elite →
                 </button>
               </Link>
             </div>
