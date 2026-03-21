@@ -53,8 +53,8 @@ const DashboardPage = () => {
         ]);
 
         setStats({
-          matchesCount: matchesRes.data.count || 0,
-          interestsReceived: interestsRes.data.interests?.length || 0,
+          matchesCount: matchesRes.data.matches?.length || matchesRes.data.count || 0,
+          interestsReceived: interestsRes.data.interests?.length || interestsRes.data.count || 0,
           conversations: conversationsRes.data.conversations?.length || 0
         });
       } catch (error) {

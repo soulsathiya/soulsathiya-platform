@@ -194,7 +194,7 @@ function App() {
     <div className="App">
       <BrowserRouter>
         <AppRouter />
-        <Toaster position="top-right" richColors />
+        <Toaster position="top-right" richColors duration={3000} />
       </BrowserRouter>
     </div>
   );
