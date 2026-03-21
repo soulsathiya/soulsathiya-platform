@@ -14,14 +14,16 @@ const getScoreColor = (score) => {
   if (score >= 85) return 'text-green-400';
   if (score >= 70) return 'text-primary';
   if (score >= 55) return 'text-amber-400';
+  if (score >= 40) return 'text-orange-400';
   return 'text-muted-foreground';
 };
 
 const getScoreLabel = (score) => {
-  if (score >= 85) return 'Exceptional';
-  if (score >= 75) return 'Strong';
-  if (score >= 65) return 'Good';
-  return 'Moderate';
+  if (score >= 85) return 'Exceptional Match';
+  if (score >= 70) return 'Strong Match';
+  if (score >= 55) return 'Good Match';
+  if (score >= 40) return 'Worth Exploring';
+  return 'Some Alignment';
 };
 
 const calculateAge = (dob) => {
@@ -64,12 +66,12 @@ const MatchCard = ({ match, onSendInterest, interestsSent }) => {
             </Badge>
           </div>
         )}
-        {/* Compatibility score overlay */}
-        <div className="absolute bottom-3 right-3 bg-card/90 backdrop-blur rounded-full px-3 py-1 flex items-center space-x-1 shadow-sm">
-          <Star className="w-3 h-3 text-amber-500 fill-amber-500" />
-          <span className={`text-sm font-bold ${getScoreColor(compatibility_score)}`}>
+        {/* Compatibility score overlay — hero number */}
+        <div className="absolute bottom-3 right-3 bg-card/95 backdrop-blur-sm rounded-xl px-3.5 py-2 flex flex-col items-center shadow-lg border border-white/10">
+          <span className={`text-xl font-extrabold tabular-nums leading-none ${getScoreColor(compatibility_score)}`}>
             {compatibility_score?.toFixed(0)}%
           </span>
+          <span className="text-[9px] text-white/40 font-medium mt-0.5">Compatible</span>
         </div>
       </div>
 
@@ -293,10 +295,10 @@ const MatchesPage = () => {
         {/* Upgrade CTA for free users */}
         {user?.subscription_status === 'free' && matches.length > 0 && (
           <div className="mt-12 bg-gradient-to-r from-primary to-secondary rounded-2xl p-8 text-primary-foreground text-center space-y-4">
-            <h3 className="font-heading text-2xl">Unlock More Connections</h3>
-            <p className="text-primary-foreground/80">Free users can view matches but cannot send interests. Upgrade to connect.</p>
+            <h3 className="font-heading text-2xl">Want More Connections?</h3>
+            <p className="text-primary-foreground/80">Free plan includes 3 connection requests per month. Upgrade for unlimited interests &amp; advanced filters.</p>
             <Link to="/subscription">
-              <Button variant="secondary" size="lg">Upgrade to Premium</Button>
+              <Button variant="secondary" size="lg">See Plans</Button>
             </Link>
           </div>
         )}

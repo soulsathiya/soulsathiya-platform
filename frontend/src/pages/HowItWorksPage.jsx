@@ -323,7 +323,7 @@ export const RelationshipJourneyCards = () => (
         </p>
       </div>
       <ul className="space-y-2.5">
-        {['Compatibility Score (0–100)', 'Relationship Readiness Score', 'Verified, serious profiles only'].map((item, i) => (
+        {['Compatibility Score — how well you match', 'Profile Strength indicator', 'Verified, serious profiles only'].map((item, i) => (
           <li key={i} className="flex items-center gap-2.5 text-sm text-muted-foreground">
             <CheckCircle2 className="w-4 h-4 flex-shrink-0" style={{ color: 'hsl(217,91%,60%)' }} />
             {item}

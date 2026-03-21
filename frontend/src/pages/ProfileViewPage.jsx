@@ -180,7 +180,7 @@ const ProfileViewPage = () => {
       {/* ── Main content ──────────────────────────────────────────────────── */}
       <main className="container mx-auto px-6 py-8 max-w-4xl">
 
-        {/* 1. Hero — name, readiness score, 3 CTAs */}
+        {/* 1. Hero — name, profile strength badge, 3 CTAs */}
         <ProfileHero
           user={user}
           profileData={profileData}

@@ -16,7 +16,7 @@ const EDU_MAP = {
 };
 const formatEdu = v => EDU_MAP[v?.toLowerCase()] || v;
 
-export const calcReadinessScore = (profileData, photos) => {
+export const calcProfileStrength = (profileData, photos) => {
   let s = 38;
   if (profileData?.bio?.trim())           s += 16;
   if (photos?.length >= 1)                s += 10;
@@ -29,10 +29,10 @@ export const calcReadinessScore = (profileData, photos) => {
   return Math.min(100, s);
 };
 
-const scoreColor = (s) => {
-  if (s >= 80) return { bar: 'from-emerald-500 to-teal-400', text: 'text-emerald-400', label: 'Highly Ready' };
-  if (s >= 60) return { bar: 'from-primary to-yellow-400',   text: 'text-primary',     label: 'Ready'        };
-  return             { bar: 'from-orange-500 to-amber-400',  text: 'text-orange-400',  label: 'Building'     };
+const strengthBadge = (s) => {
+  if (s >= 70) return { icon: '🟢', text: 'text-emerald-400', label: 'Strong Profile',  hint: "You're ready to receive great matches" };
+  if (s >= 50) return { icon: '🟡', text: 'text-yellow-400',  label: 'Growing Profile', hint: 'Add a bit more to attract better matches' };
+  return             { icon: '🔵', text: 'text-sky-400',      label: 'New Profile',     hint: 'Complete your profile to start matching' };
 };
 
 // ── Component ─────────────────────────────────────────────────────────────────
@@ -42,8 +42,8 @@ const ProfileHero = ({
 }) => {
   const primaryPhoto  = photos?.find(p => p.is_primary)?.s3_url;
   const avatarSrc     = user?.picture || primaryPhoto;
-  const readiness     = calcReadinessScore(profileData, photos);
-  const sc            = scoreColor(readiness);
+  const strength      = calcProfileStrength(profileData, photos);
+  const sb            = strengthBadge(strength);
 
   return (
     <div
@@ -127,24 +127,15 @@ const ProfileHero = ({
           </div>
         </div>
 
-        {/* ── Readiness Score ── */}
+        {/* ── Profile Strength Badge ── */}
         <div className="mt-5 p-4 rounded-xl bg-white/[0.04] border border-white/10">
-          <div className="flex items-center justify-between mb-2">
-            <div className="flex items-center gap-2">
-              <Zap className={`w-4 h-4 ${sc.text}`} />
-              <span className="text-xs font-semibold text-foreground">Relationship Readiness</span>
+          <div className="flex items-center gap-3">
+            <span className="text-lg">{sb.icon}</span>
+            <div className="flex-1 min-w-0">
+              <span className={`text-sm font-bold ${sb.text}`}>{sb.label}</span>
+              <p className="text-[11px] text-muted-foreground/60 mt-0.5">{sb.hint}</p>
             </div>
-            <span className={`text-sm font-bold tabular-nums ${sc.text}`}>{readiness}%</span>
           </div>
-          <div className="h-2 bg-white/10 rounded-full overflow-hidden">
-            <div
-              className={`h-full rounded-full bg-gradient-to-r ${sc.bar} transition-all duration-700`}
-              style={{ width: `${readiness}%` }}
-            />
-          </div>
-          <p className="text-[10px] text-muted-foreground/50 mt-1.5">
-            {sc.label} · Based on profile completeness &amp; psychographic signals
-          </p>
         </div>
 
         {/* ── CTA Buttons ── */}

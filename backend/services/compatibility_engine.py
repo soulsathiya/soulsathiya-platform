@@ -1,7 +1,20 @@
-"""SoulSathiya Compatibility Engine"""
+"""SoulSathiya Compatibility Engine
+
+Scoring philosophy
+──────────────────
+Domain compatibility uses an exponential-decay curve instead of the
+naive linear `100 - diff`.  This spreads real-world scores across the
+full 30-95 range so that a 90 %+ match genuinely feels rare and special,
+while a 60 % match still looks credible and worth exploring.
+
+Deal-breaker domains (values, marriage_expectations) carry an additional
+hard penalty when the gap exceeds 35 points, ensuring that fundamental
+misalignment cannot be hidden behind average-of-everything math.
+"""
 
 from typing import Dict, List, Tuple, Optional
 from datetime import datetime, timezone
+import math
 import uuid
 
 
@@ -14,6 +27,12 @@ class CompatibilityEngine:
         "personality": 0.10,
         "trust_attachment": 0.08,
         "growth_mindset": 0.05
+    }
+
+    # Domains where a large gap triggers a hard penalty on the overall score
+    DEALBREAKER_DOMAINS = {
+        "values":                 {"threshold": 35, "penalty": 15},
+        "marriage_expectations":  {"threshold": 35, "penalty": 12},
     }
     
     def __init__(self, db):
@@ -76,43 +95,57 @@ class CompatibilityEngine:
             return "harmonizer", None
     
     def calculate_domain_compatibility(self, score_a: float, score_b: float) -> float:
+        """Exponential-decay curve: small gaps stay high, larger gaps drop fast.
+
+        Formula:  100 × max(0, 1 − (diff / 50)^1.5)
+
+        Examples:  diff=0 → 100,  diff=10 → 91,  diff=15 → 84,
+                   diff=20 → 75,  diff=25 → 65,  diff=30 → 54,
+                   diff=40 → 28,  diff=50 → 0
+        """
         diff = abs(score_a - score_b)
-        compatibility = max(0, 100 - diff)
+        ratio = min(diff / 50.0, 1.0)              # cap at 1.0
+        compatibility = 100.0 * max(0.0, 1.0 - math.pow(ratio, 1.5))
         return round(compatibility, 2)
     
     async def calculate_compatibility(self, user_a_id: str, user_b_id: str) -> Dict:
         profile_a = await self.db.psychometric_profiles.find_one({"user_id": user_a_id}, {"_id": 0})
         profile_b = await self.db.psychometric_profiles.find_one({"user_id": user_b_id}, {"_id": 0})
-        
+
         if not profile_a or not profile_b:
             return {"compatibility_percentage": 0, "domain_breakdown": {}, "error": "Profiles not found"}
-        
+
         scores_a = profile_a["domain_scores"]
         scores_b = profile_b["domain_scores"]
-        
+
         domain_breakdown = {}
         weighted_sum = 0.0
-        
+        dealbreaker_penalty = 0.0
+
         for domain, weight in self.DOMAIN_WEIGHTS.items():
             score_a = scores_a.get(domain, 50)
             score_b = scores_b.get(domain, 50)
-            
+
             domain_comp = self.calculate_domain_compatibility(score_a, score_b)
             domain_breakdown[domain] = domain_comp
             weighted_sum += domain_comp * weight
-        
-        final_compatibility = round(weighted_sum, 2)
-        
-        if domain_breakdown.get("values", 0) > 80:
-            final_compatibility += 3
-        if domain_breakdown.get("marriage_expectations", 0) > 80:
-            final_compatibility += 2
-        
-        final_compatibility = max(0, min(100, final_compatibility))
-        
+
+            # Check for dealbreaker-level misalignment
+            if domain in self.DEALBREAKER_DOMAINS:
+                db_cfg = self.DEALBREAKER_DOMAINS[domain]
+                if abs(score_a - score_b) > db_cfg["threshold"]:
+                    dealbreaker_penalty += db_cfg["penalty"]
+
+        final_compatibility = weighted_sum - dealbreaker_penalty
+        final_compatibility = max(0, min(100, round(final_compatibility, 1)))
+
         return {
-            "compatibility_percentage": round(final_compatibility, 1),
+            "compatibility_percentage": final_compatibility,
             "domain_breakdown": domain_breakdown,
+            "dealbreaker_flags": [
+                d for d in self.DEALBREAKER_DOMAINS
+                if abs(scores_a.get(d, 50) - scores_b.get(d, 50)) > self.DEALBREAKER_DOMAINS[d]["threshold"]
+            ],
             "user_a_scores": scores_a,
             "user_b_scores": scores_b
         }
@@ -120,41 +153,52 @@ class CompatibilityEngine:
     def generate_match_insights(self, compatibility_data: Dict, user_a_archetype: str, user_b_archetype: str) -> Dict:
         compat_pct = compatibility_data["compatibility_percentage"]
         breakdown = compatibility_data["domain_breakdown"]
-        
+        dealbreakers = compatibility_data.get("dealbreaker_flags", [])
+
         if compat_pct >= 85:
-            headline = "Exceptional compatibility - deeply aligned values and goals"
-        elif compat_pct >= 75:
-            headline = "Strong compatibility - great foundation for partnership"
-        elif compat_pct >= 65:
-            headline = "Good compatibility - complementary strengths"
+            headline = "Exceptional compatibility — deeply aligned values and goals"
+        elif compat_pct >= 70:
+            headline = "Strong compatibility — great foundation for partnership"
+        elif compat_pct >= 55:
+            headline = "Good compatibility — complementary strengths worth exploring"
+        elif compat_pct >= 40:
+            headline = "Moderate compatibility — interesting differences to navigate"
         else:
-            headline = "Moderate compatibility - open communication needed"
-        
+            headline = "Some compatibility — open, honest communication is key"
+
         strengths = []
         for domain, score in breakdown.items():
-            if score >= 80:
+            if score >= 70:
                 domain_name = domain.replace("_", " ").title()
-                strengths.append(f"Highly aligned on {domain_name}")
-        
+                strengths.append(f"Aligned on {domain_name}")
+
         if not strengths:
             strengths = ["Natural compatibility in core areas"]
-        
+
         differences = []
         for domain, score in breakdown.items():
-            if score < 60:
+            if score < 50:
                 domain_name = domain.replace("_", " ").title()
-                differences.append(f"{domain_name} shows some divergence")
-        
+                differences.append(f"{domain_name} needs open conversation")
+
         if not differences:
-            differences = ["Minor differences for growth"]
-        
-        tip = "Maintain open communication and celebrate your compatibility"
-        
+            differences = ["Minor differences — room for growth together"]
+
+        risks = []
+        if dealbreakers:
+            for d in dealbreakers:
+                domain_name = d.replace("_", " ").title()
+                risks.append(f"Significant gap in {domain_name} — discuss early")
+        if not risks:
+            risks = ["No major red flags detected"]
+
+        tip = "Focus conversations on your shared strengths while being curious about your differences"
+
         return {
             "headline": headline,
             "strengths": strengths[:3],
             "differences": differences[:2],
-            "risks": ["No major red flags"],
+            "risks": risks[:2],
             "communication_tip": tip
         }
     

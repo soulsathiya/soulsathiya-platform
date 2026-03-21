@@ -174,10 +174,11 @@ function getStrengthsGrowth(dimScores) {
 }
 
 function scoreLabel(n) {
-  if (n >= 85) return { label: 'Highly Ready',      color: '#10B981' };
-  if (n >= 70) return { label: 'Very Ready',         color: '#3B82F6' };
-  if (n >= 55) return { label: 'Growing Ready',      color: '#F59E0B' };
-  return             { label: 'Building Readiness',  color: '#8B5CF6' };
+  // Qualitative badges only — no numeric score shown to user
+  if (n >= 85) return { label: 'Exceptionally Self-Aware',  color: '#10B981' };
+  if (n >= 70) return { label: 'Strong Self-Awareness',     color: '#3B82F6' };
+  if (n >= 55) return { label: 'Growing Self-Awareness',    color: '#F59E0B' };
+  return             { label: 'Beginning Your Journey',     color: '#8B5CF6' };
 }
 
 // ── Sub-components ────────────────────────────────────────────────────────────
@@ -303,12 +304,12 @@ function MicroFeedback({ stage, insights, onContinue, isLast }) {
           className="w-full py-3.5 rounded-xl font-bold text-base flex items-center justify-center gap-2 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
           style={{ background: 'linear-gradient(90deg,#D4AF37,#F0CC5A)', color: '#000' }}
         >
-          {isLast ? 'See My Readiness Score' : `Continue to ${STAGES[STAGES.indexOf(stage) + 1]?.name || 'Next Stage'}`}
+          {isLast ? 'See My Compatibility Profile' : `Continue to ${STAGES[STAGES.indexOf(stage) + 1]?.name || 'Next Stage'}`}
           <ArrowRight className="w-4 h-4" />
         </button>
 
         <p className="text-xs text-white/25">
-          {isLast ? 'Calculating your Relationship Readiness…' : `${STAGES.length - STAGES.indexOf(stage) - 1} stage${STAGES.length - STAGES.indexOf(stage) - 1 !== 1 ? 's' : ''} remaining`}
+          {isLast ? 'Building your compatibility profile…' : `${STAGES.length - STAGES.indexOf(stage) - 1} stage${STAGES.length - STAGES.indexOf(stage) - 1 !== 1 ? 's' : ''} remaining`}
         </p>
       </div>
     </div>
@@ -331,12 +332,12 @@ function ScoreCounter({ target }) {
   return <>{display}</>;
 }
 
-/** Circular progress ring */
+/** Circular badge ring — shows qualitative label instead of numeric score */
 function ScoreRing({ score, size = 180 }) {
   const r   = (size - 20) / 2;
   const circ = 2 * Math.PI * r;
-  const dash = (score / 100) * circ;
-  const { color } = scoreLabel(score);
+  const dash = circ;  // full ring — celebratory, not judgmental
+  const { color, label } = scoreLabel(score);
   return (
     <div className="relative" style={{ width: size, height: size }}>
       <svg width={size} height={size} style={{ transform: 'rotate(-90deg)' }}>
@@ -348,25 +349,24 @@ function ScoreRing({ score, size = 180 }) {
           style={{ transition: 'stroke-dasharray 1.8s cubic-bezier(0.34,1.56,0.64,1)', filter: `drop-shadow(0 0 8px ${color}80)` }}
         />
       </svg>
-      <div className="absolute inset-0 flex flex-col items-center justify-center">
-        <span className="text-5xl font-extrabold text-white tabular-nums leading-none">
-          <ScoreCounter target={score} />
-        </span>
-        <span className="text-base text-white/50 mt-0.5">%</span>
+      <div className="absolute inset-0 flex flex-col items-center justify-center px-4">
+        <span className="text-3xl">&#10003;</span>
+        <span className="text-xs font-bold text-white/70 mt-1 text-center leading-tight">{label}</span>
       </div>
     </div>
   );
 }
 
-/** Dim bar for dimension scores */
+/** Dim bar for dimension scores — shows qualitative label, not numeric % */
 function DimBar({ label, score, color }) {
   const [w, setW] = useState(0);
   useEffect(() => { const t = setTimeout(() => setW(score), 200); return () => clearTimeout(t); }, [score]);
+  const dimLabel = score >= 75 ? 'Strong' : score >= 55 ? 'Developing' : 'Emerging';
   return (
     <div className="space-y-1.5">
       <div className="flex justify-between text-xs">
         <span className="text-white/65 font-medium">{label}</span>
-        <span className="font-bold" style={{ color }}>{score}%</span>
+        <span className="font-bold" style={{ color }}>{dimLabel}</span>
       </div>
       <div className="h-1.5 rounded-full bg-white/5 overflow-hidden">
         <div
@@ -404,8 +404,8 @@ function ResultScreen({ score, dimScores, onDashboard }) {
           <div className="inline-flex items-center gap-2 bg-yellow-500/10 border border-yellow-500/20 text-yellow-400 px-4 py-1.5 rounded-full text-xs font-bold tracking-wide">
             <Star className="w-3.5 h-3.5 fill-yellow-400" /> SoulSathiya Relationship Intelligence
           </div>
-          <h1 className="font-heading text-3xl font-bold text-white">Your Relationship Readiness</h1>
-          <p className="text-white/45 text-sm">Based on your answers across 7 relationship dimensions</p>
+          <h1 className="font-heading text-3xl font-bold text-white">Your Compatibility Profile is Live!</h1>
+          <p className="text-white/45 text-sm">Here's what we learned about you across 7 relationship dimensions</p>
         </div>
 
         {/* Score card */}
@@ -425,7 +425,7 @@ function ResultScreen({ score, dimScores, onDashboard }) {
               {label}
             </div>
             <p className="text-white/50 text-sm max-w-md mx-auto">
-              You have completed your SoulSathiya Relationship Readiness Journey. Your profile is now enriched with deep compatibility intelligence.
+              Your compatibility profile is now active. SoulSathiya will use these insights to find your most compatible matches.
             </p>
           </div>
 
@@ -576,7 +576,7 @@ const PsychometricOnboarding = () => {
       <div className="min-h-screen bg-[#0C1323] flex flex-col items-center justify-center gap-4">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-yellow-500" />
         <p className="text-white/40 text-sm animate-pulse">
-          {submitting ? 'Calculating your relationship readiness…' : 'Loading your journey…'}
+          {submitting ? 'Building your compatibility profile…' : 'Loading your journey…'}
         </p>
       </div>
     );
