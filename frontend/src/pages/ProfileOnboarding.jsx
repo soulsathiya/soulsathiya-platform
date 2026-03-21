@@ -341,7 +341,7 @@ const Step3AboutYou = ({ data, onChange }) => (
       <div className="space-y-1">
         <Label>Occupation <span className="text-destructive">*</span></Label>
         <Input
-          placeholder="Software Engineer"
+          placeholder="e.g. Software Engineer"
           value={data.occupation}
           onChange={(e) => onChange({ ...data, occupation: e.target.value })}
         />
@@ -445,13 +445,48 @@ const Step4Psychometric = () => (
 );
 
 // ─── Step 5: Review ───────────────────────────────────────────────────────────
+
+/** Capitalize first letter of each word and replace underscores with spaces */
+const formatLabel = (val) => {
+  if (!val) return '—';
+  return String(val)
+    .replace(/_/g, ' ')
+    .replace(/\b\w/g, c => c.toUpperCase());
+};
+
+/** Format array values with proper capitalization */
+const formatArray = (arr) => {
+  if (!Array.isArray(arr) || !arr.length) return '—';
+  return arr.map(v => formatLabel(v)).join(', ');
+};
+
+/** Format date from YYYY-MM-DD to DD MMM YYYY (e.g. 15 Jun 1993) */
+const formatDate = (dateStr) => {
+  if (!dateStr) return '—';
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const parts = dateStr.split('-');
+  if (parts.length !== 3) return dateStr;
+  const [y, m, d] = parts;
+  return `${parseInt(d)} ${months[parseInt(m) - 1]} ${y}`;
+};
+
+/** Format annual income to readable format */
+const formatIncome = (val) => {
+  if (!val) return '—';
+  const incomeMap = {
+    'below_3l': 'Below ₹3 LPA', '3l_6l': '₹3–6 LPA', '6l_10l': '₹6–10 LPA',
+    '10l_20l': '₹10–20 LPA', '20l_50l': '₹20–50 LPA', 'above_50l': 'Above ₹50 LPA',
+    'Below ₹3 LPA': 'Below ₹3 LPA', '₹3-6 LPA': '₹3–6 LPA', '₹6-10 LPA': '₹6–10 LPA',
+    '₹10-20 LPA': '₹10–20 LPA', '₹20-50 LPA': '₹20–50 LPA', 'Above ₹50 LPA': 'Above ₹50 LPA',
+  };
+  return incomeMap[val] || formatLabel(val);
+};
+
 const ReviewRow = ({ label, value }) => (
   <div className="flex justify-between py-2 border-b last:border-0">
     <span className="text-sm text-muted-foreground">{label}</span>
     <span className="text-sm font-medium text-right max-w-[60%] truncate">
-      {Array.isArray(value)
-        ? (value.length ? value.join(', ') : '—')
-        : (value || '—')}
+      {Array.isArray(value) ? formatArray(value) : (value || '—')}
     </span>
   </div>
 );
@@ -461,28 +496,28 @@ const Step5Review = ({ profile, preferences, about }) => (
     <h2 className="font-heading text-xl">Review Your Profile</h2>
     <div className="card-surface p-4 rounded-xl space-y-1">
       <h3 className="font-semibold text-sm uppercase tracking-wide text-muted-foreground mb-2">Basic Info</h3>
-      <ReviewRow label="Date of Birth" value={profile.date_of_birth} />
-      <ReviewRow label="Gender" value={profile.gender} />
+      <ReviewRow label="Date of Birth" value={formatDate(profile.date_of_birth)} />
+      <ReviewRow label="Gender" value={formatLabel(profile.gender)} />
       <ReviewRow label="Phone" value={profile.phone_number} />
-      <ReviewRow label="Marital Status" value={profile.marital_status?.replace(/_/g, ' ')} />
+      <ReviewRow label="Marital Status" value={formatLabel(profile.marital_status)} />
       <ReviewRow label="Height" value={profile.height_cm ? `${profile.height_cm} cm` : ''} />
-      <ReviewRow label="Religion" value={profile.religion} />
+      <ReviewRow label="Religion" value={formatLabel(profile.religion)} />
     </div>
     <div className="card-surface p-4 rounded-xl space-y-1">
       <h3 className="font-semibold text-sm uppercase tracking-wide text-muted-foreground mb-2">About You</h3>
       <ReviewRow label="City / State" value={about.city && about.state ? `${about.city}, ${about.state}` : (about.city || about.state)} />
-      <ReviewRow label="Education" value={about.education_level?.replace(/_/g, ' ')} />
+      <ReviewRow label="Education" value={formatLabel(about.education_level)} />
       <ReviewRow label="Occupation" value={about.occupation} />
-      <ReviewRow label="Annual Income" value={about.annual_income?.replace(/_/g, ' ')} />
-      <ReviewRow label="Diet" value={about.diet} />
+      <ReviewRow label="Annual Income" value={formatIncome(about.annual_income)} />
+      <ReviewRow label="Diet" value={about.diet ? formatLabel(about.diet) : 'Prefer not to say'} />
     </div>
     <div className="card-surface p-4 rounded-xl space-y-1">
       <h3 className="font-semibold text-sm uppercase tracking-wide text-muted-foreground mb-2">Partner Preferences</h3>
       <ReviewRow label="Age Range" value={preferences.age_min && preferences.age_max ? `${preferences.age_min}–${preferences.age_max} yrs` : ''} />
-      <ReviewRow label="Height Range" value={preferences.height_min || preferences.height_max ? `${preferences.height_min || '?'}–${preferences.height_max || '?'} cm` : ''} />
-      <ReviewRow label="Religion Pref." value={preferences.preferred_religion} />
-      <ReviewRow label="Education Pref." value={preferences.preferred_education} />
-      <ReviewRow label="Marital Status Pref." value={preferences.preferred_marital_status} />
+      <ReviewRow label="Height Range" value={preferences.height_min && preferences.height_max ? `${preferences.height_min}–${preferences.height_max} cm` : ''} />
+      <ReviewRow label="Religion Pref." value={Array.isArray(preferences.preferred_religion) ? formatArray(preferences.preferred_religion) : formatLabel(preferences.preferred_religion)} />
+      <ReviewRow label="Education Pref." value={Array.isArray(preferences.preferred_education) ? formatArray(preferences.preferred_education) : formatLabel(preferences.preferred_education)} />
+      <ReviewRow label="Marital Status Pref." value={Array.isArray(preferences.preferred_marital_status) ? formatArray(preferences.preferred_marital_status) : formatLabel(preferences.preferred_marital_status)} />
       <ReviewRow label="Cities Pref." value={preferences.preferred_cities} />
     </div>
   </div>

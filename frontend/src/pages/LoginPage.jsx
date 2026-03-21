@@ -28,7 +28,7 @@ const LoginPage = () => {
         { withCredentials: true }
       );
 
-      toast.success('Login successful!');
+      toast.success('Login successful!', { duration: 2000 });
       navigate('/dashboard', { state: { user: response.data.user } });
     } catch (error) {
       const detail = error?.response?.data?.detail;

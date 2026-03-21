@@ -521,7 +521,7 @@ const LandingPage = () => {
           }
         });
       },
-      { threshold: 0.12 }
+      { threshold: 0.05, rootMargin: '0px 0px 80px 0px' }
     );
     els.forEach(el => observer.observe(el));
     return () => observer.disconnect();
@@ -800,9 +800,8 @@ const LandingPage = () => {
                     <div className="text-xs font-bold text-primary/70 uppercase tracking-widest mb-0.5">Level 1 Complete ✅</div>
                     <div className="text-xs text-muted-foreground">Emotional Foundation</div>
                   </div>
-                  <div className="ml-auto">
-                    <span className="text-2xl font-bold text-primary font-heading">78</span>
-                    <span className="text-xs text-muted-foreground">/100</span>
+                  <div className="ml-auto px-3 py-1 rounded-full" style={{ background: 'rgba(34,197,94,0.1)', border: '1px solid rgba(34,197,94,0.25)' }}>
+                    <span className="text-sm font-semibold text-emerald-400">Strong</span>
                   </div>
                 </div>
 
@@ -1539,7 +1538,7 @@ const LandingPage = () => {
             Away.
           </h2>
           <p className="text-lg text-muted-foreground">
-            Join thousands of Indians who are finding their life partners through deep compatibility intelligence
+            Begin your journey towards a deeply compatible life partnership — powered by psychology, not just preferences
           </p>
           <Link to="/register">
             <Button

@@ -51,7 +51,7 @@ const RegisterPage = () => {
         { withCredentials: true }
       );
 
-      toast.success('Account created! Please check your email to verify your address.');
+      toast.success('Account created! Please check your email to verify your address.', { duration: 3000 });
       // Redirect to verify-email banner first, then onboarding continues after verification
       navigate('/verify-email', { state: { user: response.data.user } });
     } catch (error) {
