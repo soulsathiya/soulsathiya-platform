@@ -60,7 +60,7 @@ export default function InsightsUnlock() {
     const token = localStorage.getItem(LS_TOKEN) || null;
     setGuestToken(token);
 
-    axios.get(`${BACKEND_URL}/api/profile/me`, { withCredentials: true })
+    axios.get(`${BACKEND_URL}/api/auth/me`, { withCredentials: true })
       .then(({ data }) => {
         setCurrentUser(data);
         setAuthState('logged_in');
@@ -70,9 +70,22 @@ export default function InsightsUnlock() {
       });
   }, []);
 
-  // ── Check if report already paid ────────────────────────────────────────────
+  // ── Convert guest data + check if report already paid ───────────────────────
   useEffect(() => {
     if (authState !== 'logged_in') return;
+
+    // If user logged in via regular login (not OTP), convert guest data
+    const token = localStorage.getItem(LS_TOKEN);
+    if (token && !token.startsWith('local_')) {
+      axios.post(
+        `${BACKEND_URL}/api/insights/convert-guest`,
+        { temp_token: token },
+        { withCredentials: true }
+      ).then(() => {
+        localStorage.removeItem(LS_TOKEN);
+      }).catch(() => {});
+    }
+
     axios.get(`${BACKEND_URL}/api/insights/my-status`, { withCredentials: true })
       .then(({ data }) => {
         if (data.report_unlocked) setPayStatus('success');
