@@ -127,6 +127,7 @@ app.add_middleware(
     allow_origins=[
         "http://localhost:3000",
         "https://soulsathiya.vercel.app",
+        "https://soulsathiya-frontend.vercel.app",
         "https://www.soulsathiya.com",
         "https://soulsathiya.com"
     ],
