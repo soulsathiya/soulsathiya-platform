@@ -214,7 +214,7 @@ export default function InsightsLandingPage() {
               </div>
               <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 4 }}>
                 <div style={{ background: 'rgba(212,165,32,0.15)', borderRadius: 20, padding: '4px 12px', fontSize: 13, color: GOLD, fontWeight: 700 }}>
-                  78 / 100
+                  ✓ Complete
                 </div>
               </div>
             </div>

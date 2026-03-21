@@ -321,10 +321,9 @@ function SectionInsightOverlay({ insight, section, onContinue, isLast }) {
                 {section?.title}
               </div>
             </div>
-            {/* Score pill */}
+            {/* Level complete badge (score hidden — available in paid report) */}
             <div style={{ marginLeft: 'auto', background: 'rgba(212,165,32,0.12)', border: `1px solid ${GOLD}40`, borderRadius: 20, padding: '6px 16px' }}>
-              <span style={{ fontSize: 20, fontWeight: 700, color: GOLD }}>{insight?.score}</span>
-              <span style={{ fontSize: 12, color: 'rgba(245,237,216,0.5)', fontFamily: 'sans-serif' }}> /100</span>
+              <span style={{ fontSize: 13, fontWeight: 600, color: GOLD, fontFamily: 'sans-serif' }}>✓ Complete</span>
             </div>
           </div>
 
