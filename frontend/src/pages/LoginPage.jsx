@@ -28,8 +28,19 @@ const LoginPage = () => {
         { withCredentials: true }
       );
 
+      const user = response.data.user;
       toast.success('Login successful!', { duration: 2000 });
-      navigate('/dashboard', { state: { user: response.data.user } });
+
+      // Check if terms need to be accepted (existing user, outdated/missing terms)
+      if (!user.terms_accepted) {
+        navigate('/accept-terms', {
+          state: { returnTo: '/dashboard' },
+          replace: true,
+        });
+        return;
+      }
+
+      navigate('/dashboard', { state: { user } });
     } catch (error) {
       const detail = error?.response?.data?.detail;
       const message = (Array.isArray(detail) ? detail[0]?.msg : detail) || error?.message || 'Login failed';

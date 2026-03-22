@@ -16,6 +16,7 @@ class UserCreate(UserBase):
     is_google_auth: bool = False
     google_id: Optional[str] = None
     picture: Optional[str] = None
+    terms_accepted: bool = False
 
     @field_validator('full_name')
     @classmethod
@@ -38,6 +39,8 @@ class User(UserBase):
     verification_badge: Optional[str] = None
     subscription_status: str = "free"
     subscription_tier: Optional[str] = None
+    terms_accepted_at: Optional[datetime] = None
+    terms_version: Optional[str] = None
     is_active: bool = True
     status: str = "active"
     deleted_at: Optional[datetime] = None

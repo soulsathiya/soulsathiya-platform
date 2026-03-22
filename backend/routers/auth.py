@@ -12,6 +12,7 @@ from datetime import datetime, timezone, timedelta
 
 from models.user import UserCreate, UserLogin, DELETED_ACCOUNT_ERROR
 from dependencies import db, auth_service, email_service, get_current_user
+from services.auth_service import CURRENT_TERMS_VERSION
 
 logger = logging.getLogger(__name__)
 limiter = Limiter(key_func=get_remote_address)
@@ -50,6 +51,10 @@ class VerifyOtpRequest(BaseModel):
     otp: str
 
 
+class CompleteRegistrationRequest(BaseModel):
+    pending_token: str
+
+
 # ---------------------------------------------------------------------------
 # Existing endpoints
 # ---------------------------------------------------------------------------
@@ -57,17 +62,26 @@ class VerifyOtpRequest(BaseModel):
 @router.post("/register")
 @limiter.limit("5/minute")
 async def register(request: Request, user_data: UserCreate):
-    """Register a new user with email and password and send a verification email."""
+    """Register a new user with email and password and send a verification email.
+
+    Requires ``terms_accepted=true`` — account creation is blocked without it.
+    """
     existing_user = await auth_service.get_user_by_email(user_data.email)
     if existing_user:
         raise HTTPException(status_code=400, detail="Email already registered")
     if not user_data.password:
         raise HTTPException(status_code=400, detail="Password is required")
+    if not user_data.terms_accepted:
+        raise HTTPException(
+            status_code=400,
+            detail="You must accept the Terms of Service and Privacy Policy to create an account.",
+        )
 
     user = await auth_service.create_user(
         email=user_data.email,
         full_name=user_data.full_name,
         password=user_data.password,
+        terms_accepted=True,
     )
     session_token = await auth_service.create_session(user["user_id"])
 
@@ -94,6 +108,8 @@ async def register(request: Request, user_data: UserCreate):
             "is_verified": user.get("is_verified", False),
             "subscription_status": user.get("subscription_status", "free"),
             "subscription_tier": user.get("subscription_tier"),
+            "terms_accepted": True,
+            "terms_version": CURRENT_TERMS_VERSION,
         },
     })
     response.set_cookie(
@@ -130,6 +146,8 @@ async def login(request: Request, credentials: UserLogin):
             "is_profile_complete": user.get("is_profile_complete", False),
             "is_verified": user.get("is_verified", False),
             "subscription_status": user.get("subscription_status", "free"),
+            "terms_accepted": user.get("terms_version") == CURRENT_TERMS_VERSION,
+            "terms_version": user.get("terms_version"),
         },
     })
     response.set_cookie(
@@ -147,12 +165,27 @@ async def login(request: Request, credentials: UserLogin):
 @router.post("/google-session")
 async def google_session(session_id: str):
     """Exchange Google OAuth session_id for user session.
+
+    For **new** Google users the endpoint returns
+    ``{status: "pending_terms", pending_token, user_info}`` — no account is
+    created until the user accepts Terms on the frontend and calls
+    ``/auth/complete-registration``.
+
     REMINDER: DO NOT HARDCODE THE URL, OR ADD ANY FALLBACKS OR REDIRECT URLS, THIS BREAKS THE AUTH
     """
     result = await auth_service.handle_google_oauth(session_id)
     if not result:
         raise HTTPException(status_code=401, detail="Google authentication failed")
 
+    # ── New user — terms not yet accepted ──────────────────────────────
+    if result.get("status") == "pending_terms":
+        return JSONResponse(content={
+            "status": "pending_terms",
+            "pending_token": result["pending_token"],
+            "user_info": result["user_info"],
+        })
+
+    # ── Existing user — normal session ─────────────────────────────────
     user = result["user"]
     session_token = result["session_token"]
     response = JSONResponse(content={
@@ -166,6 +199,8 @@ async def google_session(session_id: str):
             "is_profile_complete": user.get("is_profile_complete", False),
             "is_verified": user.get("is_verified", False),
             "subscription_status": user.get("subscription_status", "free"),
+            "terms_accepted": user.get("terms_version") == CURRENT_TERMS_VERSION,
+            "terms_version": user.get("terms_version"),
         },
     })
     response.set_cookie(
@@ -194,6 +229,8 @@ async def get_current_user_info(current_user: dict = Depends(get_current_user)):
         "verification_badge": current_user.get("verification_badge"),
         "subscription_status": current_user.get("subscription_status", "free"),
         "subscription_tier": current_user.get("subscription_tier"),
+        "terms_accepted": current_user.get("terms_version") == CURRENT_TERMS_VERSION,
+        "terms_version": current_user.get("terms_version"),
     }
 
 
@@ -228,6 +265,69 @@ async def logout(
         await auth_service.delete_session(session_token)
     response.delete_cookie(key="session_token", path="/")
     return {"message": "Logged out successfully"}
+
+
+# ---------------------------------------------------------------------------
+# Terms of Service — accept / complete-registration
+# ---------------------------------------------------------------------------
+
+@router.post("/complete-registration")
+async def complete_registration(body: CompleteRegistrationRequest):
+    """Complete a pending Google OAuth registration after Terms acceptance.
+
+    The user's Google profile data was stashed in ``pending_registrations``
+    during the OAuth callback.  This endpoint consumes that data, creates the
+    real user account (with ``terms_accepted_at`` stamped), and returns a
+    session cookie.
+    """
+    result = await auth_service.complete_pending_registration(body.pending_token)
+    if not result:
+        raise HTTPException(
+            status_code=400,
+            detail="Registration link expired or invalid. Please sign in with Google again.",
+        )
+
+    user = result["user"]
+    session_token = result["session_token"]
+    response = JSONResponse(content={
+        "message": "Registration successful",
+        "user": {
+            "user_id": user["user_id"],
+            "email": user["email"],
+            "full_name": user["full_name"],
+            "picture": user.get("picture"),
+            "is_email_verified": user.get("is_email_verified", False),
+            "is_profile_complete": user.get("is_profile_complete", False),
+            "is_verified": user.get("is_verified", False),
+            "subscription_status": user.get("subscription_status", "free"),
+            "terms_accepted": True,
+            "terms_version": CURRENT_TERMS_VERSION,
+        },
+    })
+    response.set_cookie(
+        key="session_token",
+        value=session_token,
+        httponly=True,
+        secure=COOKIE_SECURE,
+        samesite=COOKIE_SAMESITE,
+        max_age=7 * 24 * 60 * 60,
+        path="/",
+    )
+    return response
+
+
+@router.post("/accept-terms")
+async def accept_terms(current_user: dict = Depends(get_current_user)):
+    """Record that the currently authenticated user accepts the latest Terms.
+
+    Used when an existing user logs in but their ``terms_version`` is outdated
+    or missing.
+    """
+    await auth_service.accept_terms(current_user["user_id"])
+    return {
+        "message": "Terms accepted",
+        "terms_version": CURRENT_TERMS_VERSION,
+    }
 
 
 # ---------------------------------------------------------------------------
@@ -353,6 +453,8 @@ async def verify_otp(request: Request, body: VerifyOtpRequest):
             "is_profile_complete": user.get("is_profile_complete", False),
             "is_verified": user.get("is_verified", False),
             "subscription_status": user.get("subscription_status", "free"),
+            "terms_accepted": user.get("terms_version") == CURRENT_TERMS_VERSION,
+            "terms_version": user.get("terms_version"),
         },
     })
     response.set_cookie(

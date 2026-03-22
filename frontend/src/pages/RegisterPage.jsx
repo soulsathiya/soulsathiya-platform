@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Mail, Lock, User, Loader2 } from 'lucide-react';
+import { Mail, Lock, User, Loader2, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -12,6 +12,7 @@ const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const RegisterPage = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [termsAccepted, setTermsAccepted] = useState(false);
   const [formData, setFormData] = useState({
     full_name: '',
     email: '',
@@ -38,6 +39,11 @@ const RegisterPage = () => {
       return;
     }
 
+    if (!termsAccepted) {
+      toast.error('Please accept the Terms of Service and Privacy Policy to continue');
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -46,7 +52,8 @@ const RegisterPage = () => {
         {
           full_name: trimmedName,
           email: formData.email,
-          password: formData.password
+          password: formData.password,
+          terms_accepted: true,
         },
         { withCredentials: true }
       );
@@ -155,10 +162,35 @@ const RegisterPage = () => {
               </div>
             </div>
 
+            {/* Terms acceptance */}
+            <label className="flex items-start gap-3 cursor-pointer group py-1">
+              <button
+                type="button"
+                onClick={() => setTermsAccepted(!termsAccepted)}
+                className={`w-5 h-5 mt-0.5 rounded border flex-shrink-0 flex items-center justify-center transition-all duration-200 ${
+                  termsAccepted
+                    ? 'bg-primary border-primary'
+                    : 'border-muted-foreground/40 group-hover:border-primary/60'
+                }`}
+              >
+                {termsAccepted && <Check className="w-3.5 h-3.5 text-white" />}
+              </button>
+              <span className="text-xs text-muted-foreground leading-relaxed">
+                I agree to the{' '}
+                <Link to="/terms" className="text-primary hover:underline" target="_blank" onClick={e => e.stopPropagation()}>
+                  Terms of Service
+                </Link>{' '}
+                and{' '}
+                <Link to="/privacy" className="text-primary hover:underline" target="_blank" onClick={e => e.stopPropagation()}>
+                  Privacy Policy
+                </Link>
+              </span>
+            </label>
+
             <Button
               type="submit"
               className="w-full"
-              disabled={loading}
+              disabled={loading || !termsAccepted}
               data-testid="register-submit-btn"
             >
               {loading ? (

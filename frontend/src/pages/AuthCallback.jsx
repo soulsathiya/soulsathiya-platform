@@ -38,8 +38,32 @@ const AuthCallback = () => {
           }
         );
 
+        // ── New user — account NOT created yet, show Terms first ──
+        if (response.data.status === 'pending_terms') {
+          navigate('/accept-terms', {
+            state: {
+              pending_token: response.data.pending_token,
+              user_info: response.data.user_info,
+            },
+            replace: true,
+          });
+          return;
+        }
+
         const user = response.data.user;
 
+        // ── Existing user with outdated/missing terms ──
+        if (!user.terms_accepted) {
+          navigate('/accept-terms', {
+            state: {
+              returnTo: user.is_profile_complete ? '/dashboard' : '/onboarding/profile',
+            },
+            replace: true,
+          });
+          return;
+        }
+
+        // ── Normal flow ──
         if (!user.is_profile_complete) {
           navigate('/onboarding/profile', { state: { user }, replace: true });
         } else {
@@ -56,7 +80,7 @@ const AuthCallback = () => {
   }, [navigate]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#FDFBF7] to-white">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background to-card">
       <div className="text-center">
         <Loader2 className="w-12 h-12 animate-spin text-primary mx-auto mb-4" />
         <p className="text-lg text-muted-foreground">Completing authentication...</p>

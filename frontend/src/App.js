@@ -30,6 +30,7 @@ import ResetPasswordPage from './pages/ResetPasswordPage';
 
 // Step 2 (Trust & Conversion)
 import { PrivacyPolicyPage, TermsOfServicePage, AboutUsPage } from './pages/LegalPages';
+import TermsAcceptancePage from './pages/TermsAcceptancePage';
 
 // New public pages
 import HowItWorksPage from './pages/HowItWorksPage';
@@ -107,6 +108,9 @@ function AppRouter() {
       <Route path="/" element={<LandingPage />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />
+
+      {/* Terms acceptance — must accept before using platform */}
+      <Route path="/accept-terms" element={<TermsAcceptancePage />} />
 
       {/* Email verification & password reset — Issue #2 & #3 */}
       <Route path="/verify-email" element={<VerifyEmailPage />} />
