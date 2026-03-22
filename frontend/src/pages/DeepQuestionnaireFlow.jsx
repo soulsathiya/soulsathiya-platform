@@ -11,11 +11,23 @@ import axios from 'axios';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
+// ── Progress persistence helpers ────────────────────────────────────────────
+function deepStorageKey(pairId) { return `soulsathiya_deep_progress_${pairId}`; }
+function saveDeepProgress(pairId, data) {
+  try { localStorage.setItem(deepStorageKey(pairId), JSON.stringify({ ...data, savedAt: Date.now() })); } catch {}
+}
+function loadDeepProgress(pairId) {
+  try { const raw = localStorage.getItem(deepStorageKey(pairId)); return raw ? JSON.parse(raw) : null; } catch { return null; }
+}
+function clearDeepProgress(pairId) {
+  try { localStorage.removeItem(deepStorageKey(pairId)); } catch {}
+}
+
 const DeepQuestionnaireFlow = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const pairId = searchParams.get('pair_id');
-  
+
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [questions, setQuestions] = useState([]);
@@ -58,11 +70,23 @@ const DeepQuestionnaireFlow = () => {
     }
   };
 
+  // ── Restore saved progress on mount ──────────────────────────────────────
+  useEffect(() => {
+    if (!pairId) return;
+    const saved = loadDeepProgress(pairId);
+    if (saved && saved.responses && Object.keys(saved.responses).length > 0) {
+      setResponses(saved.responses);
+      if (typeof saved.currentModule === 'number') setCurrentModule(saved.currentModule);
+      toast.info('Your previous progress has been restored.');
+    }
+  }, [pairId]);
+
   const handleResponse = (questionId, value) => {
-    setResponses(prev => ({
-      ...prev,
-      [questionId]: parseInt(value)
-    }));
+    setResponses(prev => {
+      const updated = { ...prev, [questionId]: parseInt(value) };
+      saveDeepProgress(pairId, { responses: updated, currentModule });
+      return updated;
+    });
   };
 
   const currentModuleQuestions = questions.filter(
@@ -80,14 +104,18 @@ const DeepQuestionnaireFlow = () => {
     }
 
     if (currentModule < modules.length - 1) {
-      setCurrentModule(currentModule + 1);
+      const nextModule = currentModule + 1;
+      setCurrentModule(nextModule);
+      saveDeepProgress(pairId, { responses, currentModule: nextModule });
       window.scrollTo(0, 0);
     }
   };
 
   const handlePrevious = () => {
     if (currentModule > 0) {
-      setCurrentModule(currentModule - 1);
+      const prevModule = currentModule - 1;
+      setCurrentModule(prevModule);
+      saveDeepProgress(pairId, { responses, currentModule: prevModule });
       window.scrollTo(0, 0);
     }
   };
@@ -120,6 +148,8 @@ const DeepQuestionnaireFlow = () => {
         }
       );
 
+      clearDeepProgress(pairId);
+
       if (result.data.report_generated) {
         toast.success('Deep Compatibility Report generated! View your insights now.');
         navigate(`/deep/report/${pairId}`);
@@ -147,7 +177,7 @@ const DeepQuestionnaireFlow = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#FDFBF7] to-white px-4 py-12">
+    <div className="min-h-screen bg-gradient-to-b from-background to-card px-4 py-12">
       <div className="container mx-auto max-w-4xl">
         {/* Header */}
         <div className="text-center mb-8">

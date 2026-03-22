@@ -494,6 +494,19 @@ function ResultScreen({ score, dimScores, onDashboard }) {
   );
 }
 
+// ── Progress persistence (localStorage) ──────────────────────────────────────
+const PSYCH_STORAGE_KEY = 'soulsathiya_psychometric_progress';
+
+function savePsychProgress(data) {
+  try { localStorage.setItem(PSYCH_STORAGE_KEY, JSON.stringify(data)); } catch { /* ignore */ }
+}
+function loadPsychProgress() {
+  try { const raw = localStorage.getItem(PSYCH_STORAGE_KEY); return raw ? JSON.parse(raw) : null; } catch { return null; }
+}
+function clearPsychProgress() {
+  try { localStorage.removeItem(PSYCH_STORAGE_KEY); } catch { /* ignore */ }
+}
+
 // ── Main Component ────────────────────────────────────────────────────────────
 const PsychometricOnboarding = () => {
   const navigate     = useNavigate();
@@ -506,6 +519,16 @@ const PsychometricOnboarding = () => {
   const [view,       setView]       = useState('quiz');
   const [result,     setResult]     = useState(null);
   const topRef = useRef(null);
+
+  // Restore saved progress on mount
+  useEffect(() => {
+    const saved = loadPsychProgress();
+    if (saved) {
+      if (saved.responses && Object.keys(saved.responses).length > 0) setResponses(saved.responses);
+      if (typeof saved.stage === 'number') setStage(saved.stage);
+      if (saved.view === 'quiz' || saved.view === 'feedback') setView(saved.view);
+    }
+  }, []);
 
   useEffect(() => {
     (async () => {
@@ -528,7 +551,11 @@ const PsychometricOnboarding = () => {
   const pct           = Math.round((totalAnswered / 36) * 100);
 
   const handleSelect = (qId, val) => {
-    setResponses(prev => ({ ...prev, [qId]: val }));
+    setResponses(prev => {
+      const next = { ...prev, [qId]: val };
+      savePsychProgress({ responses: next, stage, view });
+      return next;
+    });
   };
 
   const scrollTop = () => { topRef.current?.scrollIntoView({ behavior: 'smooth' }); };
@@ -537,20 +564,28 @@ const PsychometricOnboarding = () => {
     if (!isComplete) { toast.error('Please answer all questions before continuing.'); return; }
     scrollTop();
     setView('feedback');
+    savePsychProgress({ responses, stage, view: 'feedback' });
   };
 
   const handleFeedbackContinue = () => {
     scrollTop();
     if (stage < STAGES.length - 1) {
-      setStage(s => s + 1);
+      const nextStage = stage + 1;
+      setStage(nextStage);
       setView('quiz');
+      savePsychProgress({ responses, stage: nextStage, view: 'quiz' });
     } else {
       handleSubmit();
     }
   };
 
   const handlePrev = () => {
-    if (stage > 0) { setStage(s => s - 1); scrollTop(); }
+    if (stage > 0) {
+      const prevStage = stage - 1;
+      setStage(prevStage);
+      savePsychProgress({ responses, stage: prevStage, view: 'quiz' });
+      scrollTop();
+    }
   };
 
   const handleSubmit = async () => {
@@ -559,6 +594,7 @@ const PsychometricOnboarding = () => {
     try {
       const formatted = Object.entries(responses).map(([question_id, response]) => ({ question_id, response }));
       await axios.post(`${BACKEND_URL}/api/psychometric/submit`, { responses: formatted }, { withCredentials: true });
+      clearPsychProgress();
       setResult({ overall, dimScores });
       setView('result');
     } catch (err) {
