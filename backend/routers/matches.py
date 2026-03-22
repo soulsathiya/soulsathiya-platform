@@ -1,12 +1,26 @@
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import APIRouter, HTTPException, Depends, Query
 from datetime import datetime, timezone
-from typing import Optional
+from typing import Optional, List
 import uuid
 
 from pydantic import BaseModel
 from dependencies import db, get_current_user, compatibility_engine, require_tier, TIER_HIERARCHY
 
 router = APIRouter(tags=["matches"])
+
+# ── Tier-gated refinement rules ────────────────────────────────────────────
+# Silently ignore filters the user's tier doesn't allow
+REFINEMENT_TIERS = {
+    "age_min":          "free",      # Free tier
+    "age_max":          "free",
+    "city":             "free",
+    "state":            "free",
+    "religion":         "premium",   # Premium tier
+    "education":        "premium",
+    "marital_status":   "premium",
+    "personality_type": "elite",     # Elite tier
+    "min_compatibility":"elite",
+}
 
 
 class SendInterestBody(BaseModel):
@@ -23,128 +37,204 @@ class RespondInterestBody(BaseModel):
 
 # ==================== MATCH ROUTES ====================
 
+def _allowed(param: str, user_tier: str) -> bool:
+    """Check if a refinement parameter is allowed for the user's tier."""
+    required = REFINEMENT_TIERS.get(param, "elite")
+    return TIER_HIERARCHY.get(user_tier, 0) >= TIER_HIERARCHY.get(required, 3)
+
+
+def _age_from_dob(dob) -> Optional[int]:
+    """Compute age from date-of-birth string or date object."""
+    if not dob:
+        return None
+    if isinstance(dob, str):
+        try:
+            from datetime import date as _date
+            parts = dob.split("-")
+            dob = _date(int(parts[0]), int(parts[1]), int(parts[2]))
+        except Exception:
+            return None
+    today = datetime.now().date()
+    return today.year - dob.year - ((today.month, today.day) < (dob.month, dob.day))
+
+
 @router.get("/matches")
 async def get_matches(
-    min_compatibility: Optional[float] = None,
+    # ── Refinement parameters (tier-gated) ──
+    age_min: Optional[int] = Query(None, ge=18, le=100),
+    age_max: Optional[int] = Query(None, ge=18, le=100),
+    city: Optional[str] = None,
+    state: Optional[str] = None,
+    religion: Optional[str] = None,
+    education: Optional[str] = None,
+    marital_status: Optional[str] = None,
+    personality_type: Optional[str] = None,
+    min_compatibility: Optional[float] = Query(None, ge=0, le=100),
+    # ── Legacy params ──
     max_distance_km: Optional[int] = None,
-    current_user: dict = Depends(get_current_user)
+    current_user: dict = Depends(get_current_user),
 ):
-    """Get psychometric-ranked compatible matches with tier-based limits"""
-    # Tier-based match visibility: Free sees fewer, Elite sees all
+    """Get psychometric-ranked compatible matches with optional refinement.
+
+    Refinement filters are applied **post-ranking** — they narrow the
+    algorithm-ranked list, never replace it.  Each filter is tier-gated:
+    filters above the user's tier are silently ignored.
+    """
     user_tier = current_user.get("subscription_tier") or "free"
-    tier_match_limits = {
-        "free": 10,       # enough to see value, creates upgrade motivation
-        "premium": 30,    # strong match pool
-        "elite": 50,      # full access
-    }
+
+    # ── Normalise refinement values (silently drop unauthorised ones) ──
+    r_age_min  = age_min  if _allowed("age_min", user_tier) else None
+    r_age_max  = age_max  if _allowed("age_max", user_tier) else None
+    r_city     = city.strip().lower()   if city   and _allowed("city", user_tier) else None
+    r_state    = state.strip().lower()  if state  and _allowed("state", user_tier) else None
+    r_religion = religion.strip().lower() if religion and _allowed("religion", user_tier) else None
+    r_education = education.strip().lower() if education and _allowed("education", user_tier) else None
+    r_marital  = marital_status.strip().lower() if marital_status and _allowed("marital_status", user_tier) else None
+    r_archetype = personality_type.strip() if personality_type and _allowed("personality_type", user_tier) else None
+    r_min_compat = min_compatibility if _allowed("min_compatibility", user_tier) else None
+
+    has_refinements = any([r_age_min, r_age_max, r_city, r_state, r_religion,
+                          r_education, r_marital, r_archetype, r_min_compat])
+
+    # Tier-based match visibility: Free sees fewer, Elite sees all
+    # Fetch more from engine if refinements are active (to avoid empty results)
+    tier_match_limits = {"free": 10, "premium": 30, "elite": 50}
     match_limit = tier_match_limits.get(user_tier, 10)
+    engine_limit = match_limit * 3 if has_refinements else match_limit
 
     # Check if user has completed psychometric profile
     psych_profile = await db.psychometric_profiles.find_one(
-        {"user_id": current_user["user_id"]},
-        {"_id": 0}
+        {"user_id": current_user["user_id"]}, {"_id": 0}
     )
 
     if psych_profile:
-        # Get psychometric-ranked matches (engine handles all 3 filter layers)
+        # Get psychometric-ranked matches (engine handles Layer 1-3)
         matches = await compatibility_engine.get_ranked_matches(
             user_id=current_user["user_id"],
-            limit=match_limit
+            limit=engine_limit,
         )
-        
+
         # Get active boosts
         now = datetime.now(timezone.utc)
         boosted_users = await db.boosts.find(
             {"status": "active", "expires_at": {"$gt": now}},
-            {"_id": 0, "user_id": 1}
+            {"_id": 0, "user_id": 1},
         ).to_list(100)
-        
         boosted_user_ids = {boost["user_id"] for boost in boosted_users}
-        
+
         match_results = []
         for match in matches:
+            uid = match["matched_user_id"]
             user = await db.users.find_one(
-                {"user_id": match["matched_user_id"], "is_active": {"$ne": False}},
-                {"_id": 0, "user_id": 1, "full_name": 1, "picture": 1, "is_verified": 1}
+                {"user_id": uid, "is_active": {"$ne": False}},
+                {"_id": 0, "user_id": 1, "full_name": 1, "picture": 1, "is_verified": 1},
+            )
+            if not user:
+                continue
+
+            profile = await db.profiles.find_one(
+                {"user_id": uid},
+                {"_id": 0, "city": 1, "state": 1, "date_of_birth": 1,
+                 "occupation": 1, "religion": 1, "education_level": 1,
+                 "marital_status": 1},
             )
 
-            if user:
-                profile = await db.profiles.find_one(
-                    {"user_id": match["matched_user_id"]},
-                    {"_id": 0, "city": 1, "state": 1, "date_of_birth": 1, "occupation": 1}
-                )
+            # Get archetype
+            psych = await db.psychometric_profiles.find_one(
+                {"user_id": uid}, {"_id": 0, "archetype_primary": 1},
+            )
+            archetype = psych.get("archetype_primary") if psych else None
 
-                # Get archetype
-                psych = await db.psychometric_profiles.find_one(
-                    {"user_id": match["matched_user_id"]},
-                    {"_id": 0, "archetype_primary": 1}
-                )
-                
-                is_boosted = match["matched_user_id"] in boosted_user_ids
-                
-                match_results.append({
-                    "match_id": match.get("match_id", f"match_{uuid.uuid4().hex[:8]}"),
-                    "user": user,
-                    "profile_preview": profile,
-                    "archetype": psych.get("archetype_primary") if psych else None,
-                    "compatibility_score": match["psychometric_score"],
-                    "psychometric_score": match["psychometric_score"],
-                    "distance_km": match.get("distance_km"),
-                    "is_boosted": is_boosted,
-                    "rank_score": match["rank_score"]
-                })
-        
-        return {"matches": match_results, "match_type": "psychometric"}
-    
-    # Fallback: basic matching for users without psychometric profile
-    query = {
-        "user_id": current_user["user_id"]
-    }
-    
+            # ── Apply refinement filters (post-ranking) ────────────
+            if profile and has_refinements:
+                # Age
+                cand_age = _age_from_dob(profile.get("date_of_birth"))
+                if r_age_min and cand_age is not None and cand_age < r_age_min:
+                    continue
+                if r_age_max and cand_age is not None and cand_age > r_age_max:
+                    continue
+                # Location
+                if r_city and (profile.get("city") or "").lower() != r_city:
+                    continue
+                if r_state and (profile.get("state") or "").lower() != r_state:
+                    continue
+                # Religion (Premium)
+                if r_religion and (profile.get("religion") or "").lower() != r_religion:
+                    continue
+                # Education (Premium)
+                if r_education and (profile.get("education_level") or "").lower() != r_education:
+                    continue
+                # Marital status (Premium)
+                if r_marital and (profile.get("marital_status") or "").lower() != r_marital:
+                    continue
+                # Personality archetype (Elite)
+                if r_archetype and (archetype or "").lower() != r_archetype.lower():
+                    continue
+                # Minimum compatibility (Elite)
+                if r_min_compat and match["psychometric_score"] < r_min_compat:
+                    continue
+
+            is_boosted = uid in boosted_user_ids
+
+            match_results.append({
+                "match_id": match.get("match_id", f"match_{uuid.uuid4().hex[:8]}"),
+                "user": user,
+                "profile_preview": profile,
+                "archetype": archetype,
+                "compatibility_score": match["psychometric_score"],
+                "psychometric_score": match["psychometric_score"],
+                "distance_km": match.get("distance_km"),
+                "is_boosted": is_boosted,
+                "rank_score": match["rank_score"],
+            })
+
+            # Respect tier match limit after refinement
+            if len(match_results) >= match_limit:
+                break
+
+        return {
+            "matches": match_results,
+            "match_type": "psychometric",
+            "refinements_applied": has_refinements,
+        }
+
+    # ── Fallback: basic matching for users without psychometric profile ──
+    query = {"user_id": current_user["user_id"]}
     if min_compatibility:
         query["compatibility_score"] = {"$gte": min_compatibility}
-    
     if max_distance_km:
         query["distance_km"] = {"$lte": max_distance_km}
-    
+
     matches = await db.matches.find(query, {"_id": 0}).sort("compatibility_score", -1).to_list(50)
-    
-    # Get active boosts for all matched users
+
     now = datetime.now(timezone.utc)
     boosted_users = await db.boosts.find(
-        {
-            "status": "active",
-            "expires_at": {"$gt": now}
-        },
-        {"_id": 0, "user_id": 1}
+        {"status": "active", "expires_at": {"$gt": now}},
+        {"_id": 0, "user_id": 1},
     ).to_list(100)
-    
     boosted_user_ids = {boost["user_id"] for boost in boosted_users}
-    
+
     match_results = []
     for match in matches:
         user = await db.users.find_one(
             {"user_id": match["matched_user_id"], "is_active": {"$ne": False}},
-            {"_id": 0, "user_id": 1, "full_name": 1, "picture": 1, "is_verified": 1}
+            {"_id": 0, "user_id": 1, "full_name": 1, "picture": 1, "is_verified": 1},
         )
-
         if user:
             profile = await db.profiles.find_one(
                 {"user_id": match["matched_user_id"]},
-                {"_id": 0, "city": 1, "state": 1, "date_of_birth": 1, "occupation": 1}
+                {"_id": 0, "city": 1, "state": 1, "date_of_birth": 1, "occupation": 1},
             )
-
             is_boosted = match["matched_user_id"] in boosted_user_ids
-            
             match_results.append({
                 "match_id": match.get("match_id", f"match_{uuid.uuid4().hex[:8]}"),
                 "user": user,
                 "profile_preview": profile,
                 "compatibility_score": match.get("compatibility_score", 0),
                 "distance_km": match.get("distance_km"),
-                "is_boosted": is_boosted
+                "is_boosted": is_boosted,
             })
-    
+
     return {"matches": match_results, "match_type": "basic"}
 
 
