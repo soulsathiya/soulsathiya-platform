@@ -55,6 +55,7 @@ const DEFAULT_ABOUT = {
   diet: '',
   drinking: '',
   smoking: '',
+  linkedin_url: '',
 };
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -410,6 +411,23 @@ const Step3AboutYou = ({ data, onChange }) => (
       />
       <p className="text-xs text-muted-foreground text-right">{data.bio.length}/1000</p>
     </div>
+
+    {/* LinkedIn (Optional) */}
+    <div className="space-y-1">
+      <Label>LinkedIn Profile <span className="text-muted-foreground text-xs font-normal">(Optional)</span></Label>
+      <Input
+        type="url"
+        placeholder="https://linkedin.com/in/your-profile"
+        value={data.linkedin_url}
+        onChange={(e) => onChange({ ...data, linkedin_url: e.target.value })}
+      />
+      <p className="text-xs text-muted-foreground">
+        Profiles with LinkedIn tend to receive more meaningful responses
+      </p>
+      {data.linkedin_url && !data.linkedin_url.toLowerCase().includes('linkedin.com') && (
+        <p className="text-xs text-amber-400">Please enter a valid LinkedIn URL (e.g. linkedin.com/in/...)</p>
+      )}
+    </div>
   </div>
 );
 
@@ -510,6 +528,7 @@ const Step5Review = ({ profile, preferences, about }) => (
       <ReviewRow label="Occupation" value={about.occupation} />
       <ReviewRow label="Annual Income" value={formatIncome(about.annual_income)} />
       <ReviewRow label="Diet" value={about.diet ? formatLabel(about.diet) : 'Prefer not to say'} />
+      {about.linkedin_url && <ReviewRow label="LinkedIn" value="✓ Linked" />}
     </div>
     <div className="card-surface p-4 rounded-xl space-y-1">
       <h3 className="font-semibold text-sm uppercase tracking-wide text-muted-foreground mb-2">Partner Preferences</h3>
@@ -647,8 +666,13 @@ const ProfileOnboarding = () => {
     setLoading(true);
     try {
       // Build profile payload (merge basic + about)
+      const aboutClean = { ...about };
+      // Only save linkedin_url if it's a valid LinkedIn URL
+      if (aboutClean.linkedin_url && !aboutClean.linkedin_url.toLowerCase().includes('linkedin.com')) {
+        delete aboutClean.linkedin_url;
+      }
       const profilePayload = {
-        ...about,
+        ...aboutClean,
         ...profile,
         height_cm: profile.height_cm ? parseInt(profile.height_cm) : undefined,
         user_id: user?.user_id || '',

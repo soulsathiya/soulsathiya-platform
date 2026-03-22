@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field, ConfigDict
+from pydantic import BaseModel, Field, ConfigDict, field_validator
 from typing import Optional, List
 from datetime import datetime, date
 from enum import Enum
@@ -75,6 +75,15 @@ class ProfileBase(BaseModel):
     linkedin_url: Optional[str] = None
     instagram_handle: Optional[str] = None
 
+    @field_validator("linkedin_url")
+    @classmethod
+    def validate_linkedin_url(cls, v):
+        if v is None or v == "":
+            return None
+        if "linkedin.com" not in v.lower():
+            raise ValueError("Must be a valid LinkedIn URL (e.g. https://linkedin.com/in/...)")
+        return v
+
 
 class ProfileCreate(ProfileBase):
     pass
@@ -102,6 +111,15 @@ class ProfileUpdate(BaseModel):
     hobbies: Optional[List[str]] = None
     linkedin_url: Optional[str] = None
     instagram_handle: Optional[str] = None
+
+    @field_validator("linkedin_url")
+    @classmethod
+    def validate_linkedin_url(cls, v):
+        if v is None or v == "":
+            return None
+        if "linkedin.com" not in v.lower():
+            raise ValueError("Must be a valid LinkedIn URL (e.g. https://linkedin.com/in/...)")
+        return v
 
 
 class Profile(ProfileBase):
